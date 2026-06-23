@@ -32,6 +32,11 @@
     return window.location.hostname;
   }
 
+  function normalizeDomain(d) {
+    if (!d) return '';
+    return d.replace(/^https?:\/\//, '').replace(/\/.*$/, '').replace(/^www\./, '').toLowerCase();
+  }
+
   function init() {
     var slots = document.querySelectorAll('.adnet-slot');
     if (!slots.length) {
@@ -44,7 +49,9 @@
         console.warn(AD_NETWORK + ': Site ID "' + siteId + '" is not registered.');
       } else {
         var allowedDomain = publisher.domain;
-        if (allowedDomain && allowedDomain !== '*' && getDomain() !== allowedDomain && getDomain() !== 'localhost') {
+        var normCurrent = normalizeDomain(getDomain());
+        var normAllowed = normalizeDomain(allowedDomain);
+        if (allowedDomain && allowedDomain !== '*' && normCurrent !== normAllowed && normCurrent !== 'localhost') {
           console.warn(AD_NETWORK + ': Domain ' + getDomain() + ' not authorized for site ID ' + siteId);
           return;
         }
@@ -109,7 +116,7 @@
       if (ad.imageUrl) {
         bannerHtml = '<a href="' + escapeHtml(linkUrl) + '" class="adnet-link" target="_blank" rel="noopener noreferrer nofollow"><img src="' + escapeHtml(ad.imageUrl) + '" alt="' + escapeHtml(ad.title || 'Advertisement') + '" class="adnet-image" style="max-width:100%;height:auto;border:0;display:block"></a>';
       } else {
-        bannerHtml = '<a href="' + escapeHtml(linkUrl) + '" class="adnet-link adnet-text-ad" target="_blank" rel="noopener noreferrer nofollow" style="display:block;padding:16px;background:#f5f5f5;border-radius:8px;text-decoration:none;color:#333;text-align:center;"><strong>' + escapeHtml(ad.title || 'Sponsored') + '</strong></a>';
+        bannerHtml = '<a href="' + escapeHtml(linkUrl) + '" class="adnet-link adnet-text-ad" target="_blank" rel="noopener noreferrer nofollow" style="display:block;padding:20px;background:linear-gradient(135deg,#6C5CE7,#a29bfe);border-radius:10px;text-decoration:none;color:#fff;text-align:center;font-family:Arial,sans-serif;"><strong style="font-size:16px;">' + escapeHtml(ad.title || 'Sponsored') + '</strong><span style="display:block;font-size:12px;margin-top:6px;opacity:0.8;">Advertisement</span></a>';
       }
       wrapper.innerHTML = bannerHtml;
     } else if (ad.type === 'video') {
