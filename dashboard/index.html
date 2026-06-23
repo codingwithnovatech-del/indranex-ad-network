@@ -1,275 +1,191 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AdNet Pro - Analytics Dashboard</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Analytics Dashboard - Indranex AdNet</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 <style>
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-:root { --primary:#6C5CE7; --primary-dark:#5A4BD1; --primary-light:#A29BFE; --secondary:#00CEC9; --success:#00b894; --danger:#e74c3c; --warning:#fdcb6e; --dark:#2D3436; --gray:#636E72; --light:#DFE6E9; --bg:#f0f2f5; --card:#FFFFFF; --shadow:0 2px 20px rgba(0,0,0,0.08); --radius:12px; }
-body { font-family:'Inter',-apple-system,sans-serif; background:var(--bg); color:var(--dark); line-height:1.6; min-height:100vh; }
-.container { max-width:1200px; margin:0 auto; padding:0 24px; }
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#6C5CE7;--primary-dark:#5A4BD1;--primary-light:#A29BFE;--secondary:#00CEC9;--success:#00b894;--danger:#e74c3c;--dark:#0a0a1a;--gray:#636E72;--bg:#f0f2f8;--card:#fff;--radius:14px;--shadow:0 2px 20px rgba(0,0,0,0.04)}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:#2D3436;min-height:100vh;font-size:14px}
+.container{max-width:1100px;margin:0 auto;padding:0 20px}
+a{color:var(--primary);text-decoration:none}
 
-header { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:#fff; padding:0; }
-header .top-row { display:flex; align-items:center; justify-content:space-between; padding:20px 0; }
-header h1 { font-size:22px; font-weight:700; display:flex; align-items:center; gap:10px; }
-header h1 svg { width:28px; height:28px; }
-header .header-links { display:flex; gap:16px; }
-header .header-links a { color:rgba(255,255,255,0.8); text-decoration:none; font-size:13px; font-weight:500; transition:color 0.2s; }
-header .header-links a:hover { color:#fff; }
-header .time-range { padding:16px 0; display:flex; gap:8px; }
-header .time-range button { padding:6px 16px; border:1px solid rgba(255,255,255,0.3); background:transparent; color:rgba(255,255,255,0.8); border-radius:8px; cursor:pointer; font-size:12px; font-weight:500; transition:all 0.2s; }
-header .time-range button:hover, header .time-range button.active { background:rgba(255,255,255,0.2); color:#fff; border-color:rgba(255,255,255,0.5); }
+.header{background:linear-gradient(135deg,#0a0a1a,#1a1a3e);color:#fff;padding:48px 0 40px;position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;top:-50%;right:-20%;width:60%;height:200%;background:radial-gradient(ellipse,rgba(108,92,231,0.1) 0%,transparent 70%)}
+.header .container{position:relative;z-index:1}
+.header-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;flex-wrap:wrap;gap:12px}
+.header-top .brand{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:800}
+.header-top .brand .bi{width:34px;height:34px;background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800}
+.header-top .brand span{color:var(--primary-light)}
+.header nav{display:flex;gap:20px;flex-wrap:wrap}
+.header nav a{color:rgba(255,255,255,0.5);font-size:13px;font-weight:500;transition:color 0.2s;text-decoration:none}
+.header nav a:hover{color:#fff}
+.header h1{font-size:28px;font-weight:800;margin-bottom:4px}
+.header p{color:rgba(255,255,255,0.5);font-size:14px}
 
-.stats-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; margin:24px 0; }
-.stat-card { background:var(--card); border-radius:var(--radius); padding:24px; box-shadow:var(--shadow); position:relative; overflow:hidden; }
-.stat-card .stat-icon { position:absolute; right:16px; top:16px; font-size:28px; opacity:0.1; }
-.stat-card .stat-label { font-size:12px; color:var(--gray); text-transform:uppercase; letter-spacing:0.5px; font-weight:600; }
-.stat-card .stat-value { font-size:36px; font-weight:800; margin-top:4px; background:linear-gradient(135deg,var(--primary),var(--secondary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-.stat-card .stat-value.mono { background:linear-gradient(135deg,var(--dark),var(--gray)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-.stat-card .stat-sub { font-size:13px; color:var(--gray); margin-top:2px; }
-.stat-card .stat-bar { height:4px; background:#eee; border-radius:4px; margin-top:12px; overflow:hidden; }
-.stat-card .stat-bar-fill { height:100%; border-radius:4px; background:linear-gradient(90deg,var(--primary),var(--secondary)); transition:width 0.6s ease; }
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:28px 0 24px}
+.stat-card{background:var(--card);border-radius:var(--radius);padding:22px 24px;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform 0.2s}
+.stat-card:hover{transform:translateY(-2px)}
+.stat-card .stat-bar{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--primary),var(--secondary))}
+.stat-card .stat-label{font-size:11px;text-transform:uppercase;color:var(--gray);font-weight:600;letter-spacing:0.3px}
+.stat-card .stat-value{font-size:30px;font-weight:800;margin-top:2px;background:linear-gradient(135deg,var(--primary),var(--primary-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-card .stat-value.mono{-webkit-background-clip:unset;-webkit-text-fill-color:unset;color:var(--dark);font-size:24px;}
+.stat-card .stat-sub{font-size:11px;color:var(--gray);margin-top:4px}
+.stat-card .stat-bar-fill{position:absolute;bottom:0;left:0;height:4px;border-radius:0 2px 0 0;background:linear-gradient(90deg,var(--primary),var(--primary-light));transition:width 1s ease}
 
-.card { background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; margin-bottom:24px; }
-.card-header { padding:16px 20px; border-bottom:1px solid #f0f0f0; display:flex; align-items:center; justify-content:space-between; }
-.card-header h3 { font-size:16px; font-weight:600; }
-.card-body { padding:20px; }
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden}
+.card-head{padding:16px 20px;border-bottom:1px solid #f5f5f5;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.card-head h3{font-size:15px;font-weight:600}
+.card-body{padding:20px}
 
-table { width:100%; border-collapse:collapse; font-size:14px; }
-th, td { padding:12px 16px; text-align:left; border-bottom:1px solid #f0f0f0; }
-th { font-size:12px; text-transform:uppercase; letter-spacing:0.5px; color:var(--gray); font-weight:600; background:#fafafa; }
-tr:hover td { background:#fafbfc; }
-.badge { display:inline-block; padding:3px 10px; border-radius:50px; font-size:11px; font-weight:600; }
-.badge-banner { background:#e8f4fd; color:#2196F3; }
-.badge-video { background:#fef3e2; color:#f39c12; }
-.badge-native { background:#f3e8ff; color:#9b59b6; }
+/* BAR CHART */
+.chart-container{margin:0 0 4px}
+.chart-bar-row{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding:8px 0;border-bottom:1px solid #f5f5f5}
+.chart-bar-row:last-child{border-bottom:none}
+.chart-bar-label{min-width:120px;font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chart-bar-track{flex:1;height:28px;background:#f0f0f0;border-radius:6px;overflow:hidden;position:relative}
+.chart-bar-fill{height:100%;border-radius:6px;transition:width 1s ease;position:relative;display:flex;align-items:center;padding-left:10px;font-size:11px;color:#fff;font-weight:600;min-width:fit-content}
+.chart-bar-value{min-width:60px;text-align:right;font-size:12px;color:var(--gray);font-weight:500}
 
-.chart-container { margin-top:16px; }
-.chart-bar-row { display:flex; align-items:center; gap:12px; margin-bottom:8px; }
-.chart-bar-label { min-width:120px; font-size:12px; color:var(--gray); font-weight:500; text-align:right; }
-.chart-bar-track { flex:1; height:24px; background:#f0f0f0; border-radius:6px; overflow:hidden; position:relative; }
-.chart-bar-fill { height:100%; border-radius:6px; background:linear-gradient(90deg,var(--primary),var(--primary-light)); transition:width 0.8s cubic-bezier(0.22,1,0.36,1); display:flex; align-items:center; padding-left:8px; font-size:12px; color:#fff; font-weight:600; min-width:fit-content; }
-.chart-bar-value { font-size:12px; font-weight:600; color:var(--gray); min-width:50px; text-align:left; }
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:12px 14px;text-align:left;border-bottom:1px solid #f5f5f5}
+th{font-size:11px;text-transform:uppercase;color:var(--gray);font-weight:600;background:#fafafa}
+tr:hover td{background:#f5f3ff}
+.badge{display:inline-block;padding:3px 10px;border-radius:50px;font-size:11px;font-weight:600}
+.badge-banner{background:#e8f4fd;color:#2196F3}
+.badge-video{background:#fef3e2;color:#f39c12}
+.badge-native{background:#f3e8ff;color:#9b59b6}
+.badge-popunder{background:#fce4ec;color:#e91e63}
+.badge-interstitial{background:#e0f7fa;color:#00acc1}
 
-.empty-state { text-align:center; padding:40px 20px; color:var(--gray); }
-.empty-state .empty-icon { font-size:48px; margin-bottom:12px; opacity:0.5; }
-.empty-state p { font-size:14px; }
+.loading{text-align:center;padding:60px 20px;color:var(--gray);font-size:14px}
+.loading .spinner{width:36px;height:36px;border:3px solid #eee;border-top-color:var(--primary);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-.loading { display:flex; align-items:center; justify-content:center; padding:60px; color:var(--gray); font-size:14px; gap:8px; }
-.loading .spinner { width:20px; height:20px; border:3px solid #e0e0e0; border-top-color:var(--primary); border-radius:50%; animation:spin 0.8s linear infinite; }
-@keyframes spin { to { transform:rotate(360deg); } }
+time-range{display:flex;gap:8px;flex-wrap:wrap}
+.time-btn{padding:6px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.5);font-size:12px;cursor:pointer;transition:all 0.2s}
+.time-btn:hover,.time-btn.active{background:rgba(108,92,231,0.2);color:#fff;border-color:var(--primary)}
 
-footer { text-align:center; padding:24px; color:#999; font-size:13px; }
-footer a { color:var(--primary); text-decoration:none; }
-
-@media (max-width:768px) {
-  .stats-row { grid-template-columns:repeat(2,1fr); }
-  .stat-card .stat-value { font-size:24px; }
-  .chart-bar-label { min-width:80px; font-size:11px; }
-  header .time-range { overflow-x:auto; }
-}
+footer{padding:24px 0;text-align:center;border-top:1px solid #eee;color:var(--gray);font-size:12px;margin-top:24px}
+footer a{color:var(--primary)}
+@media(max-width:600px){.stats-row{grid-template-columns:repeat(2,1fr)}.chart-bar-label{min-width:80px;font-size:12px}}
 </style>
 </head>
 <body>
 
-<header>
+<div class="header">
   <div class="container">
-    <div class="top-row">
-      <h1><svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2L2 7v10l10 5 10-5V7l-10-5z"/></svg> AdNet Pro Analytics</h1>
-      <div class="header-links">
+    <div class="header-top">
+      <div class="brand"><div class="bi">I</div>Indranex <span>AdNet</span> Analytics</div>
+      <nav>
         <a href="/">Home</a>
         <a href="/publishers/">Publishers</a>
         <a href="/advertisers/">Advertisers</a>
         <a href="/admin/">Admin</a>
-        <a href="/dashboard/" style="color:#fff;font-weight:600;">Dashboard</a>
-      </div>
+      </nav>
     </div>
-    <div class="time-range">
-      <button class="active" data-range="all">All Time</button>
-    </div>
+    <h1>Real-Time Analytics</h1>
+    <p>Live performance data across all campaigns and publishers</p>
   </div>
-</header>
+</div>
 
-<main class="container">
+<div class="container">
   <div class="stats-row" id="statsRow">
-    <div class="stat-card">
-      <div class="stat-icon">&#128065;</div>
-      <div class="stat-label">Total Impressions</div>
-      <div class="stat-value" id="totalImpressions">0</div>
-      <div class="stat-sub">All time ad views</div>
-      <div class="stat-bar"><div class="stat-bar-fill" id="impressionBar" style="width:0%"></div></div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon">&#128070;</div>
-      <div class="stat-label">Total Clicks</div>
-      <div class="stat-value" id="totalClicks">0</div>
-      <div class="stat-sub">User interactions</div>
-      <div class="stat-bar"><div class="stat-bar-fill" id="clickBar" style="width:0%"></div></div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon">&#128200;</div>
-      <div class="stat-label">Click-Through Rate</div>
-      <div class="stat-value" id="ctrValue">0%</div>
-      <div class="stat-sub">(clicks / impressions) &times; 100</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon">&#9879;</div>
-      <div class="stat-label">Active Campaigns</div>
-      <div class="stat-value mono" id="activeAds">0</div>
-      <div class="stat-sub">Currently running ads</div>
-    </div>
+    <div class="stat-card"><div class="stat-bar"></div><div class="stat-label">Total Impressions</div><div class="stat-value" id="totalImps">-</div><div class="stat-sub">All time</div><div class="stat-bar-fill" id="impsBar" style="width:0%"></div></div>
+    <div class="stat-card"><div class="stat-bar" style="background:var(--secondary)"></div><div class="stat-label">Total Clicks</div><div class="stat-value" id="totalClicks">-</div><div class="stat-sub">All time</div><div class="stat-bar-fill" id="clicksBar" style="width:0%;background:linear-gradient(90deg,var(--secondary),#00e6df)"></div></div>
+    <div class="stat-card"><div class="stat-bar" style="background:var(--success)"></div><div class="stat-label">CTR</div><div class="stat-value mono" id="totalCtr">-</div><div class="stat-sub">Click-through rate</div></div>
+    <div class="stat-card"><div class="stat-bar" style="background:var(--warning)"></div><div class="stat-label">Active Campaigns</div><div class="stat-value mono" id="activeAds">-</div><div class="stat-sub">Currently running</div></div>
   </div>
 
   <div class="card">
-    <div class="card-header"><h3>Ad Performance Overview</h3></div>
-    <div class="card-body" id="adPerformanceBody">
-      <div class="loading"><div class="spinner"></div> Loading analytics...</div>
-    </div>
+    <div class="card-head"><h3>&#9879; Campaign Performance</h3></div>
+    <div class="card-body" id="chartBody"><div class="loading"><div class="spinner"></div>Loading analytics...</div></div>
   </div>
 
   <div class="card">
-    <div class="card-header"><h3>Publisher Breakdown</h3></div>
-    <div class="card-body" id="publisherBody">
-      <div class="loading"><div class="spinner"></div> Loading publisher data...</div>
-    </div>
+    <div class="card-head"><h3>&#9781; Publisher Sites</h3></div>
+    <div class="card-body" id="publisherBody"><div class="loading"><div class="spinner"></div>Loading publishers...</div></div>
   </div>
-</main>
+</div>
 
-<footer>
-  <div class="container">
-    <p>&copy; 2026 AdNet Pro &bull; <a href="/">Home</a> &bull; <a href="/admin/">Admin Panel</a></p>
-  </div>
-</footer>
+<footer><div class="container">&copy; 2026 Indranex AdNet &bull; <a href="/">Home</a> &bull; <a href="/publishers/">Publishers</a> &bull; <a href="/advertisers/">Advertisers</a> &bull; <a href="/admin/">Admin</a> &bull; <a href="/terms.html">Terms</a> &bull; <a href="/privacy.html">Privacy</a></div></footer>
 
 <script>
-var FIREBASE_CONFIG = {
-  apiKey: "AIzaSyBUqHKr6vuXqKr5cWMkSM5oTxG1LgPzFEw",
-  authDomain: "indranex-ads-network.firebaseapp.com",
-  databaseURL: "https://indranex-ads-network-default-rtdb.firebaseio.com",
-  projectId: "indranex-ads-network",
-  storageBucket: "indranex-ads-network.firebasestorage.app",
-  messagingSenderId: "665770384201",
-  appId: "1:665770384201:web:0126de06a6919e9f1e1898"
-};
+var FIREBASE_CONFIG={apiKey:"AIzaSyBUqHKr6vuXqKr5cWMkSM5oTxG1LgPzFEw",authDomain:"indranex-ads-network.firebaseapp.com",databaseURL:"https://indranex-ads-network-default-rtdb.firebaseio.com",projectId:"indranex-ads-network",storageBucket:"indranex-ads-network.firebasestorage.app",messagingSenderId:"665770384201",appId:"1:665770384201:web:0126de06a6919e9f1e1898"};
+firebase.initializeApp(FIREBASE_CONFIG);var db=firebase.database();
 
-firebase.initializeApp(FIREBASE_CONFIG);
-var db = firebase.database();
+function loadDashboard(){
+  var impsP=db.ref('analytics/impressions').once('value');
+  var clksP=db.ref('analytics/clicks').once('value');
+  var adsP=db.ref('ads').once('value');
+  var pubsP=db.ref('publishers').once('value');
 
-function loadDashboard() {
-  var totalImps = 0, totalClks = 0;
+  Promise.all([impsP,clksP,adsP,pubsP]).then(function(results){
+    var impData=results[0].val()||{};var clkData=results[1].val()||{};var adsData=results[2].val()||{};var pubsData=results[3].val()||{};
+    var imps=Object.keys(impData).length;var clks=Object.keys(clkData).length;
+    var ads=adsData;var adKeys=Object.keys(ads);
 
-  db.ref('analytics/impressions').once('value', function(snap) {
-    totalImps = snap.val() ? Object.keys(snap.val()).length : 0;
-    document.getElementById('totalImpressions').textContent = totalImps.toLocaleString();
+    document.getElementById('totalImps').textContent=imps.toLocaleString();
+    document.getElementById('totalClicks').textContent=clks.toLocaleString();
+    document.getElementById('totalCtr').textContent=imps>0?((clks/imps)*100).toFixed(2)+'%':'0%';
 
-    var impPct = Math.min((totalImps / 100000) * 100, 100);
-    document.getElementById('impressionBar').style.width = impPct + '%';
+    var active=0;adKeys.forEach(function(k){if(ads[k].status==='active')active++});
+    document.getElementById('activeAds').textContent=active;
 
-    db.ref('analytics/clicks').once('value', function(snap2) {
-      totalClks = snap2.val() ? Object.keys(snap2.val()).length : 0;
-      document.getElementById('totalClicks').textContent = totalClks.toLocaleString();
+    // animate bars
+    var maxVal=Math.max(imps,clks,1);
+    document.getElementById('impsBar').style.width=(imps/maxVal*100)+'%';
+    document.getElementById('clicksBar').style.width=(clks/maxVal*100)+'%';
 
-      var clkPct = Math.min((totalClks / 10000) * 100, 100);
-      document.getElementById('clickBar').style.width = clkPct + '%';
-
-      var ctr = totalImps > 0 ? ((totalClks / totalImps) * 100) : 0;
-      document.getElementById('ctrValue').textContent = ctr.toFixed(2) + '%';
-    });
-
-    db.ref('ads').once('value', function(snap3) {
-      var adsData = snap3.val() || {};
-      var activeCount = 0;
-      var adPerf = {};
-      var maxImps = 0;
-
-      Object.keys(adsData).forEach(function(key) {
-        var ad = adsData[key];
-        if (ad.status === 'active') activeCount++;
-        adPerf[key] = {
-          title: ad.title || key.substring(0,12),
-          type: ad.type || 'banner',
-          impressions: 0,
-          clicks: 0
-        };
+    // Campaign performance
+    if(adKeys.length){
+      var promises=[];var adMap={};
+      adKeys.forEach(function(k){
+        adMap[k]=ads[k];
+        var p=Promise.all([
+          db.ref('analytics/impressions').orderByChild('adId').equalTo(k).once('value'),
+          db.ref('analytics/clicks').orderByChild('adId').equalTo(k).once('value')
+        ]).then(function(r){adMap[k]._imps=r[0].val()?Object.keys(r[0].val()).length:0;adMap[k]._clks=r[1].val()?Object.keys(r[1].val()).length:0});
+        promises.push(p);
       });
 
-      document.getElementById('activeAds').textContent = activeCount;
-
-      db.ref('analytics/impressions').once('value', function(impSnap) {
-        var imps = impSnap.val() || {};
-        Object.keys(imps).forEach(function(k) {
-          var imp = imps[k];
-          if (imp.adId && adPerf[imp.adId]) {
-            adPerf[imp.adId].impressions++;
-          }
+      Promise.all(promises).then(function(){
+        var sorted=adKeys.slice().sort(function(a,b){return (adMap[b]._imps||0)-(adMap[a]._imps||0)});
+        var maxAd=Math.max.apply(null,sorted.map(function(k){return adMap[k]._imps||0}),10);
+        var html='<div class="chart-container">';
+        sorted.forEach(function(k){
+          var ad=adMap[k];var aimp=ad._imps||0;var aclk=ad._clks||0;var pct=maxAd>0?(aimp/maxAd*100):0;
+          var colors=['#6C5CE7','#00CEC9','#FD79A8','#fdcb6e','#2196F3','#00b894','#e91e63','#f39c12'];
+          var ci=Math.floor(Math.random()*colors.length);
+          html+='<div class="chart-bar-row"><div class="chart-bar-label" title="'+(ad.title||k.substring(0,10))+'">'+(ad.title||k.substring(0,10))+'</div><div class="chart-bar-track"><div class="chart-bar-fill" style="width:'+pct+'%;background:'+colors[ci]+'">'+aimp+'</div></div><div class="chart-bar-value">'+aclk+' clicks &bull; '+(aimp>0?((aclk/aimp)*100).toFixed(1):'0')+'% CTR</div></div>';
         });
-
-        db.ref('analytics/clicks').once('value', function(clkSnap) {
-          var clks = clkSnap.val() || {};
-          Object.keys(clks).forEach(function(k) {
-            var clk = clks[k];
-            if (clk.adId && adPerf[clk.adId]) {
-              adPerf[clk.adId].clicks++;
-            }
-          });
-
-          Object.keys(adPerf).forEach(function(k) {
-            if (adPerf[k].impressions > maxImps) maxImps = adPerf[k].impressions;
-          });
-
-          var sorted = Object.keys(adPerf).sort(function(a, b) {
-            return adPerf[b].impressions - adPerf[a].impressions;
-          });
-
-          var html = '';
-          if (sorted.length) {
-            html += '<div class="chart-container">';
-            sorted.forEach(function(key) {
-              var p = adPerf[key];
-              var pct = maxImps > 0 ? (p.impressions / maxImps) * 100 : 0;
-              var ctr = p.impressions > 0 ? ((p.clicks / p.impressions) * 100).toFixed(2) + '%' : '0%';
-              html += '<div class="chart-bar-row">';
-              html += '<div class="chart-bar-label">' + p.title + ' <span class="badge badge-' + p.type + '">' + p.type + '</span></div>';
-              html += '<div class="chart-bar-track"><div class="chart-bar-fill" style="width:' + pct + '%">' + (pct > 15 ? p.impressions.toLocaleString() + ' views' : '') + '</div></div>';
-              html += '<div class="chart-bar-value">' + p.clicks + ' clks / ' + ctr + '</div>';
-              html += '</div>';
-            });
-            html += '</div>';
-          } else {
-            html = '<div class="empty-state"><div class="empty-icon">&#9783;</div><p>No ad performance data yet. Create ads and generate traffic to see metrics.</p></div>';
-          }
-          document.getElementById('adPerformanceBody').innerHTML = html;
-        });
+        html+='</div>';
+        document.getElementById('chartBody').innerHTML=html;
       });
-    });
-  });
-
-  db.ref('publishers').once('value', function(snap) {
-    var pubs = snap.val() || {};
-    var keys = Object.keys(pubs);
-    var html = '';
-
-    if (keys.length) {
-      html = '<table><thead><tr><th>Site ID</th><th>Name</th><th>Domain</th></tr></thead><tbody>';
-      keys.forEach(function(k) {
-        var p = pubs[k];
-        html += '<tr><td><code>' + k + '</code></td><td>' + (p.name || '') + '</td><td>' + (p.domain || '*') + '</td></tr>';
-      });
-      html += '</tbody></table>';
     } else {
-      html = '<div class="empty-state"><div class="empty-icon">&#9781;</div><p>No publishers registered.</p></div>';
+      document.getElementById('chartBody').innerHTML='<div class="loading">No campaigns yet.</div>';
     }
-    document.getElementById('publisherBody').innerHTML = html;
+
+    // Publishers table
+    var pk=Object.keys(pubsData);
+    if(pk.length){
+      var h='<table><thead><tr><th>Site ID</th><th>Name</th><th>Domain</th></tr></thead><tbody>';
+      pk.forEach(function(k){var p=pubsData[k];h+='<tr><td><code style="background:#f0f0f0;padding:2px 8px;border-radius:4px;font-size:11px;">'+k+'</code></td><td><strong>'+(p.name||'')+'</strong></td><td>'+(p.domain||'*')+'</td></tr>'});
+      h+='</tbody></table>';
+      document.getElementById('publisherBody').innerHTML=h;
+    } else {
+      document.getElementById('publisherBody').innerHTML='<div class="loading">No publishers registered.</div>';
+    }
   });
 }
 
-document.addEventListener('DOMContentLoaded', loadDashboard);
+loadDashboard();
 </script>
-
 </body>
 </html>
