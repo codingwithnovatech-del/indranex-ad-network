@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AdNet Pro - Publisher Demo</title>
+<style>
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background:#f0f2f5; color:#333; }
+  .container { max-width:1100px; margin:0 auto; padding:24px; }
+  header { background:linear-gradient(135deg,#6C5CE7,#a29bfe); color:#fff; padding:40px 24px; text-align:center; }
+  header h1 { font-size:28px; margin-bottom:8px; }
+  header p { opacity:0.85; }
+  .demo-layout { display:grid; grid-template-columns:1fr 300px; gap:24px; margin-top:24px; }
+  .content-area { background:#fff; border-radius:12px; padding:24px; min-height:400px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+  .sidebar { display:flex; flex-direction:column; gap:24px; }
+  .adnet-slot { background:#fafafa; border:2px dashed #ddd; border-radius:8px; min-height:90px; display:flex; align-items:center; justify-content:center; transition:border-color 0.3s; margin-bottom:16px; }
+  .adnet-slot[data-position="header"] { min-height:100px; }
+  .adnet-slot[data-position="sidebar"] { min-height:250px; }
+  .adnet-slot[data-position="inline"] { min-height:120px; }
+  .code-box { background:#1e1e2e; color:#cdd6f4; border-radius:10px; padding:16px; font-family:'Cascadia Code','Fira Code',monospace; font-size:13px; overflow-x:auto; margin-top:16px; }
+  .code-box .tag { color:#89b4fa; }
+  .code-box .attr { color:#a6e3a1; }
+  .code-box .str { color:#f9e2af; }
+  .info { background:#e8f4fd; border-radius:8px; padding:12px 16px; font-size:13px; color:#1a5276; margin-bottom:16px; }
+  .info strong { color:#6C5CE7; }
+  footer { text-align:center; padding:24px; color:#999; font-size:13px; }
+  @media (max-width:768px) {
+    .demo-layout { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>AdNet Pro Publisher Demo</h1>
+  <p>Demonstrating ad slot integration with the ad.js script</p>
+</header>
+
+<div class="container">
+  <div class="info">
+    <strong>Site ID:</strong> demo-site &bull;
+    <strong>Script:</strong> &lt;script src="ad.js" data-site-id="demo-site"&gt;&lt;/script&gt;
+  </div>
+
+  <div class="demo-layout">
+    <div class="content-area">
+      <h2 style="margin-bottom:16px;">Article Content</h2>
+      <p style="margin-bottom:16px;color:#666;line-height:1.7;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+
+      <div class="adnet-slot" data-position="header"></div>
+
+      <p style="margin-bottom:16px;color:#666;line-height:1.7;">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+      <div class="adnet-slot" data-position="inline"></div>
+
+      <p style="color:#666;line-height:1.7;">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+    </div>
+
+    <div class="sidebar">
+      <div style="background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+        <h3 style="font-size:14px;color:#999;margin-bottom:12px;">SIDEBAR ADS</h3>
+        <div class="adnet-slot" data-position="sidebar"></div>
+        <div class="adnet-slot" data-position="sidebar"></div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:32px;margin-bottom:12px;">Integration Code</h3>
+  <div class="code-box">
+<span class="tag">&lt;!-- Add ad slots to your HTML --&gt;</span><br>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"adnet-slot"</span> <span class="attr">data-position</span>=<span class="str">"header"</span><span class="tag">&gt;&lt;/div&gt;</span><br>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"adnet-slot"</span> <span class="attr">data-position</span>=<span class="str">"sidebar"</span><span class="tag">&gt;&lt;/div&gt;</span><br>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"adnet-slot"</span> <span class="attr">data-position</span>=<span class="str">"inline"</span><span class="tag">&gt;&lt;/div&gt;</span><br><br>
+<span class="tag">&lt;!-- Include the ad script --&gt;</span><br>
+<span class="tag">&lt;script</span> <span class="attr">src</span>=<span class="str">"https://ads.yourdomain.com/ad.js"</span> <span class="attr">data-site-id</span>=<span class="str">"SITE_ID"</span><span class="tag">&gt;&lt;/script&gt;</span>
+  </div>
+</div>
+
+<footer>
+  &copy; 2026 AdNet Pro &bull; <a href="/">Home</a> &bull; <a href="/admin/">Admin</a>
+</footer>
+
+<script src="ad.js" data-site-id="demo-site"></script>
+</body>
+</html>

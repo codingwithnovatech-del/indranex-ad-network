@@ -1,0 +1,81 @@
+{
+  "rules": {
+    "ads": {
+      ".read": true,
+      ".write": "data.parent().parent().child('admin/token').val() === newData.child('_token').val()",
+      "$ad_id": {
+        ".validate": "newData.hasChildren(['type', 'status'])",
+        "type": { ".validate": "newData.val() === 'banner' || newData.val() === 'video' || newData.val() === 'native'" },
+        "status": { ".validate": "newData.val() === 'active' || newData.val() === 'inactive'" },
+        "imageUrl": { ".validate": "newData.isString()" },
+        "videoUrl": { ".validate": "newData.isString()" },
+        "targetUrl": { ".validate": "newData.isString()" },
+        "title": { ".validate": "newData.isString()" },
+        "description": { ".validate": "newData.isString()" },
+        "positions": {
+          ".validate": "newData.isObject()"
+        },
+        "sites": {
+          ".validate": "newData.isObject()"
+        },
+        "createdAt": { ".validate": "newData.isNumber()" },
+        "impressions": { ".validate": "newData.isNumber()" },
+        "clicks": { ".validate": "newData.isNumber()" },
+        "_token": { ".validate": "newData.isString()" },
+        "$other": { ".validate": false }
+      }
+    },
+    "analytics": {
+      "impressions": {
+        ".write": true,
+        ".read": "data.parent().parent().child('admin/token').val() === newData.child('_token').val()",
+        "$imp_id": {
+          ".validate": "newData.hasChildren(['adId', 'siteId', 'timestamp'])",
+          "adId": { ".validate": "newData.isString()" },
+          "siteId": { ".validate": "newData.isString()" },
+          "position": { ".validate": "newData.isString()" },
+          "timestamp": { ".validate": "newData.isNumber()" },
+          "userAgent": { ".validate": "newData.isString()" },
+          "$other": { ".validate": false }
+        }
+      },
+      "clicks": {
+        ".write": true,
+        ".read": "data.parent().parent().child('admin/token').val() === newData.child('_token').val()",
+        "$click_id": {
+          ".validate": "newData.hasChildren(['adId', 'siteId', 'timestamp'])",
+          "adId": { ".validate": "newData.isString()" },
+          "siteId": { ".validate": "newData.isString()" },
+          "position": { ".validate": "newData.isString()" },
+          "timestamp": { ".validate": "newData.isNumber()" },
+          "$other": { ".validate": false }
+        }
+      }
+    },
+    "publishers": {
+      ".read": true,
+      ".write": "data.parent().child('admin/token').val() === newData.child('_token').val()",
+      "$site_id": {
+        ".validate": "newData.hasChildren(['name', 'domain'])",
+        "name": { ".validate": "newData.isString() && newData.val().length > 0" },
+        "domain": { ".validate": "newData.isString()" },
+        "email": { ".validate": "newData.isString()" },
+        "createdAt": { ".validate": "newData.isNumber()" },
+        "_token": { ".validate": "newData.isString()" },
+        "$other": { ".validate": false }
+      }
+    },
+    "admin": {
+      ".read": false,
+      ".write": false,
+      "password": {
+        ".read": true,
+        ".write": false
+      },
+      "token": {
+        ".read": false,
+        ".write": false
+      }
+    }
+  }
+}

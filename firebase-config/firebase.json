@@ -1,0 +1,58 @@
+{
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/ad.js",
+        "destination": "/publisher-script/ad.js"
+      }
+    ],
+    "headers": [
+      {
+        "source": "**/*.js",
+        "headers": [
+          {
+            "key": "Access-Control-Allow-Origin",
+            "value": "*"
+          },
+          {
+            "key": "Access-Control-Allow-Methods",
+            "value": "GET, POST, OPTIONS"
+          },
+          {
+            "key": "Access-Control-Allow-Headers",
+            "value": "Content-Type"
+          }
+        ]
+      },
+      {
+        "source": "publisher-script/ad.js",
+        "headers": [
+          {
+            "key": "Access-Control-Allow-Origin",
+            "value": "*"
+          },
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=3600, s-maxage=3600"
+          }
+        ]
+      }
+    ],
+    "redirects": [
+      {
+        "source": "/firebase-config/firebase.js",
+        "destination": "/firebase-config/firebase.js",
+        "type": 200
+      }
+    ]
+  },
+  "database": {
+    "rules": "firebase-config/database.rules.json"
+  }
+}
