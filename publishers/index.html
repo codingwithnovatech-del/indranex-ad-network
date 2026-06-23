@@ -200,7 +200,7 @@ function loadDash(sid){
   db.ref('publishers/'+sid).once('value',function(s){
     var p=s.val()||{};document.getElementById('pubName').textContent=p.name||sid;document.getElementById('pubSiteIdDisplay').textContent=sid;
     var dm=window.location.hostname;
-    document.getElementById('integrationCode').textContent='<!-- Ad Slots -->\n<div class="adnet-slot" data-position="header"></div>\n<div class="adnet-slot" data-position="sidebar"></div>\n<div class="adnet-slot" data-position="inline"></div>\n\n<!-- For popunder/interstitial (optional) -->\n<div class="adnet-slot" data-position="popunder"></div>\n<div class="adnet-slot" data-position="interstitial"></div>\n\n<!-- Script -->\n<script src="https://'+dm+'/publisher-script/ad.js" data-site-id="'+sid+'">\x3C/script>';
+    document.getElementById('integrationCode').textContent='<!-- Ad Slots -->\n<div class="adnet-slot" data-position="header"></div>\n<div class="adnet-slot" data-position="sidebar"></div>\n<div class="adnet-slot" data-position="inline"></div>\n\n<!-- Special Formats (optional) -->\n<div class="adnet-slot" data-position="popunder"></div>\n<div class="adnet-slot" data-position="interstitial"></div>\n<div class="adnet-slot" data-position="social-bar"></div>\n\n<!-- Script -->\n<script src="https://'+dm+'/publisher-script/ad.js" data-site-id="'+sid+'">\x3C/script>';
   });
 
   var imps=0,clks=0;
