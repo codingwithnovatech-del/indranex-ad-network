@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{--primary:#6C5CE7;--primary-dark:#5A4BD1;--primary-light:#A29BFE;--secondary:#00CEC9;--success:#00b894;--danger:#e74c3c;--warning:#fdcb6e;--dark:#1a1a2e;--gray:#636E72;--bg:#f4f5f9;--card:#fff;--shadow:0 1px 3px rgba(0,0,0,0.06);--radius:12px}
@@ -99,6 +100,7 @@ tr:hover td{background:#f8f9ff}
     <h1>Admin Login</h1>
     <p>Enter your admin password</p>
     <div class="form-group"><label>Password</label><input type="password" id="loginPwd" placeholder="Admin password"></div>
+    <div class="form-group"><div class="cf-turnstile" data-sitekey="0x4AAAAAADpyYbUVl_BY83xh"></div></div>
     <button class="btn btn-primary btn-block" id="loginBtn">Sign In</button>
     <div style="color:var(--danger);font-size:13px;display:none;margin-top:8px" id="loginError">Invalid password</div>
   </div>
@@ -201,15 +203,20 @@ function snapArr(snap){var a=[];if(!snap)return a;snap.forEach(function(c){var v
 
 document.getElementById('loginBtn').addEventListener('click',function(){
   var p=document.getElementById('loginPwd').value;if(!p){document.getElementById('loginError').style.display='block';return}
+  var token = turnstile.getResponse();
+  if(!token){document.getElementById('loginError').textContent='Please complete the CAPTCHA';document.getElementById('loginError').style.display='block';return}
   document.getElementById('loginBtn').disabled=true;document.getElementById('loginBtn').textContent='Verifying...';
-  sha256(p).then(function(h){
-    db.ref('admin/password').once('value').then(function(s){
-      var st=s.val();
-      if(!st){db.ref('admin/password').set(h).then(function(){ak='1';sessionStorage.setItem('adnet_auth','1');document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';initApp()})}
-      else if(h===st){ak='1';sessionStorage.setItem('adnet_auth','1');document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';initApp()}
-      else {document.getElementById('loginError').style.display='block';document.getElementById('loginBtn').disabled=false;document.getElementById('loginBtn').textContent='Sign In'}
-    }).catch(function(){document.getElementById('loginError').style.display='block';document.getElementById('loginBtn').disabled=false;document.getElementById('loginBtn').textContent='Sign In'});
-  });
+  fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify',{method:'POST',body:new URLSearchParams({secret:'0x4AAAAAADpyYUSEdHV5IYqvl38ZN5RLNLg',response:token})}).then(function(r){return r.json()}).then(function(resp){
+    if(!resp.success){document.getElementById('loginError').textContent='CAPTCHA verification failed';document.getElementById('loginError').style.display='block';document.getElementById('loginBtn').disabled=false;document.getElementById('loginBtn').textContent='Sign In';return}
+    sha256(p).then(function(h){
+      db.ref('admin/password').once('value').then(function(s){
+        var st=s.val();
+        if(!st){db.ref('admin/password').set(h).then(function(){ak='1';sessionStorage.setItem('adnet_auth','1');document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';initApp()})}
+        else if(h===st){ak='1';sessionStorage.setItem('adnet_auth','1');document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';initApp()}
+        else {document.getElementById('loginError').textContent='Invalid password';document.getElementById('loginError').style.display='block';document.getElementById('loginBtn').disabled=false;document.getElementById('loginBtn').textContent='Sign In'}
+      }).catch(function(){document.getElementById('loginError').textContent='Error';document.getElementById('loginError').style.display='block';document.getElementById('loginBtn').disabled=false;document.getElementById('loginBtn').textContent='Sign In'});
+    });
+  }).catch(function(){document.getElementById('loginError').textContent='CAPTCHA verification failed';document.getElementById('loginError').style.display='block';document.getElementById('loginBtn').disabled=false;document.getElementById('loginBtn').textContent='Sign In'});
 });
 document.getElementById('loginPwd').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('loginBtn').click()});
 document.getElementById('logoutBtn').addEventListener('click',function(e){e.preventDefault();sessionStorage.removeItem('adnet_auth');ak=null;document.getElementById('app').style.display='none';document.getElementById('loginOverlay').style.display='flex';document.getElementById('loginPwd').value=''});
