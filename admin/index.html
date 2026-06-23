@@ -211,7 +211,8 @@ tr:hover td { background:#fafbfc; }
 &lt;script src="https://indranexadnet.dpdns.org/ad.js" data-site-id="SITE_ID"&gt;&lt;/script&gt;
             </div>
             <h4 style="margin-bottom:8px;">4. Available Positions</h4>
-            <p style="color:#636E72;font-size:14px;">header, footer, sidebar, inline, custom (any string)</p>
+            <p style="color:#636E72;font-size:14px;">header, footer, sidebar, inline, popunder, interstitial, custom</p>
+            <p style="color:#636E72;font-size:13px;margin-top:4px;">Popunder &amp; Interstitial don't need HTML slots — they auto-trigger. Add &lt;div class="adnet-slot" data-position="popunder"&gt;&lt;/div&gt; to enable.</p>
             <hr style="margin:24px 0;border:none;border-top:1px solid #eee;">
             <h4 style="margin-bottom:8px;">Settings</h4>
             <button class="btn btn-outline btn-sm" onclick="document.getElementById('pwdModal').classList.add('active');document.getElementById('pwdCurrent').value='';document.getElementById('pwdNew').value='';document.getElementById('pwdConfirm').value='';">Change Admin Password</button>
@@ -242,6 +243,8 @@ tr:hover td { background:#fafbfc; }
         <label><input type="checkbox" value="footer"> Footer</label>
         <label><input type="checkbox" value="sidebar"> Sidebar</label>
         <label><input type="checkbox" value="inline"> Inline</label>
+        <label><input type="checkbox" value="popunder"> Popunder</label>
+        <label><input type="checkbox" value="interstitial"> Interstitial</label>
         <label><input type="checkbox" value="custom"> Custom</label>
       </div>
     </div>

@@ -3,251 +3,244 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Indranex AdNet - Publisher Portal</title>
+<title>Indranex AdNet - Publisher Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 <style>
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-:root { --primary:#6C5CE7; --primary-dark:#5A4BD1; --gray:#636E72; --bg:#f0f2f5; --card:#fff; --shadow:0 2px 20px rgba(0,0,0,0.08); --radius:12px; }
-body { font-family:'Inter',-apple-system,sans-serif; background:var(--bg); color:#2D3436; min-height:100vh; }
-.container { max-width:1200px; margin:0 auto; padding:0 24px; }
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#6C5CE7;--primary-dark:#5A4BD1;--primary-light:#A29BFE;--secondary:#00CEC9;--success:#00b894;--danger:#e74c3c;--warning:#fdcb6e;--dark:#1a1a2e;--gray:#636E72;--light:#DFE6E9;--bg:#f4f5f9;--card:#fff;--shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);--radius:12px}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:#2D3436;min-height:100vh;font-size:14px}
+.container{max-width:1100px;margin:0 auto;padding:0 20px}
+a{color:var(--primary);text-decoration:none}
+input,button,select{font-family:inherit}
 
-header { background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; padding:20px 0; }
-header .container { display:flex; align-items:center; justify-content:space-between; }
-header h1 { font-size:20px; font-weight:700; }
-header h1 a { color:#fff; text-decoration:none; }
-header nav { display:flex; gap:16px; }
-header nav a { color:rgba(255,255,255,0.8); text-decoration:none; font-size:13px; }
-header nav a:hover { color:#fff; }
+.top-bar{background:var(--dark);color:#fff;padding:14px 0;position:sticky;top:0;z-index:100}
+.top-bar .container{display:flex;align-items:center;justify-content:space-between}
+.top-bar h1{font-size:18px;font-weight:700;display:flex;align-items:center;gap:8px}
+.top-bar h1 span{color:var(--primary-light)}
+.top-bar nav{display:flex;gap:20px;align-items:center}
+.top-bar nav a{color:rgba(255,255,255,0.6);font-size:13px;font-weight:500;transition:color 0.2s}
+.top-bar nav a:hover{color:#fff}
+.top-bar nav a.active{color:var(--primary-light)}
 
-.login-card { max-width:420px; margin:80px auto; background:var(--card); border-radius:20px; padding:40px; box-shadow:var(--shadow); text-align:center; }
-.login-card h2 { font-size:22px; margin-bottom:4px; }
-.login-card p { color:var(--gray); font-size:14px; margin-bottom:24px; }
-.form-group { margin-bottom:16px; text-align:left; }
-.form-group label { display:block; font-size:12px; font-weight:600; color:var(--gray); margin-bottom:4px; }
-.form-group input { width:100%; padding:12px 14px; border:2px solid #e8e8e8; border-radius:10px; font-size:14px; outline:none; transition:border-color 0.3s; }
-.form-group input:focus { border-color:var(--primary); }
-.btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 24px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; transition:all 0.3s; border:none; width:100%; }
-.btn-primary { background:var(--primary); color:#fff; }
-.btn-primary:hover { background:var(--primary-dark); }
-.btn-outline { background:transparent; color:var(--primary); border:2px solid var(--primary); }
-.btn-outline:hover { background:var(--primary); color:#fff; }
-.btn-sm { padding:8px 14px; font-size:12px; width:auto; }
-.toggle-link { color:var(--primary); cursor:pointer; font-size:13px; text-decoration:underline; }
-.error { color:#e74c3c; font-size:13px; display:none; margin-top:8px; }
+.login-wrap{max-width:420px;margin:80px auto;background:var(--card);border-radius:20px;padding:40px;box-shadow:0 4px 24px rgba(0,0,0,0.08);text-align:center}
+.login-wrap .logo{width:52px;height:52px;background:var(--primary);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px;color:#fff;font-weight:800}
+.login-wrap h2{font-size:22px;margin-bottom:4px}
+.login-wrap p{color:var(--gray);font-size:13px;margin-bottom:24px}
+.form-group{margin-bottom:14px;text-align:left}
+.form-group label{display:block;font-size:12px;font-weight:600;color:var(--gray);margin-bottom:4px}
+.form-group input{width:100%;padding:11px 14px;border:2px solid #e8e8e8;border-radius:10px;font-size:14px;outline:none;transition:border-color 0.2s;background:#fafafa}
+.form-group input:focus{border-color:var(--primary);background:#fff}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:11px 24px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s;border:none}
+.btn-primary{background:var(--primary);color:#fff;width:100%}
+.btn-primary:hover{background:var(--primary-dark)}
+.btn-outline{background:transparent;color:var(--primary);border:2px solid var(--primary)}
+.btn-outline:hover{background:var(--primary);color:#fff}
+.btn-sm{padding:7px 14px;font-size:12px;width:auto}
+.toggle{color:var(--primary);cursor:pointer;font-size:13px;text-decoration:underline}
 
-.dashboard { display:none; }
-.stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin:24px 0; }
-.stat-card { background:var(--card); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); }
-.stat-card .stat-label { font-size:12px; color:var(--gray); text-transform:uppercase; font-weight:600; }
-.stat-card .stat-value { font-size:28px; font-weight:700; margin-top:4px; }
+.dash{display:none}
+.dash-head{display:flex;justify-content:space-between;align-items:center;margin:24px 0 20px;flex-wrap:wrap;gap:12px}
+.dash-head h2{font-size:20px;font-weight:700}
+.dash-head .info{font-size:13px;color:var(--gray)}
+.dash-head .info code{background:#f0f0f0;padding:2px 6px;border-radius:4px;font-size:12px}
 
-.card { background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; margin-bottom:24px; }
-.card-header { padding:16px 20px; border-bottom:1px solid #f0f0f0; display:flex; align-items:center; justify-content:space-between; }
-.card-header h3 { font-size:16px; font-weight:600; }
-.card-body { padding:20px; }
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px}
+.stat{background:var(--card);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.stat .stat-icon{position:absolute;right:14px;top:14px;font-size:22px;opacity:0.08}
+.stat .stat-label{font-size:11px;text-transform:uppercase;color:var(--gray);font-weight:600;letter-spacing:0.3px}
+.stat .stat-value{font-size:26px;font-weight:800;margin-top:2px;background:linear-gradient(135deg,var(--primary),var(--primary-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat .stat-value.mono{background:linear-gradient(135deg,var(--dark),var(--gray));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat .stat-sub{font-size:11px;color:var(--gray);margin-top:2px}
 
-.code-snippet { background:#1e1e2e; color:#cdd6f4; border-radius:10px; padding:16px; font-family:monospace; font-size:13px; overflow-x:auto; margin-top:8px; }
-.copy-btn { background:var(--primary); color:#fff; border:none; padding:6px 14px; border-radius:6px; font-size:12px; cursor:pointer; }
-.copy-btn:hover { background:var(--primary-dark); }
-table { width:100%; border-collapse:collapse; font-size:14px; }
-th,td { padding:10px 14px; text-align:left; border-bottom:1px solid #f0f0f0; }
-th { font-size:12px; text-transform:uppercase; color:var(--gray); font-weight:600; background:#fafafa; }
-.toast { position:fixed; bottom:24px; right:24px; background:#2D3436; color:#fff; padding:12px 20px; border-radius:10px; font-size:13px; z-index:2000; opacity:0; transform:translateY(20px); transition:all 0.3s; }
-.toast.show { opacity:1; transform:translateY(0); }
-@media (max-width:768px) { .login-card { margin:40px 16px; padding:24px; } }
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden}
+.card-head{padding:16px 20px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.card-head h3{font-size:15px;font-weight:600}
+.card-body{padding:20px}
+.code-box{background:#1e1e2e;color:#cdd6f4;border-radius:10px;padding:14px 16px;font-family:'Cascadia Code','Fira Code',monospace;font-size:12px;overflow-x:auto;line-height:1.7}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:10px 14px;text-align:left;border-bottom:1px solid #f5f5f5}
+th{font-size:11px;text-transform:uppercase;color:var(--gray);font-weight:600;background:#fafafa}
+tr:hover td{background:#f8f9ff}
+
+.empty{padding:40px;text-align:center;color:var(--gray);font-size:14px}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--dark);color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;z-index:9999;opacity:0;transform:translateY(16px);transition:all 0.3s;max-width:360px}
+.toast.show{opacity:1;transform:translateY(0)}
+
+footer{padding:24px 0;text-align:center;border-top:1px solid #eee;color:var(--gray);font-size:12px;margin-top:24px}
+footer a{color:var(--primary)}
+@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.dash-head{flex-direction:column;align-items:flex-start}}
 </style>
 </head>
 <body>
 
-<header>
+<div class="top-bar">
   <div class="container">
-    <h1><a href="/">Indranex AdNet</a></h1>
+    <h1><span>&#9632;</span> Indranex <span>AdNet</span></h1>
     <nav>
       <a href="/">Home</a>
-      <a href="/admin/">Admin</a>
-      <a href="/dashboard/">Dashboard</a>
       <a href="/advertisers/">Advertisers</a>
+      <a href="/dashboard/">Analytics</a>
     </nav>
   </div>
-</header>
+</div>
 
-<div class="login-card" id="loginCard">
+<div class="login-wrap" id="loginCard">
+  <div class="logo">I</div>
   <h2>Publisher Login</h2>
-  <p>Sign in to view your ad stats and integration code</p>
+  <p>Sign in to access your earnings &amp; ad codes</p>
   <div class="form-group"><label>Site ID</label><input id="loginSiteId" placeholder="your-site-id"></div>
-  <div class="form-group"><label>Password</label><input type="password" id="loginPwd" placeholder="Enter password"></div>
+  <div class="form-group"><label>Password</label><input type="password" id="loginPwd" placeholder="Enter your password"></div>
   <button class="btn btn-primary" onclick="pubLogin()">Sign In</button>
-  <p style="margin-top:12px;font-size:13px;color:#636E72;">Don't have an account? <span class="toggle-link" onclick="showRegister()">Register here</span></p>
-  <div class="error" id="loginError">Invalid credentials</div>
+  <p style="margin-top:14px;font-size:13px;color:#636E72;">New publisher? <span class="toggle" onclick="showReg()">Create account</span></p>
+  <div style="color:#e74c3c;font-size:13px;display:none;margin-top:8px" id="loginError">Invalid site ID or password</div>
 </div>
 
-<div class="login-card" id="registerCard" style="display:none;">
-  <h2>Register as Publisher</h2>
-  <p>Join Indranex AdNet and monetize your traffic</p>
+<div class="login-wrap" id="regCard" style="display:none">
+  <div class="logo">I</div>
+  <h2>Become a Publisher</h2>
+  <p>Join and start earning from your traffic</p>
   <div class="form-group"><label>Site ID</label><input id="regSiteId" placeholder="my-website"></div>
-  <div class="form-group"><label>Your Name</label><input id="regName" placeholder="Your name or company"></div>
+  <div class="form-group"><label>Publisher Name</label><input id="regName" placeholder="Your name or brand"></div>
   <div class="form-group"><label>Website Domain</label><input id="regDomain" placeholder="example.com"></div>
-  <div class="form-group"><label>Email</label><input id="regEmail" type="email" placeholder="you@example.com"></div>
+  <div class="form-group"><label>Email</label><input type="email" id="regEmail" placeholder="you@example.com"></div>
   <div class="form-group"><label>Password</label><input type="password" id="regPwd" placeholder="Min 6 characters"></div>
-  <button class="btn btn-primary" onclick="pubRegister()">Create Account</button>
-  <p style="margin-top:12px;font-size:13px;color:#636E72;">Already have an account? <span class="toggle-link" onclick="showLogin()">Sign in</span></p>
-  <div class="error" id="regError">Registration failed</div>
+  <button class="btn btn-primary" onclick="pubReg()">Create Account</button>
+  <p style="margin-top:14px;font-size:13px;color:#636E72;">Already have account? <span class="toggle" onclick="showLogin()">Sign in</span></p>
+  <div style="color:#e74c3c;font-size:13px;display:none;margin-top:8px" id="regError">Registration failed</div>
 </div>
 
-<div class="dashboard" id="dashboard">
-  <div class="container" style="padding:24px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-      <h2>Welcome, <span id="pubName"></span></h2>
+<div class="dash" id="dashboard">
+  <div class="container">
+    <div class="dash-head">
+      <div>
+        <h2>Welcome, <span id="pubName"></span></h2>
+        <div class="info">Site ID: <code id="pubSiteIdDisplay"></code></div>
+      </div>
       <button class="btn btn-outline btn-sm" onclick="pubLogout()">Logout</button>
     </div>
-    <p style="color:#636E72;font-size:14px;margin-bottom:16px;">Site ID: <code id="pubSiteIdDisplay" style="background:#f0f0f0;padding:2px 6px;border-radius:4px;"></code></p>
 
-    <div class="stats-grid">
-      <div class="stat-card"><div class="stat-label">Impressions</div><div class="stat-value" id="pubImps">0</div></div>
-      <div class="stat-card"><div class="stat-label">Clicks</div><div class="stat-value" id="pubClicks">0</div></div>
-      <div class="stat-card"><div class="stat-label">CTR</div><div class="stat-value" id="pubCtr">0%</div></div>
-      <div class="stat-card"><div class="stat-label">Active Ads</div><div class="stat-value" id="pubActiveAds">0</div></div>
+    <div class="stats" id="pubStats">
+      <div class="stat"><div class="stat-icon">&#128065;</div><div class="stat-label">Impressions</div><div class="stat-value" id="pubImps">0</div><div class="stat-sub">All time</div></div>
+      <div class="stat"><div class="stat-icon">&#128070;</div><div class="stat-label">Clicks</div><div class="stat-value" id="pubClicks">0</div><div class="stat-sub">All time</div></div>
+      <div class="stat"><div class="stat-icon">&#128200;</div><div class="stat-label">CTR</div><div class="stat-value" id="pubCtr">0%</div><div class="stat-sub">Click-through rate</div></div>
+      <div class="stat"><div class="stat-icon">&#9879;</div><div class="stat-label">Active Ads</div><div class="stat-value mono" id="pubActiveAds">0</div><div class="stat-sub">Running on your site</div></div>
     </div>
 
     <div class="card">
-      <div class="card-header"><h3>Your Integration Code</h3><button class="copy-btn" onclick="copyCode()">Copy</button></div>
+      <div class="card-head">
+        <h3>&#128279; Integration Code</h3>
+        <button class="btn btn-primary btn-sm" onclick="copyCode()">Copy Code</button>
+      </div>
       <div class="card-body">
-        <p style="font-size:13px;color:#636E72;margin-bottom:8px;">Add these to your website HTML:</p>
-        <div class="code-snippet" id="integrationCode"></div>
+        <p style="color:#636E72;font-size:13px;margin-bottom:10px;">Add these ad slots and script to your website HTML:</p>
+        <div class="code-box" id="integrationCode"></div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-header"><h3>Ad Performance</h3></div>
-      <div class="card-body" id="pubAdPerf"><p style="color:#636E72;font-size:14px;">Loading...</p></div>
+      <div class="card-head"><h3>&#9879; Ad Performance</h3></div>
+      <div class="card-body" id="pubAdPerf"><div class="empty">Loading...</div></div>
     </div>
   </div>
+  <footer><div class="container">&copy; 2026 Indranex AdNet &bull; <a href="/">Home</a> &bull; <a href="/advertisers/">Advertisers</a></div></footer>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-var FIREBASE_CONFIG = {
-  apiKey: "AIzaSyBUqHKr6vuXqKr5cWMkSM5oTxG1LgPzFEw",
-  authDomain: "indranex-ads-network.firebaseapp.com",
-  databaseURL: "https://indranex-ads-network-default-rtdb.firebaseio.com",
-  projectId: "indranex-ads-network",
-  storageBucket: "indranex-ads-network.firebasestorage.app",
-  messagingSenderId: "665770384201",
-  appId: "1:665770384201:web:0126de06a6919e9f1e1898"
-};
-firebase.initializeApp(FIREBASE_CONFIG);
-var db = firebase.database();
+var FIREBASE_CONFIG={apiKey:"AIzaSyBUqHKr6vuXqKr5cWMkSM5oTxG1LgPzFEw",authDomain:"indranex-ads-network.firebaseapp.com",databaseURL:"https://indranex-ads-network-default-rtdb.firebaseio.com",projectId:"indranex-ads-network",storageBucket:"indranex-ads-network.firebasestorage.app",messagingSenderId:"665770384201",appId:"1:665770384201:web:0126de06a6919e9f1e1898"};
+firebase.initializeApp(FIREBASE_CONFIG);var db=firebase.database();
+function toast(m){var e=document.getElementById('toast');e.textContent=m;e.className='toast show';setTimeout(function(){e.className='toast'},3000)}
+function sha256(m){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(m)).then(function(b){return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('')})}
+function showReg(){document.getElementById('loginCard').style.display='none';document.getElementById('regCard').style.display='block'}
+function showLogin(){document.getElementById('loginCard').style.display='block';document.getElementById('regCard').style.display='none'}
 
-function toast(m) { var e=document.getElementById('toast'); e.textContent=m; e.className='toast show'; setTimeout(function(){e.className='toast'},3000); }
-
-function sha256(m) { return crypto.subtle.digest('SHA-256',new TextEncoder().encode(m)).then(function(b){return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('')}); }
-
-function showRegister() { document.getElementById('loginCard').style.display='none'; document.getElementById('registerCard').style.display='block'; }
-function showLogin() { document.getElementById('loginCard').style.display='block'; document.getElementById('registerCard').style.display='none'; }
-
-function pubRegister() {
+function pubReg(){
   var sid=document.getElementById('regSiteId').value.trim().toLowerCase().replace(/[^a-z0-9-]/g,'-');
   var name=document.getElementById('regName').value.trim();
   var domain=document.getElementById('regDomain').value.trim().replace(/^https?:\/\//,'').replace(/\/$/,'');
   var email=document.getElementById('regEmail').value.trim();
   var pwd=document.getElementById('regPwd').value;
-  if(!sid||!name||!domain||!pwd) { toast('Fill all fields.'); return; }
-  if(pwd.length<6) { toast('Password min 6 characters.'); return; }
-  db.ref('publishers/'+sid).once('value').then(function(snap){
-    if(snap.val()) { toast('Site ID already exists.'); return; }
-    sha256(pwd).then(function(hash){
-      db.ref('publishers/'+sid).set({name:name,domain:domain,email:email,password:hash,createdAt:Date.now()}).then(function(){
-        toast('Registered! You can now login.');
-        showLogin();
-        document.getElementById('loginSiteId').value=sid;
+  if(!sid||!name||!domain||!pwd){toast('Fill all fields.');return}
+  if(pwd.length<6){toast('Password min 6 characters.');return}
+  db.ref('publishers/'+sid).once('value',function(s){
+    if(s.val()){toast('Site ID already exists.');return}
+    sha256(pwd).then(function(h){
+      db.ref('publishers/'+sid).set({name:name,domain:domain,email:email,password:h,createdAt:Date.now()}).then(function(){
+        toast('Account created! Sign in now.');
+        showLogin();document.getElementById('loginSiteId').value=sid;
+        document.getElementById('loginPwd').value='';
       });
     });
   });
 }
 
-function pubLogin() {
+function pubLogin(){
   var sid=document.getElementById('loginSiteId').value.trim().toLowerCase();
   var pwd=document.getElementById('loginPwd').value;
-  if(!sid||!pwd) { document.getElementById('loginError').style.display='block'; return; }
-  db.ref('publishers/'+sid+'/password').once('value').then(function(snap){
-    var stored=snap.val();
-    if(!stored) { document.getElementById('loginError').style.display='block'; return; }
-    sha256(pwd).then(function(hash){
-      if(hash===stored) {
-        sessionStorage.setItem('adnet_pub',sid);
-        loadPublisherDashboard(sid);
-      } else {
-        document.getElementById('loginError').style.display='block';
-      }
+  if(!sid||!pwd){document.getElementById('loginError').style.display='block';return}
+  document.getElementById('loginError').style.display='none';
+  db.ref('publishers/'+sid+'/password').once('value').then(function(s){
+    var stored=s.val();
+    if(!stored){document.getElementById('loginError').style.display='block';return}
+    sha256(pwd).then(function(h){
+      if(h===stored){sessionStorage.setItem('adnet_pub',sid);loadDash(sid)}
+      else document.getElementById('loginError').style.display='block';
     });
-  }).catch(function(){ document.getElementById('loginError').style.display='block'; });
+  }).catch(function(){document.getElementById('loginError').style.display='block'});
 }
 
-function pubLogout() {
-  sessionStorage.removeItem('adnet_pub');
-  document.getElementById('dashboard').style.display='none';
-  document.getElementById('loginCard').style.display='block';
-  document.getElementById('loginCard').querySelector('p').style.display='block';
-}
+function pubLogout(){sessionStorage.removeItem('adnet_pub');document.getElementById('dashboard').style.display='none';document.getElementById('loginCard').style.display='block';document.getElementById('loginCard').querySelector('p').style.display='block'}
 
-function loadPublisherDashboard(sid) {
-  document.getElementById('loginCard').style.display='none';
-  document.getElementById('registerCard').style.display='none';
-  document.getElementById('dashboard').style.display='block';
+function loadDash(sid){
+  document.getElementById('loginCard').style.display='none';document.getElementById('regCard').style.display='none';document.getElementById('dashboard').style.display='block';
+  db.ref('publishers/'+sid).once('value',function(s){
+    var p=s.val()||{};document.getElementById('pubName').textContent=p.name||sid;document.getElementById('pubSiteIdDisplay').textContent=sid;
+    var dm=window.location.hostname;
+    document.getElementById('integrationCode').textContent='<!-- Ad Slots -->\n<div class="adnet-slot" data-position="header"></div>\n<div class="adnet-slot" data-position="sidebar"></div>\n<div class="adnet-slot" data-position="inline"></div>\n\n<!-- For popunder/interstitial (optional) -->\n<div class="adnet-slot" data-position="popunder"></div>\n<div class="adnet-slot" data-position="interstitial"></div>\n\n<!-- Script -->\n<script src="https://'+dm+'/publisher-script/ad.js" data-site-id="'+sid+'">\x3C/script>';
+  });
 
-  db.ref('publishers/'+sid).once('value').then(function(snap){
-    var p=snap.val()||{};
-    document.getElementById('pubName').textContent=p.name||sid;
-    document.getElementById('pubSiteIdDisplay').textContent=sid;
-    var domain = window.location.hostname;
-    var code = '<!-- Ad slots -->\n<div class="adnet-slot" data-position="header"></div>\n<div class="adnet-slot" data-position="sidebar"></div>\n<div class="adnet-slot" data-position="inline"></div>\n\n<!-- Ad script -->\n<script src="https://'+domain+'/publisher-script/ad.js" data-site-id="'+sid+'">\x3C/script>';
-    document.getElementById('integrationCode').textContent=code;
+  var imps=0,clks=0;
+  db.ref('analytics/impressions').orderByChild('siteId').equalTo(sid).once('value',function(s){
+    imps=s.val()?Object.keys(s.val()).length:0;document.getElementById('pubImps').textContent=imps.toLocaleString();
+    db.ref('analytics/clicks').orderByChild('siteId').equalTo(sid).once('value',function(s2){
+      clks=s2.val()?Object.keys(s2.val()).length:0;document.getElementById('pubClicks').textContent=clks.toLocaleString();
+      document.getElementById('pubCtr').textContent=imps>0?((clks/imps)*100).toFixed(2)+'%':'0%';
+    });
+  });
 
-    // Stats
-    var imps=0, clks=0;
-    db.ref('analytics/impressions').orderByChild('siteId').equalTo(sid).once('value',function(s){
-      var vals=s.val(); imps=vals?Object.keys(vals).length:0;
-      document.getElementById('pubImps').textContent=imps;
-      db.ref('analytics/clicks').orderByChild('siteId').equalTo(sid).once('value',function(s2){
-        var vals2=s2.val(); clks=vals2?Object.keys(vals2).length:0;
-        document.getElementById('pubClicks').textContent=clks;
-        var ctr=imps>0?((clks/imps)*100).toFixed(2)+'%':'0%';
-        document.getElementById('pubCtr').textContent=ctr;
+  db.ref('ads').once('value',function(s){
+    var ads=s.val()||{};var active=0;var rows='';
+    var keys=Object.keys(ads);var done=0;var total=keys.length;
+    if(!total){document.getElementById('pubAdPerf').innerHTML='<div class="empty">No ads assigned to your site yet.</div>';document.getElementById('pubActiveAds').textContent='0';return}
+    rows='<table><thead><tr><th>Ad</th><th>Type</th><th>Position</th><th>Impressions</th><th>Clicks</th><th>CTR</th></tr></thead><tbody>';
+    keys.forEach(function(k){
+      var a=ads[k];
+      if(a.sites&&a.sites[sid]&&a.status==='active')active++;
+      if(!a.sites||!a.sites[sid]){done++;if(done>=total)finalize();return}
+      var pos=a.positions?Object.keys(a.positions).filter(function(p){return a.positions[p]}).join(', '):'-';
+      db.ref('analytics/impressions').orderByChild('adId').equalTo(k).once('value',function(is){
+        var aimp=is.val()?Object.keys(is.val()).length:0;
+        db.ref('analytics/clicks').orderByChild('adId').equalTo(k).once('value',function(cs){
+          var aclk=cs.val()?Object.keys(cs.val()).length:0;
+          rows+='<tr><td>'+(a.title||k.substring(0,10))+'</td><td>'+a.type+'</td><td>'+pos+'</td><td>'+aimp+'</td><td>'+aclk+'</td><td>'+(aimp>0?((aclk/aimp)*100).toFixed(2)+'%':'0%')+'</td></tr>';
+          done++;if(done>=total)finalize();
+        });
       });
     });
-
-    db.ref('ads').once('value',function(s3){
-      var ads=s3.val()||{}; var active=0; var perf='<table><thead><tr><th>Ad</th><th>Type</th><th>Impressions</th><th>Clicks</th><th>CTR</th></tr></thead><tbody>';
-      Object.keys(ads).forEach(function(k){
-        var a=ads[k];
-        if(a.sites&&a.sites[sid]&&a.status==='active') active++;
-        if(a.sites&&a.sites[sid]){
-          var aimp=0, aclk=0;
-          db.ref('analytics/impressions').orderByChild('adId').equalTo(k).once('value',function(is){
-            var iv=is.val(); aimp=iv?Object.keys(iv).length:0;
-            db.ref('analytics/clicks').orderByChild('adId').equalTo(k).once('value',function(cs){
-              var cv=cs.val(); aclk=cv?Object.keys(cv).length:0;
-              var actr=aimp>0?((aclk/aimp)*100).toFixed(2)+'%':'0%';
-              perf+='<tr><td>'+(a.title||k.substring(0,12))+'</td><td>'+a.type+'</td><td>'+aimp+'</td><td>'+aclk+'</td><td>'+actr+'</td></tr>';
-            });
-          });
-        }
-      });
-      document.getElementById('pubActiveAds').textContent=active;
-      setTimeout(function(){
-        document.getElementById('pubAdPerf').innerHTML=perf+'</tbody></table>';
-      },2000);
-    });
+    function finalize(){document.getElementById('pubAdPerf').innerHTML=rows+'</tbody></table>';document.getElementById('pubActiveAds').textContent=active}
   });
 }
 
-var pubSession = sessionStorage.getItem('adnet_pub');
-if(pubSession) loadPublisherDashboard(pubSession);
-</script>
+function copyCode(){
+  var c=document.getElementById('integrationCode').textContent;
+  navigator.clipboard.writeText(c).then(function(){toast('Code copied!')}).catch(function(){toast('Copy failed')});
+}
 
+var ps=sessionStorage.getItem('adnet_pub');if(ps)loadDash(ps);
+</script>
 </body>
 </html>
