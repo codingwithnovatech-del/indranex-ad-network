@@ -101,8 +101,10 @@ tr:hover td{background:#f8f9ff}
     <p>Enter your admin password</p>
     <div class="form-group"><label>Password</label><input type="password" id="loginPwd" placeholder="Admin password"></div>
     <div class="form-group"><div class="cf-turnstile" data-sitekey="0x4AAAAAADpyYbUVl_BY83xh"></div></div>
+    <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;margin-bottom:10px"><input type="checkbox" id="rememberMe"> Remember me for 24h</label>
     <button class="btn btn-primary btn-block" id="loginBtn">Sign In</button>
     <div style="color:var(--danger);font-size:13px;display:none;margin-top:8px" id="loginError">Invalid password</div>
+    <p style="margin-top:12px;font-size:11px;color:#636E72;line-height:1.5">By signing in you agree to our <a href="/terms.html" target="_blank" style="color:var(--primary)">Terms</a> &amp; <a href="/privacy.html" target="_blank" style="color:var(--primary)">Privacy Policy</a></p>
   </div>
 </div>
 
@@ -195,31 +197,73 @@ tr:hover td{background:#f8f9ff}
 
 <script>
 var FC={apiKey:"AIzaSyBUqHKr6vuXqKr5cWMkSM5oTxG1LgPzFEw",authDomain:"indranex-ads-network.firebaseapp.com",databaseURL:"https://indranex-ads-network-default-rtdb.firebaseio.com",projectId:"indranex-ads-network",storageBucket:"indranex-ads-network.firebasestorage.app",messagingSenderId:"665770384201",appId:"1:665770384201:web:0126de06a6919e9f1e1898"};
-firebase.initializeApp(FC);var db=firebase.database();var ak=sessionStorage.getItem('adnet_auth');
+firebase.initializeApp(FC);var db=firebase.database();
+
 function sha256(m){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(m)).then(function(b){return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('')})}
 function toast(m){var e=document.getElementById('toast');e.textContent=m;e.className='toast show';setTimeout(function(){e.className='toast'},3000)}
 function closeModal(id){document.getElementById(id).classList.remove('active')}
 function snapArr(snap){var a=[];if(!snap)return a;snap.forEach(function(c){var v=c.val();v['.key']=c.key;a.push(v)});return a}
 
+function setLoginError(m){var e=document.getElementById('loginError');e.textContent=m;e.style.display='block'}
+function setLoginBtn(disabled,text){document.getElementById('loginBtn').disabled=disabled;document.getElementById('loginBtn').textContent=text}
+
+function checkSession(){
+  var ls=localStorage.getItem('adnet_auth');
+  if(ls){try{var d=JSON.parse(ls);if(d&&d.t&&Date.now()<d.t){document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';initApp();return}}catch(e){}}
+  var ss=sessionStorage.getItem('adnet_auth');
+  if(ss){document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';initApp()}
+}
+
+function setSession(remember){
+  if(remember){localStorage.setItem('adnet_auth',JSON.stringify({t:Date.now()+86400000}))}
+  else{sessionStorage.setItem('adnet_auth','1')}
+  document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';initApp()
+}
+
+function clearSession(){
+  localStorage.removeItem('adnet_auth');sessionStorage.removeItem('adnet_auth')
+}
+
+function checkRateLimit(cb){
+  var ref=db.ref('rate-limit/admin/admin/attempts');
+  var cut=Date.now()-900000;
+  ref.orderByChild('t').startAt(cut).once('value',function(s){
+    var count=s.val()?Object.keys(s.val()).length:0;
+    if(count>=5){var oldest=Infinity;if(s.val())Object.values(s.val()).forEach(function(a){if(a.t<oldest)oldest=a.t});var wait=Math.ceil((oldest+900000-Date.now())/60000);setLoginError('Too many attempts. Try again in '+wait+' min.');setLoginBtn(false,'Sign In');return}
+    cb()
+  })
+}
+
+function recordAttempt(){
+  db.ref('rate-limit/admin/admin/attempts').push({t:Date.now()})
+}
+
+function clearRateLimit(){
+  db.ref('rate-limit/admin/admin').remove()
+}
+
 document.getElementById('loginBtn').addEventListener('click',function(){
-  var p=document.getElementById('loginPwd').value;if(!p){document.getElementById('loginError').style.display='block';return}
-  var token = turnstile.getResponse();
-  if(!token){document.getElementById('loginError').textContent='Please complete the CAPTCHA';document.getElementById('loginError').style.display='block';return}
-  document.getElementById('loginBtn').disabled=true;document.getElementById('loginBtn').textContent='Verifying...';
+  var p=document.getElementById('loginPwd').value;
+  if(!p){setLoginError('Enter your password');return}
+  var token=turnstile.getResponse();
+  if(!token){setLoginError('Please complete the CAPTCHA');return}
+  setLoginBtn(true,'Verifying...');
   fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify',{method:'POST',body:new URLSearchParams({secret:'0x4AAAAAADpyYUSEdHV5IYqvl38ZN5RLNLg',response:token})}).then(function(r){return r.json()}).then(function(resp){
-    if(!resp.success){document.getElementById('loginError').textContent='CAPTCHA verification failed';document.getElementById('loginError').style.display='block';document.getElementById('loginBtn').disabled=false;document.getElementById('loginBtn').textContent='Sign In';return}
-    sha256(p).then(function(h){
-      db.ref('admin/password').once('value').then(function(s){
-        var st=s.val();
-        if(!st){db.ref('admin/password').set(h).then(function(){ak='1';sessionStorage.setItem('adnet_auth','1');document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';initApp()})}
-        else if(h===st){ak='1';sessionStorage.setItem('adnet_auth','1');document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';initApp()}
-        else {document.getElementById('loginError').textContent='Invalid password';document.getElementById('loginError').style.display='block';document.getElementById('loginBtn').disabled=false;document.getElementById('loginBtn').textContent='Sign In'}
-      }).catch(function(){document.getElementById('loginError').textContent='Error';document.getElementById('loginError').style.display='block';document.getElementById('loginBtn').disabled=false;document.getElementById('loginBtn').textContent='Sign In'});
+    if(!resp.success){setLoginError('CAPTCHA verification failed');setLoginBtn(false,'Sign In');return}
+    checkRateLimit(function(){
+      sha256(p).then(function(h){
+        db.ref('admin/password').once('value').then(function(s){
+          var st=s.val();
+          if(!st){db.ref('admin/password').set(h).then(function(){var rm=document.getElementById('rememberMe').checked;setSession(rm);clearRateLimit()})}
+          else if(h===st){var rm=document.getElementById('rememberMe').checked;setSession(rm);clearRateLimit()}
+          else{recordAttempt();setLoginError('Invalid password');setLoginBtn(false,'Sign In')}
+        }).catch(function(){setLoginError('Connection error. Try again.');setLoginBtn(false,'Sign In')});
+      });
     });
-  }).catch(function(){document.getElementById('loginError').textContent='CAPTCHA verification failed';document.getElementById('loginError').style.display='block';document.getElementById('loginBtn').disabled=false;document.getElementById('loginBtn').textContent='Sign In'});
+  }).catch(function(){setLoginError('CAPTCHA verification failed');setLoginBtn(false,'Sign In')});
 });
 document.getElementById('loginPwd').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('loginBtn').click()});
-document.getElementById('logoutBtn').addEventListener('click',function(e){e.preventDefault();sessionStorage.removeItem('adnet_auth');ak=null;document.getElementById('app').style.display='none';document.getElementById('loginOverlay').style.display='flex';document.getElementById('loginPwd').value=''});
+document.getElementById('logoutBtn').addEventListener('click',function(e){e.preventDefault();clearSession();document.getElementById('app').style.display='none';document.getElementById('loginOverlay').style.display='flex';document.getElementById('loginPwd').value=''});
 
 document.querySelectorAll('.sidebar nav a[data-tab]').forEach(function(a){
   a.addEventListener('click',function(e){
@@ -430,7 +474,7 @@ function changePwd(){
   sha256(p).then(function(h){db.ref('admin/password').set(h).then(function(){toast('Password updated!');document.getElementById('changePwd').value=''})});
 }
 
-if(ak==='1'){document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';initApp()}
+checkSession();
 </script>
 </body>
 </html>

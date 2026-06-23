@@ -94,9 +94,11 @@ footer{padding:24px 0;text-align:center;border-top:1px solid #eee;color:var(--gr
   <div class="form-group"><label>Email</label><input id="loginEmail" placeholder="you@example.com"></div>
   <div class="form-group"><label>Password</label><input type="password" id="loginPwd" placeholder="Enter password"></div>
   <div class="form-group"><div class="cf-turnstile" data-sitekey="0x4AAAAAADpyYbUVl_BY83xh"></div></div>
+  <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;margin-bottom:10px"><input type="checkbox" id="rememberMe"> Remember me for 24h</label>
   <button class="btn btn-primary" onclick="advLogin()">Sign In</button>
   <p style="margin-top:14px;font-size:13px;color:#636E72;">New advertiser? <span class="toggle" onclick="showReg()">Create account</span></p>
   <div style="color:#e74c3c;font-size:13px;display:none;margin-top:8px" id="loginError">Invalid email or password</div>
+  <p style="margin-top:12px;font-size:11px;color:#636E72;line-height:1.5">By signing in you agree to our <a href="/terms.html" target="_blank" style="color:var(--primary)">Terms</a> &amp; <a href="/privacy.html" target="_blank" style="color:var(--primary)">Privacy Policy</a></p>
 </div>
 
 <div class="login-wrap" id="regCard" style="display:none">
@@ -195,23 +197,48 @@ function advReg(){
   }).catch(function(){toast('CAPTCHA verification failed')});
 }
 
+function setLoginError(m){var e=document.getElementById('loginError');e.textContent=m;e.style.display='block'}
+function advSetSession(key,remember){
+  if(remember){localStorage.setItem('adnet_adv',JSON.stringify({key:key,t:Date.now()+86400000}))}
+  else{sessionStorage.setItem('adnet_adv',key)}
+}
+function advClearSession(){localStorage.removeItem('adnet_adv');sessionStorage.removeItem('adnet_adv')}
+
+function advCheckRateLimit(key,cb){
+  var ref=db.ref('rate-limit/advertiser/'+key+'/attempts');
+  var cut=Date.now()-900000;
+  ref.orderByChild('t').startAt(cut).once('value',function(s){
+    var count=s.val()?Object.keys(s.val()).length:0;
+    if(count>=5){var oldest=Infinity;if(s.val())Object.values(s.val()).forEach(function(a){if(a.t<oldest)oldest=a.t});var wait=Math.ceil((oldest+900000-Date.now())/60000);setLoginError('Too many attempts. Try again in '+wait+' min.');return}
+    cb()
+  })
+}
+function advRecordAttempt(key){db.ref('rate-limit/advertiser/'+key+'/attempts').push({t:Date.now()})}
+function advClearRateLimit(key){db.ref('rate-limit/advertiser/'+key).remove()}
+
 function advLogin(){
   var e=document.getElementById('loginEmail').value.trim(),p=document.getElementById('loginPwd').value;
-  if(!e||!p){document.getElementById('loginError').style.display='block';return}
-  var token = turnstile.getResponse();
-  if(!token){document.getElementById('loginError').textContent='Please complete the CAPTCHA';document.getElementById('loginError').style.display='block';return}
+  if(!e||!p){setLoginError('Enter email and password');return}
+  var token=turnstile.getResponse();
+  if(!token){setLoginError('Please complete the CAPTCHA');return}
   document.getElementById('loginError').style.display='none';
   fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify',{method:'POST',body:new URLSearchParams({secret:'0x4AAAAAADpyYUSEdHV5IYqvl38ZN5RLNLg',response:token})}).then(function(r){return r.json()}).then(function(resp){
-    if(!resp.success){document.getElementById('loginError').textContent='CAPTCHA verification failed';document.getElementById('loginError').style.display='block';return}
+    if(!resp.success){setLoginError('CAPTCHA verification failed');return}
     var key=e.replace(/[^a-zA-Z0-9]/g,'_').toLowerCase();
-    db.ref('advertisers/'+key+'/password').once('value').then(function(s){
-      var st=s.val();if(!st){document.getElementById('loginError').style.display='block';return}
-      sha256(p).then(function(h){if(h===st){sessionStorage.setItem('adnet_adv',key);currentAdv=key;loadDash(key)}else document.getElementById('loginError').style.display='block'});
-    }).catch(function(){document.getElementById('loginError').style.display='block'});
-  }).catch(function(){document.getElementById('loginError').textContent='CAPTCHA verification failed';document.getElementById('loginError').style.display='block'});
+    advCheckRateLimit(key,function(){
+      db.ref('advertisers/'+key).once('value').then(function(s){
+        var data=s.val();
+        if(!data||!data.password){advRecordAttempt(key);setLoginError('Invalid email or password');return}
+        sha256(p).then(function(h){
+          if(h===data.password){var rm=document.getElementById('rememberMe').checked;advSetSession(key,rm);advClearRateLimit(key);currentAdv=key;loadDash(key)}
+          else{advRecordAttempt(key);setLoginError('Invalid email or password')}
+        });
+      }).catch(function(){setLoginError('Connection error. Try again.')});
+    });
+  }).catch(function(){setLoginError('CAPTCHA verification failed')});
 }
 
-function advLogout(){sessionStorage.removeItem('adnet_adv');currentAdv=null;document.getElementById('dashboard').style.display='none';document.getElementById('loginCard').style.display='block'}
+function advLogout(){advClearSession();currentAdv=null;document.getElementById('dashboard').style.display='none';document.getElementById('loginCard').style.display='block'}
 
 function loadDash(key){
   currentAdv=key;
@@ -306,7 +333,12 @@ function saveCampaign(){
 
 function deleteCampaign(id){if(!confirm('Delete this campaign?'))return;db.ref('ads/'+id).remove().then(function(){toast('Campaign deleted.');loadCampaigns(currentAdv)})}
 
-var as=sessionStorage.getItem('adnet_adv');if(as)loadDash(as);
+(function(){
+  var ls=localStorage.getItem('adnet_adv');
+  if(ls){try{var d=JSON.parse(ls);if(d&&d.key&&d.t&&Date.now()<d.t){currentAdv=d.key;loadDash(d.key);return}}catch(e){}}
+  var ss=sessionStorage.getItem('adnet_adv');
+  if(ss){currentAdv=ss;loadDash(ss)}
+})();
 </script>
 </body>
 </html>
