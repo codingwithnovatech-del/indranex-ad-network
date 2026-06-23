@@ -256,7 +256,8 @@ document.getElementById('loginBtn').addEventListener('click',function(){
   var p=document.getElementById('loginPwd').value;if(!p){setLoginError('Enter your password');return}
   var token=turnstile.getResponse();if(!token){setLoginError('Please complete the CAPTCHA');return}
   setLoginBtn(true,'Verifying...');
-  fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify',{method:'POST',body:new URLSearchParams({secret:'0x4AAAAAADpyYUSEdHV5IYqvl38ZN5RLNLg',response:token})}).then(function(r){return r.json()}).then(function(resp){
+  var TW = 'https://broad-resonance-0af8.ayushkumar20265f.workers.dev';
+  fetch(TW,{method:'POST',body:JSON.stringify({token:token}),headers:{'Content-Type':'application/json'}}).then(function(r){return r.json()}).then(function(resp){
     if(!resp.success){setLoginError('CAPTCHA verification failed');setLoginBtn(false,'Sign In');return}
     checkRateLimit(function(){
       sha256(p).then(function(h){
@@ -268,7 +269,7 @@ document.getElementById('loginBtn').addEventListener('click',function(){
         }).catch(function(){setLoginError('Connection error. Try again.');setLoginBtn(false,'Sign In')});
       });
     });
-  }).catch(function(){setLoginError('CAPTCHA verification failed');setLoginBtn(false,'Sign In')});
+  }).catch(function(){setLoginError('CAPTCHA service unavailable. Try again.');setLoginBtn(false,'Sign In')});
 });
 document.getElementById('loginPwd').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('loginBtn').click()});
 document.getElementById('logoutBtn').addEventListener('click',function(e){e.preventDefault();clearSession();document.getElementById('app').style.display='none';document.getElementById('loginOverlay').style.display='flex';document.getElementById('loginPwd').value=''});

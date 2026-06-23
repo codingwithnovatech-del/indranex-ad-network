@@ -175,7 +175,8 @@ function pubReg(){
   var regTurnstile=document.querySelector('#regCard .cf-turnstile');
   var token=turnstile.getResponse(regTurnstile);
   if(!token){toast('Please complete the CAPTCHA');return}
-  fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify',{method:'POST',body:new URLSearchParams({secret:'0x4AAAAAADpyYUSEdHV5IYqvl38ZN5RLNLg',response:token})}).then(function(r){return r.json()}).then(function(resp){
+  var TW = 'https://broad-resonance-0af8.ayushkumar20265f.workers.dev';
+  fetch(TW,{method:'POST',body:JSON.stringify({token:token}),headers:{'Content-Type':'application/json'}}).then(function(r){return r.json()}).then(function(resp){
     if(!resp.success){toast('CAPTCHA verification failed');return}
     db.ref('publishers/'+sid).once('value',function(s){
       if(s.val()){toast('Site ID already exists.');return}
@@ -183,7 +184,7 @@ function pubReg(){
         db.ref('publishers/'+sid).set({name:name,domain:domain,email:email,password:h,createdAt:Date.now()}).then(function(){toast('Account created! Sign in now.');showLogin();document.getElementById('loginSiteId').value=sid;document.getElementById('loginPwd').value=''});
       });
     });
-  }).catch(function(){toast('CAPTCHA verification failed')});
+  }).catch(function(){toast('CAPTCHA service unavailable')});
 }
 
 function setLoginError(m){var e=document.getElementById('loginError');e.textContent=m;e.style.display='block'}
@@ -209,7 +210,8 @@ function pubLogin(){
   if(!sid||!pwd){setLoginError('Enter site ID and password');return}
   var token=turnstile.getResponse();if(!token){setLoginError('Please complete the CAPTCHA');return}
   document.getElementById('loginError').style.display='none';
-  fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify',{method:'POST',body:new URLSearchParams({secret:'0x4AAAAAADpyYUSEdHV5IYqvl38ZN5RLNLg',response:token})}).then(function(r){return r.json()}).then(function(resp){
+  var TW = 'https://broad-resonance-0af8.ayushkumar20265f.workers.dev';
+  fetch(TW,{method:'POST',body:JSON.stringify({token:token}),headers:{'Content-Type':'application/json'}}).then(function(r){return r.json()}).then(function(resp){
     if(!resp.success){setLoginError('CAPTCHA verification failed');return}
     pubCheckRateLimit(sid,function(){
       db.ref('publishers/'+sid).once('value',function(s){
@@ -221,7 +223,7 @@ function pubLogin(){
         });
       }).catch(function(){setLoginError('Connection error. Try again.')});
     });
-  }).catch(function(){setLoginError('CAPTCHA verification failed')});
+  }).catch(function(){setLoginError('CAPTCHA service unavailable')});
 }
 
 function pubLogout(){pubClearSession();document.getElementById('dashboard').style.display='none';document.getElementById('loginCard').style.display='block'}
