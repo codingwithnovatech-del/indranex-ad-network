@@ -157,7 +157,7 @@ tr:hover td{background:rgba(108,92,231,0.06)}
 
 <div class="app" id="app">
   <aside class="sidebar">
-    <div class="sidebar-brand"><div class="sb-icon"><img src="https://i.ibb.co/zVsdtWK9/Chat-GPT-Image-Jun-24-2026-10-56-29-AM.png" alt="Indranex AdNet"></div>Indranex <span>Net</span></div>
+    <div class="sidebar-brand"><div class="sb-icon"><img src="https://i.ibb.co/zVsdtWK9/Chat-GPT-Image-Jun-24-2026-10-56-29-AM.png" alt="Indranex AdNet"></div>Indranex <span>AdNet</span></div>
     <nav>
       <a href="#" class="active" data-tab="overview"><span>&#9632;</span> Overview</a>
       <a href="#" data-tab="ads"><span>&#9879;</span> Ad Campaigns</a>
@@ -280,7 +280,7 @@ function googleSignIn(){
   }).catch(function(e){setLoginError(e.message)});
 }
 
-document.getElementById('loginBtn').addEventListener('click',function(){
+var loginHandler = function(){
   var p=document.getElementById('loginPwd').value;if(!p){setLoginError('Enter your password');return}
   var token=turnstile.getResponse();if(!token){setLoginError('Please complete the CAPTCHA');return}
   setLoginBtn(true,'Verifying...');
@@ -308,12 +308,13 @@ document.getElementById('loginBtn').addEventListener('click',function(){
           setLoginBtn(false,'Create Admin Account');
         } else {
           recordAttempt();setLoginError('Invalid password');setLoginBtn(false,'Sign In');
-          document.getElementById('loginBtn').onclick=arguments.callee;
+          document.getElementById('loginBtn').onclick=loginHandler;
         }
       });
     });
   }).catch(function(){setLoginError('CAPTCHA service unavailable');setLoginBtn(false,'Sign In')});
-});
+};
+document.getElementById('loginBtn').addEventListener('click',loginHandler);
 document.getElementById('loginPwd').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('loginBtn').click()});
 document.getElementById('logoutBtn').addEventListener('click',function(e){e.preventDefault();clearSession();auth.signOut().then(function(){document.getElementById('app').style.display='none';document.getElementById('loginOverlay').style.display='flex';document.getElementById('loginPwd').value='';document.getElementById('loginSub').textContent='Enter your admin credentials';document.getElementById('loginBtn').textContent='Sign In'})});
 
@@ -324,7 +325,7 @@ auth.onAuthStateChanged(function(user){
   }
 });
 // Fallback for already-resolved auth state
-(function(){var ls=localStorage.getItem('adnet_auth');var ss=sessionStorage.getItem('adnet_auth');if(ls||ss&&auth.currentUser){document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';window.scrollTo(0,0);initApp()}})();
+(function(){var ls=localStorage.getItem('adnet_auth');var ss=sessionStorage.getItem('adnet_auth');if((ls||ss)&&auth.currentUser){document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';window.scrollTo(0,0);initApp()}})();
 
 document.querySelectorAll('.sidebar nav a[data-tab]').forEach(function(a){
   a.addEventListener('click',function(e){

@@ -4,8 +4,16 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="google-adsense-account" content="ca-pub-7499391070855373">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7499391070855373" crossorigin="anonymous"></script>
-<title>Terms of Service - Indranex AdNet</title>
+<title>Ad Placement Guidelines & Best Practices - Indranex AdNet</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%236C5CE7'/%3E%3Ctext x='50' y='68' font-size='60' fill='white' text-anchor='middle' font-family='Arial' font-weight='bold'%3EI%3C/text%3E%3C/svg%3E">
+<meta name="description" content="Best practices for ad placement on your website. Learn optimal positions, formats, and strategies to maximize revenue while maintaining user experience.">
+<link rel="canonical" href="https://indranexadnet.dpdns.org/docs/ad-placement-guidelines.html">
+<meta property="og:title" content="Ad Placement Guidelines - Indranex AdNet">
+<meta property="og:description" content="Best practices for ad placement to maximize revenue while maintaining user experience.">
+<meta property="og:url" content="https://indranexadnet.dpdns.org/docs/ad-placement-guidelines.html">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://i.ibb.co/zVsdtWK9/Chat-GPT-Image-Jun-24-2026-10-56-29-AM.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -52,7 +60,7 @@ nav .links a:hover{color:#fff;text-decoration:none}
     <a href="/" class="logo"><div class="icon"><img src="https://i.ibb.co/zVsdtWK9/Chat-GPT-Image-Jun-24-2026-10-56-29-AM.png" alt="Indranex AdNet"></div>Indranex <span>AdNet</span></a>
     <div class="links">
       <a href="/">Home</a>
-      <a href="/blog/how-display-ads-work.html">Blog</a>
+      <a href="/docs/getting-started.html">Docs</a>
       <a href="/about.html">About</a>
       <a href="/contact.html">Contact</a>
     </div>
@@ -60,37 +68,43 @@ nav .links a:hover{color:#fff;text-decoration:none}
 </nav>
 <div class="wrapper">
 <div class="card">
-  <h1>Terms of Service</h1>
+  <h1>Ad Placement Guidelines & Best Practices</h1>
   <div class="meta">Last updated: June 24, 2026</div>
 
-<p>Welcome to Indranex AdNet. These Terms of Service ("Terms") govern your access to and use of our website, platform, and services. By creating an account or using our services, you agree to be bound by these Terms. If you do not agree, please do not use our services.</p>
+<p>Proper ad placement is critical to maximizing your revenue while maintaining a positive user experience. The following guidelines outline how Indranex AdNet ads should be placed on your website. Adherence to these rules ensures compliance with our network policies and prevents account penalties.</p>
 
-<h2>Account Registration</h2>
-<p>To use our platform as a publisher, you must register for an account. You agree to provide accurate, current, and complete information during the registration process. You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account. You must notify us immediately of any unauthorized use of your account.</p>
+<h2>General Placement Rules</h2>
+<p>Each page may display a maximum of <strong>three ad slots</strong> simultaneously. This includes all format types display banners, popunders, interstitials, and social bars combined. Exceeding this limit may result in ad serving being disabled on your account.</p>
+<p>Ad slots must not overlap, stack, or cover one another. Maintain a minimum spacing of <strong>300 pixels</strong> between any two ad containers on the same page to ensure readability and avoid accidental clicks.</p>
 
-<h2>Publisher Responsibilities</h2>
-<p>As a publisher, you agree to:</p>
+<h2>Above-the-Fold & Below-the-Fold Placements</h2>
+<p>Above-the-fold placements (visible without scrolling) typically yield higher CPM rates. However, we recommend a balanced approach: place one above-the-fold slot and one or two below-the-fold slots. Avoid placing more than one ad above the fold so that content remains the primary focus for visitors.</p>
+
+<h2>Responsive Design Requirements</h2>
+<p>All ad containers must adapt fluidly across device sizes. Our ad script automatically serves responsive creative units, but your container elements must use percentage-based or flexible widths. Test your layout on mobile, tablet, and desktop viewports to confirm proper rendering. Ads that break page layouts, overflow containers, or cause horizontal scrolling violate our placement policy.</p>
+
+<h2>Popunder Triggers</h2>
+<p>Popunder ads may only be triggered by explicit user interaction such as a click, tap, or scroll. Automatically firing popunders on page load, mouse movement, or timer-based events is strictly prohibited. The triggered popunder must open a new tab or window behind the current browsing context.</p>
+
+<h2>Interstitial Frequency Capping</h2>
+<p>Full-screen interstitial ads may be served a maximum of <strong>once per user session</strong>. Implement session tracking on your end to prevent repeated interstitial displays to the same visitor. Interstitials should appear at natural navigation breaks, such as between page transitions.</p>
+
+<h2>Social Bar Positioning</h2>
+<p>The social bar widget should be positioned at the edge of the viewport, either left or right side, without obstructing main content. It must not cover interactive elements like buttons, forms, or navigation menus. Provide users the ability to dismiss the social bar permanently.</p>
+
+<h2>Prohibited Placements</h2>
+<p>The following ad placements are strictly forbidden and will result in immediate account suspension:</p>
 <ul>
-  <li>Own or have legal rights to all content on websites where you place our ads.</li>
-  <li>Comply with all applicable laws, including copyright, privacy, and advertising regulations.</li>
-  <li>Not engage in fraudulent activity, including but not limited to generating artificial clicks, impressions, or traffic through automated means, bots, or any other method.</li>
-  <li>Not place ads on websites containing illegal, offensive, or prohibited content, as determined by our policies.</li>
-  <li>Maintain accurate traffic source records and provide them upon request.</li>
+<li>Pop-up ads that appear in front of content or require dismissal before content access</li>
+<li>Deceptive close buttons that are difficult to locate or trigger unintended ad clicks</li>
+<li>Ads placed inside iframes that are hidden, transparent, or zero-sized</li>
+<li>Forcing users to view or interact with ads to access content (ad walls)</li>
+<li>Ads placed on error pages, under-construction pages, or pages with no substantive content</li>
+<li>Injection of ads into third-party websites without authorization (ad injection)</li>
 </ul>
 
-<h2>Payment Terms</h2>
-<p>Revenue is calculated based on verified impressions and clicks as recorded by our tracking systems. Payments are made on a net-30 or net-60 schedule depending on your account tier, subject to a minimum payout threshold. If your account is terminated for policy violations, unpaid earnings may be forfeited. All payment disputes must be raised within 30 days of the payment date.</p>
-
-<h2>Intellectual Property</h2>
-<p>Our platform, logo, brand name, and all associated intellectual property are owned by Indranex AdNet. You may not reproduce, modify, distribute, or create derivative works without our prior written consent. You retain all rights to your website content and traffic data.</p>
-
-<h2>Termination</h2>
-<p>We reserve the right to suspend or terminate your account at any time for violation of these Terms or our policies. You may terminate your account at any time through your account settings or by contacting us. Upon termination, your right to use our services ceases immediately, and you must remove all ad tags from your websites.</p>
-
-<h2>Modifications</h2>
-<p>We may update these Terms from time to time. We will notify you of material changes via email or through our platform. Continued use of our services after changes constitutes acceptance of the revised Terms. We encourage you to review these Terms periodically.</p>
-
-<p>If you have questions about these Terms, please <a href="/contact.html">contact us</a>.</p>
+<h2>Best Practices for Maximizing Revenue</h2>
+<p>Test different ad positions using our A/B testing dashboard. Monitor your click-through rate (CTR) and eCPM metrics regularly. Place in-article ads between paragraphs of long-form content for higher engagement. Use the sidebar for sticky ad placements on desktop. Always prioritize user experience aggressive ad placements drive visitors away and harm long-term revenue.</p>
 
 </div>
 <div class="footer">

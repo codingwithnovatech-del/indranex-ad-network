@@ -413,8 +413,8 @@ function loadDash(sid){
   db.ref('publishers/'+sid).once('value',function(s){
     var p=s.val()||{};document.getElementById('pubName').textContent=p.name||sid;document.getElementById('pubSiteIdDisplay').textContent=sid;
     document.getElementById('setName').value=p.name||'';document.getElementById('setDomain').value=p.domain||'';
-    var dm=window.location.hostname;
-    document.getElementById('integrationCode').textContent='<!-- Ad Slots -->\n<div class="adnet-slot" data-position="header"></div>\n<div class="adnet-slot" data-position="sidebar"></div>\n<div class="adnet-slot" data-position="inline"></div>\n\n<!-- Special Formats (optional) -->\n<div class="adnet-slot" data-position="popunder"></div>\n<div class="adnet-slot" data-position="interstitial"></div>\n<div class="adnet-slot" data-position="social-bar"></div>\n\n<!-- Script -->\n<script src="https://'+dm+'/publisher-script/ad.js" data-site-id="'+sid+'">\x3C/script>';
+    var dm=window.location.origin;
+    document.getElementById('integrationCode').textContent='<!-- Ad Slots -->\n<div class="adnet-slot" data-position="header"></div>\n<div class="adnet-slot" data-position="sidebar"></div>\n<div class="adnet-slot" data-position="inline"></div>\n\n<!-- Special Formats (optional) -->\n<div class="adnet-slot" data-position="popunder"></div>\n<div class="adnet-slot" data-position="interstitial"></div>\n<div class="adnet-slot" data-position="social-bar"></div>\n\n<!-- Script -->\n<script src="'+dm+'/publisher-script/ad.js" data-site-id="'+sid+'">\x3C/script>';
   });
   var imps=0,clks=0;
   db.ref('analytics/impressions').orderByChild('siteId').equalTo(sid).once('value',function(s){imps=s.val()?Object.keys(s.val()).length:0;document.getElementById('pubImps').textContent=imps.toLocaleString();
@@ -487,7 +487,6 @@ function loadPubEarnings(sid){
 }
 
 /* WITHDRAWAL */
-var currentSid='';
 function showWithdrawModal(){document.getElementById('withdrawModal').classList.add('active')}
 function closeModal(){document.getElementById('withdrawModal').classList.remove('active')}
 function submitWithdraw(){

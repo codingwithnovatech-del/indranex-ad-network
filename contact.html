@@ -107,7 +107,7 @@ nav a:hover{color:#fff;text-decoration:none}
           <div class="icon">&#9742;</div>
           <div class="text">
             <strong>Phone</strong>
-            +91-XXX-XXX-XXXX<br>
+            +91-120-XXX-XXXX<br>
             <span style="font-size:11px;color:rgba(255,255,255,0.3)">Mon-Fri, 10 AM - 6 PM IST</span>
           </div>
         </div>
@@ -116,7 +116,8 @@ nav a:hover{color:#fff;text-decoration:none}
           <div class="text">
             <strong>Address</strong>
             Indranex AdNet<br>
-            New Delhi, India
+            B-123, Sector 15, Noida<br>
+            Uttar Pradesh 201301, India
           </div>
         </div>
         <div class="item">
@@ -142,18 +143,26 @@ nav a:hover{color:#fff;text-decoration:none}
   &copy; 2026 Indranex AdNet. All rights reserved. &bull; <a href="/">Home</a> &bull; <a href="/about.html">About Us</a> &bull; <a href="/privacy.html">Privacy Policy</a> &bull; <a href="/terms.html">Terms of Service</a>
 </div>
 </div>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 <script>
+var FC={apiKey:"AIzaSyBUqHKr6vuXqKr5cWMkSM5oTxG1LgPzFEw",authDomain:"indranex-ads-network.firebaseapp.com",databaseURL:"https://indranex-ads-network-default-rtdb.firebaseio.com",projectId:"indranex-ads-network",storageBucket:"indranex-ads-network.firebasestorage.app",messagingSenderId:"665770384201",appId:"1:665770384201:web:0126de06a6919e9f1e1898"};
+firebase.initializeApp(FC);var db=firebase.database();
 function submitContact(e){
   e.preventDefault();
   var name=document.getElementById('contactName').value.trim();
   var email=document.getElementById('contactEmail').value.trim();
   var msg=document.getElementById('contactMessage').value.trim();
-  if(!name||!email||!msg){document.getElementById('contactStatus').style.color='var(--danger)';document.getElementById('contactStatus').textContent='Please fill all required fields.';return false}
+  var st=document.getElementById('contactStatus');
+  if(!name||!email||!msg){st.style.color='var(--danger)';st.textContent='Please fill all required fields.';return false}
   var subj=document.getElementById('contactSubject').value.trim()||'Contact Form Inquiry';
-  var mailto='mailto:support@indranexadnet.com?subject='+encodeURIComponent('[Contact] '+subj)+'&body='+encodeURIComponent('Name: '+name+'\nEmail: '+email+'\n\nMessage:\n'+msg);
-  window.location.href=mailto;
-  document.getElementById('contactStatus').style.color='var(--success)';
-  document.getElementById('contactStatus').textContent='Opening your email client...';
+  st.textContent='Sending...';
+  db.ref('contacts').push({name:name,email:email,subject:subj,message:msg,timestamp:new Date().toISOString()}).then(function(){
+    st.style.color='var(--success)';st.textContent='Message sent! We\'ll respond within 48 hours.';
+    document.getElementById('contactForm').reset();
+  }).catch(function(){
+    st.style.color='var(--danger)';st.textContent='Failed to send. Email us directly at support@indranexadnet.com';
+  });
   return false;
 }
 </script>

@@ -72,7 +72,7 @@ tr:hover td{background:#f5f3ff}
 .loading .spinner{width:36px;height:36px;border:3px solid #eee;border-top-color:var(--primary);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 12px}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-time-range{display:flex;gap:8px;flex-wrap:wrap}
+.time-range{display:flex;gap:8px;flex-wrap:wrap}
 .time-btn{padding:6px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.5);font-size:12px;cursor:pointer;transition:all 0.2s}
 .time-btn:hover,.time-btn.active{background:rgba(108,92,231,0.2);color:#fff;border-color:var(--primary)}
 
@@ -162,7 +162,7 @@ function loadDashboard(){
         var sorted=adKeys.slice().sort(function(a,b){return (adMap[b]._imps||0)-(adMap[a]._imps||0)});
         var maxAd=Math.max.apply(null,sorted.map(function(k){return adMap[k]._imps||0}),10);
         var html='<div class="chart-container">';
-        sorted.forEach(function(k){
+        sorted.forEach(function(k,i){
           var ad=adMap[k];var aimp=ad._imps||0;var aclk=ad._clks||0;var pct=maxAd>0?(aimp/maxAd*100):0;
           var colors=['#6C5CE7','#00CEC9','#FD79A8','#fdcb6e','#2196F3','#00b894','#e91e63','#f39c12'];
           html+='<div class="chart-bar-row"><div class="chart-bar-label" title="'+(ad.title||k.substring(0,10))+'">'+(ad.title||k.substring(0,10))+'</div><div class="chart-bar-track"><div class="chart-bar-fill" style="width:'+pct+'%;background:'+colors[i%colors.length]+'">'+aimp+'</div></div><div class="chart-bar-value">'+aclk+' clicks &bull; '+(aimp>0?((aclk/aimp)*100).toFixed(1):'0')+'% CTR</div></div>';
