@@ -1,35 +1,28 @@
 (function () {
   'use strict';
-
   var FIREBASE_URL = 'https://indranex-ads-network-default-rtdb.firebaseio.com';
   var AD_NETWORK = 'Indranex AdNet';
-
   var scriptEl = document.currentScript || document.scripts[document.scripts.length - 1];
   var siteId = scriptEl.getAttribute('data-site-id');
-
-  if (!siteId) {
-    console.error(AD_NETWORK + ': Missing data-site-id attribute.');
-    return;
-  }
-
-  var tracked = {};
-  var popunderShown = false;
-  var interstitialShown = false;
-  var socialBarShown = false;
-
+  if (!siteId) { console.error(AD_NETWORK + ': Missing data-site-id'); return; }
+  var tracked = {}, popunderShown = false, interstitialShown = false, socialBarShown = false;
+  var session = sessionStorage.getItem('adnet_session') || Math.random().toString(36).slice(2);
+  sessionStorage.setItem('adnet_session', session);
+  var impKey = function(adId, pos) { return adId + '_' + pos; };
   function fetchJSON(p) { return fetch(FIREBASE_URL + p + '.json').then(function(r){return r.json()}).catch(function(){return null}); }
-  function postJSON(p, d) { return fetch(FIREBASE_URL + p + '.json',{method:'POST',body:JSON.stringify(d),headers:{'Content-Type':'application/json'}}).catch(function(){}); }
+  function pushJSON(p, d) { return fetch(FIREBASE_URL + p + '.json',{method:'POST',body:JSON.stringify(d),headers:{'Content-Type':'application/json'}}).catch(function(){}); }
   function getDomain() { return window.location.hostname; }
   function normDomain(d) { if(!d)return ''; return d.replace(/^https?:\/\//,'').replace(/\/.*$/,'').replace(/^www\./,'').toLowerCase(); }
   function esc(s) { if(!s)return ''; var d=document.createElement('div'); d.appendChild(document.createTextNode(s)); return d.innerHTML; }
-
   function trackImp(adId, pos) {
-    postJSON('/analytics/impressions',{adId:adId||'unknown',siteId:siteId,position:pos||'unknown',timestamp:Date.now(),userAgent:navigator.userAgent,url:window.location.href,referrer:document.referrer||''});
+    var k = impKey(adId, pos);
+    if (tracked[k]) return;
+    tracked[k] = true;
+    pushJSON('/analytics/impressions',{adId:adId,siteId:siteId,position:pos,timestamp:new Date().toISOString(),sessionId:session,pageUrl:window.location.href});
   }
-  function trackClk(adId, pos) {
-    postJSON('/analytics/clicks',{adId:adId||'unknown',siteId:siteId,position:pos||'unknown',timestamp:Date.now(),url:window.location.href});
+  function trackClk(adId, pos, targetUrl) {
+    pushJSON('/analytics/clicks',{adId:adId,siteId:siteId,position:pos,timestamp:new Date().toISOString(),sessionId:session,targetUrl:targetUrl||'',pageUrl:window.location.href});
   }
-
   function getAds() {
     return fetchJSON('/ads').then(function(d){
       if(!d)return[];
@@ -43,12 +36,22 @@
       });
     });
   }
-
   function findAds(ads, pos) {
+    var formatLimit = scriptEl.getAttribute('data-format');
     return ads.filter(function(a){
+      if(formatLimit && a.type !== formatLimit) return false;
       if(!a.positions)return false;
       for(var p in a.positions)if(a.positions.hasOwnProperty(p)&&a.positions[p]===true&&p===pos)return true;
       return false;
+    });
+  }
+
+  function attachClicks(el, adId, pos, targetUrl) {
+    var links = el.querySelectorAll('a');
+    [].forEach.call(links, function(l){
+      l.addEventListener('click', function(e){
+        trackClk(adId, pos, targetUrl || l.href);
+      });
     });
   }
 
@@ -60,7 +63,8 @@
       w.innerHTML='<a href="'+esc(linkUrl)+'" class="adnet-link" target="_blank" rel="noopener noreferrer nofollow" style="display:block;padding:18px;background:linear-gradient(135deg,#6C5CE7,#a29bfe);border-radius:8px;text-decoration:none;color:#fff;text-align:center;font-family:Arial,sans-serif;"><strong>'+esc(ad.title||'Sponsored')+'</strong><span style="display:block;font-size:12px;margin-top:4px;opacity:0.8;">Advertisement</span></a>';
     }
     slot.appendChild(w);
-    attachTracking(w, adId, pos);
+    trackImp(adId, pos);
+    attachClicks(w, adId, pos, linkUrl);
   }
 
   function renderVideo(slot, ad, linkUrl, adId, pos) {
@@ -72,7 +76,9 @@
       w.innerHTML='<video controls muted playsinline style="width:100%;display:block;aspect-ratio:16/9;" poster="'+esc(ad.imageUrl||'')+'"><source src="'+esc(ad.videoUrl)+'" type="video/mp4"></video>';
     }
     if(ad.targetUrl){var o=w.querySelector('iframe, video');if(o)o.style.pointerEvents='none';w.innerHTML+='<a href="'+esc(ad.targetUrl)+'" class="adnet-link" target="_blank" rel="noopener noreferrer nofollow" style="position:absolute;top:0;left:0;right:0;bottom:0;z-index:2;"></a>';}
-    slot.appendChild(w);attachTracking(w,adId,pos);
+    slot.appendChild(w);
+    trackImp(adId, pos);
+    attachClicks(w, adId, pos, ad.targetUrl);
   }
 
   function renderNative(slot, ad, linkUrl, adId, pos) {
@@ -83,7 +89,9 @@
       +(ad.title?'<h4 style="margin:0 0 4px;font-size:15px;font-weight:600;color:#222;">'+esc(ad.title)+'</h4>':'')
       +(ad.description?'<p style="margin:0;font-size:13px;color:#666;line-height:1.4;">'+esc(ad.description)+'</p>':'')
       +'</div></a>';
-    slot.appendChild(w);attachTracking(w,adId,pos);
+    slot.appendChild(w);
+    trackImp(adId, pos);
+    attachClicks(w, adId, pos, linkUrl);
   }
 
   function renderSocialBar(ad) {
@@ -108,9 +116,10 @@
   }
 
   function showPopunder(ad) {
-    if(popunderShown||!ad||!ad.targetUrl)return;popunderShown=true;
+    if(popunderShown||!ad||!ad.targetUrl)return;
+    popunderShown=true;
     var adId=ad._key||ad.id||'';
-    trackImp(adId,'popunder');trackClk(adId,'popunder');
+    trackImp(adId,'popunder');trackClk(adId,'popunder',ad.targetUrl);
     try{
       var w=window.open(ad.targetUrl,'_blank');
       if(w){try{w.blur();}catch(e){}window.focus();}
@@ -145,11 +154,12 @@
     setTimeout(function(){ov.style.opacity='1';},50);
   }
 
-  function attachTracking(w, adId, pos) {
-    var key=adId+'_'+pos;
-    if(!tracked[key]){tracked[key]=true;trackImp(adId,pos);}
-    var links=w.querySelectorAll('.adnet-link');
-    [].forEach.call(links,function(l){l.addEventListener('click',function(){trackClk(adId,pos);});});
+  function renderCustom(slot, ad, linkUrl, adId, pos) {
+    var w = document.createElement('div'); w.style.cssText = 'margin:0;padding:0;';
+    w.innerHTML = '<a href="'+esc(linkUrl)+'" class="adnet-link" target="_blank" rel="noopener noreferrer nofollow" style="display:inline-block;padding:14px 24px;background:linear-gradient(135deg,#6C5CE7,#00CEC9);border-radius:10px;color:#fff;text-decoration:none;font-weight:600;font-size:14px;font-family:Arial,sans-serif;">' + esc(ad.title||'Learn More') + ' →</a>';
+    slot.appendChild(w);
+    trackImp(adId, pos);
+    attachClicks(w, adId, pos, linkUrl);
   }
 
   function init() {
@@ -168,17 +178,20 @@
           if(ad.type==='banner')renderBanner(slot,ad,linkUrl,adId,pos);
           else if(ad.type==='video')renderVideo(slot,ad,linkUrl,adId,pos);
           else if(ad.type==='native')renderNative(slot,ad,linkUrl,adId,pos);
+          else if(ad.type==='custom')renderCustom(slot,ad,linkUrl,adId,pos);
           else slot.innerHTML='<!-- '+AD_NETWORK+': unknown type '+ad.type+' -->';
         });
-
         var sd=parseInt(scriptEl.getAttribute('data-social-delay'))||3000;
-        var popunders=findAds(ads,'social-bar');
-        if(popunders.length)setTimeout(function(){renderSocialBar(popunders[Math.floor(Math.random()*popunders.length)])},sd);
-
+        var socials=findAds(ads,'social-bar');
+        if(socials.length)setTimeout(function(){renderSocialBar(socials[Math.floor(Math.random()*socials.length)])},sd);
         var pd=parseInt(scriptEl.getAttribute('data-popunder-delay'))||4000;
         var pops=findAds(ads,'popunder');
-        if(pops.length)setTimeout(function(){showPopunder(pops[Math.floor(Math.random()*pops.length)])},pd);
-
+        if(pops.length){
+          document.addEventListener('click', function popTrigger(){
+            setTimeout(function(){showPopunder(pops[Math.floor(Math.random()*pops.length)])}, 200);
+            document.removeEventListener('click', popTrigger);
+          }, {once: true});
+        }
         var id=parseInt(scriptEl.getAttribute('data-interstitial-delay'))||3000;
         var ints=findAds(ads,'interstitial');
         if(ints.length)setTimeout(function(){showInterstitial(ints[Math.floor(Math.random()*ints.length)])},id);

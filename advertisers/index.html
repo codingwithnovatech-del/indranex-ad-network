@@ -296,6 +296,7 @@ footer{padding:24px 0;text-align:center;border-top:1px solid rgba(255,255,255,0.
     </div>
     <div class="modal-actions">
       <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="previewCampaign()" style="background:var(--secondary);font-size:12px">Preview</button>
       <button class="btn btn-success" onclick="saveCampaign()">Save Campaign</button>
     </div>
   </div>
@@ -308,6 +309,7 @@ var FIREBASE_CONFIG={apiKey:"AIzaSyBUqHKr6vuXqKr5cWMkSM5oTxG1LgPzFEw",authDomain
 firebase.initializeApp(FIREBASE_CONFIG);var db=firebase.database();var auth=firebase.auth();var googleProvider = new firebase.auth.GoogleAuthProvider();var currentAdv=null;var googleRegEmail='';
 function toast(m){var e=document.getElementById('toast');e.textContent=m;e.className='toast show';setTimeout(function(){e.className='toast'},3000)}
 function closeModal(){document.getElementById('campaignModal').classList.remove('active')}
+function previewCampaign(){window.open('/demo/','_blank')}
 
 // Modal overlay click & ESC close
 document.addEventListener('click',function(e){if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('active')});

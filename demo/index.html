@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ad Demo - Indranex AdNet</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,sans-serif;background:#f0f2f5;color:#333}
+.container{max-width:1200px;margin:0 auto;padding:24px}
+header{background:linear-gradient(135deg,#0a0a1a,#1a1a3e);color:#fff;padding:48px 24px;text-align:center}
+header h1{font-size:30px;margin-bottom:8px}
+header p{color:rgba(255,255,255,0.5);font-size:14px}
+.demo-layout{display:grid;grid-template-columns:1fr 280px;gap:24px;margin-top:24px}
+.content-area{background:#fff;border-radius:14px;padding:24px;min-height:500px;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.sidebar{display:flex;flex-direction:column;gap:24px}
+.sidebar-box{background:#fff;border-radius:14px;padding:16px;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.sidebar-box h3{font-size:13px;color:#999;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px}
+.adnet-slot{background:#fafafa;border:2px dashed #ddd;border-radius:8px;min-height:90px;display:flex;align-items:center;justify-content:center;transition:border-color 0.3s;margin-bottom:16px;position:relative}
+.adnet-slot[data-position="header"]{min-height:100px}
+.adnet-slot[data-position="sidebar"]{min-height:250px}
+.adnet-slot[data-position="inline"]{min-height:120px}
+.adnet-slot.loaded{border-color:var(--primary,#6C5CE7);background:#fff}
+.format-tabs{display:flex;gap:8px;margin:20px 0 16px;flex-wrap:wrap}
+.format-tabs button{padding:8px 18px;border-radius:8px;border:1px solid #ddd;background:#fff;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s;color:#666}
+.format-tabs button:hover{border-color:#6C5CE7;color:#6C5CE7}
+.format-tabs button.active{background:#6C5CE7;color:#fff;border-color:#6C5CE7}
+.info-box{background:#e8f4fd;border-radius:10px;padding:14px 18px;font-size:13px;color:#1a5276;margin-bottom:20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.info-box strong{color:#6C5CE7}
+.code-box{background:#1e1e2e;color:#cdd6f4;border-radius:10px;padding:16px;font-family:'Cascadia Code','Fira Code',monospace;font-size:13px;overflow-x:auto;margin-top:16px;line-height:1.8}
+.code-box .tag{color:#89b4fa}
+.code-box .attr{color:#a6e3a1}
+.code-box .str{color:#f9e2af}
+footer{text-align:center;padding:24px;color:#999;font-size:13px}
+@media(max-width:768px){.demo-layout{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Indranex AdNet — Live Ad Demo</h1>
+  <p>Real ad delivery demo. All 6 formats supported: banner, popunder, interstitial, native, video &amp; social bar</p>
+</header>
+<div class="container">
+  <div class="info-box">
+    <span><strong>Site ID:</strong> demo-site</span>
+    <span><strong>Status:</strong> <span id="adStatus">Loading...</span></span>
+    <span><strong>Script:</strong> <code style="background:rgba(108,92,231,0.1);padding:2px 8px;border-radius:4px">&lt;script src="/publisher-script/ad.js" data-site-id="SITE_ID"&gt;&lt;/script&gt;</code></span>
+  </div>
+  <div class="format-tabs">
+    <button class="active" data-format="all">All Formats</button>
+    <button data-format="banner">Banner</button>
+    <button data-format="native">Native</button>
+    <button data-format="video">Video</button>
+    <button data-format="popunder">Popunder</button>
+    <button data-format="interstitial">Interstitial</button>
+    <button data-format="social-bar">Social Bar</button>
+  </div>
+  <div class="demo-layout">
+    <div class="content-area">
+      <h2 style="margin-bottom:16px;">Demo Article Content</h2>
+      <p style="margin-bottom:16px;color:#666;line-height:1.7;">This is a live demonstration of the Indranex AdNet ad delivery system. Ads below are fetched from Firebase in real-time based on active campaigns targeting this demo site.</p>
+      <div class="adnet-slot" data-position="header"></div>
+      <p style="margin-bottom:16px;color:#666;line-height:1.7;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+      <div class="adnet-slot" data-position="inline"></div>
+      <p style="color:#666;line-height:1.7;">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    </div>
+    <div class="sidebar">
+      <div class="sidebar-box">
+        <h3>Sidebar Ads</h3>
+        <div class="adnet-slot" data-position="sidebar"></div>
+        <div class="adnet-slot" data-position="sidebar"></div>
+      </div>
+      <div class="sidebar-box">
+        <h3>Integration Guide</h3>
+        <div class="code-box">
+<span class="tag">&lt;!-- Ad slot anywhere --&gt;</span><br>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"adnet-slot"</span><br>
+<span class="attr">data-position</span>=<span class="str">"inline"</span><span class="tag">&gt;&lt;/div&gt;</span><br><br>
+<span class="tag">&lt;script</span> <span class="attr">src</span>=<span class="str">"https://indranexadnet.dpdns.org/publisher-script/ad.js"</span><br>
+<span class="attr">data-site-id</span>=<span class="str">"YOUR_SITE_ID"</span><span class="tag">&gt;&lt;/script&gt;</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>&copy; 2026 Indranex AdNet &bull; <a href="/">Home</a> &bull; <a href="/publishers/">Publishers</a> &bull; <a href="/advertisers/">Advertisers</a></footer>
+<script src="/publisher-script/ad.js" data-site-id="demo-site"></script>
+<script>
+var statusEl = document.getElementById('adStatus');
+setTimeout(function(){
+  var slots = document.querySelectorAll('.adnet-slot');
+  var loaded = 0;
+  slots.forEach(function(s){ if(s.children.length > 0 && !s.querySelector('<!--')) loaded++; });
+  statusEl.textContent = loaded > 0 ? loaded + ' ads rendered' : 'No active campaigns for demo-site';
+  statusEl.style.color = loaded > 0 ? '#00b894' : '#e74c3c';
+  slots.forEach(function(s){ if(s.children.length > 0) s.classList.add('loaded'); });
+}, 2000);
+document.querySelectorAll('.format-tabs button').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.format-tabs button').forEach(function(b){b.classList.remove('active')});
+    btn.classList.add('active');
+    var fmt = btn.getAttribute('data-format');
+    document.querySelectorAll('.adnet-slot').forEach(function(slot){
+      var pos = slot.getAttribute('data-position');
+      if(fmt === 'all' || pos === fmt) slot.style.display = 'flex';
+      else slot.style.display = 'none';
+    });
+  });
+});
+</script>
+</body>
+</html>

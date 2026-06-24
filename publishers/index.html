@@ -193,6 +193,7 @@ footer{padding:24px 0;text-align:center;border-top:1px solid rgba(255,255,255,0.
       <button class="active" onclick="switchPubTab('overview',this)">Overview</button>
       <button onclick="switchPubTab('earnings',this)">Earnings</button>
       <button onclick="switchPubTab('stats',this)">Traffic Stats</button>
+      <button onclick="switchPubTab('integration',this)">Integration</button>
       <button onclick="switchPubTab('settings',this)">Settings</button>
     </div>
 
@@ -232,6 +233,27 @@ footer{padding:24px 0;text-align:center;border-top:1px solid rgba(255,255,255,0.
       </div>
     </div>
 
+    <div class="tab-content" id="tabIntegration">
+      <div class="card"><div class="card-head"><h3>Ad Integration Code</h3></div><div class="card-body">
+        <p style="color:rgba(255,255,255,0.5);font-size:13px;margin-bottom:16px">Copy and paste this code into your website's HTML where you want ads to appear.</p>
+        <div style="background:rgba(0,0,0,0.4);border-radius:10px;padding:16px;font-family:'Cascadia Code','Fira Code',monospace;font-size:12px;line-height:1.8;overflow-x:auto;white-space:pre" id="pubIntegrationCode">Loading...</div>
+        <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+          <button class="btn btn-primary btn-sm" onclick="copyIntegrationCode()">Copy Code</button>
+          <button class="btn btn-outline btn-sm" onclick="previewAd()">Preview Ad</button>
+        </div>
+        <hr style="margin:24px 0;border:none;border-top:1px solid rgba(255,255,255,0.06)">
+        <h4 style="color:#fff;font-size:14px;margin-bottom:10px">Available Positions</h4>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;font-size:12px">
+          <div style="background:rgba(255,255,255,0.04);padding:10px 14px;border-radius:8px"><strong style="color:var(--primary-light)">header</strong><br><span style="color:rgba(255,255,255,0.4)">Top banner area</span></div>
+          <div style="background:rgba(255,255,255,0.04);padding:10px 14px;border-radius:8px"><strong style="color:var(--primary-light)">inline</strong><br><span style="color:rgba(255,255,255,0.4)">Within content</span></div>
+          <div style="background:rgba(255,255,255,0.04);padding:10px 14px;border-radius:8px"><strong style="color:var(--primary-light)">sidebar</strong><br><span style="color:rgba(255,255,255,0.4)">Side column</span></div>
+          <div style="background:rgba(255,255,255,0.04);padding:10px 14px;border-radius:8px"><strong style="color:var(--primary-light)">footer</strong><br><span style="color:rgba(255,255,255,0.4)">Bottom of page</span></div>
+          <div style="background:rgba(255,255,255,0.04);padding:10px 14px;border-radius:8px"><strong style="color:var(--primary-light)">popunder</strong><br><span style="color:rgba(255,255,255,0.4)">Opens behind window</span></div>
+          <div style="background:rgba(255,255,255,0.04);padding:10px 14px;border-radius:8px"><strong style="color:var(--primary-light)">interstitial</strong><br><span style="color:rgba(255,255,255,0.4)">Full-screen overlay</span></div>
+          <div style="background:rgba(255,255,255,0.04);padding:10px 14px;border-radius:8px"><strong style="color:var(--primary-light)">social-bar</strong><br><span style="color:rgba(255,255,255,0.4)">Sticky bottom bar</span></div>
+        </div>
+      </div></div>
+    </div>
     <div class="tab-content" id="tabSettings">
       <div class="card">
         <div class="card-head"><h3>&#9881; Site Settings</h3></div>
@@ -417,7 +439,26 @@ function copyCode(){var c=document.getElementById('integrationCode').textContent
 function switchPubTab(tab,btn){
   document.querySelectorAll('#pubTabs button').forEach(function(b){b.classList.remove('active')});
   document.querySelectorAll('.tab-content').forEach(function(t){t.classList.remove('active')});
-  btn.classList.add('active');document.getElementById('tab'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active')
+  btn.classList.add('active');document.getElementById('tab'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active');
+  if(tab==='integration')generateIntegrationCode()
+}
+function generateIntegrationCode(){
+  var sid=currentSid;if(!sid){document.getElementById('pubIntegrationCode').textContent='// Load dashboard first';return}
+  var domain=window.location.origin;
+  var code='<!-- Ad slots - place where you want ads -->\n';
+  code+='<div class="adnet-slot" data-position="header"></div>\n';
+  code+='<div class="adnet-slot" data-position="inline"></div>\n';
+  code+='<div class="adnet-slot" data-position="sidebar"></div>\n\n';
+  code+='<!-- Ad SDK -->\n';
+  code+='<script src="'+domain+'/publisher-script/ad.js" data-site-id="'+sid+'"><\/script>';
+  document.getElementById('pubIntegrationCode').textContent=code;
+}
+function copyIntegrationCode(){
+  var el=document.getElementById('pubIntegrationCode');var t=el.textContent;
+  navigator.clipboard.writeText(t).then(function(){toast('Code copied!')}).catch(function(){toast('Copy failed')})
+}
+function previewAd(){
+  window.open('/demo/','_blank');
 }
 
 /* EARNINGS */
