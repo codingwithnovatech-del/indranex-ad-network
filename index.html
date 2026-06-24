@@ -172,14 +172,32 @@ nav.scrolled .container{height:60px}
 .back-to-top.show{opacity:1;transform:translateY(0)}
 .back-to-top:hover{transform:translateY(-4px);box-shadow:0 8px 30px rgba(108,92,231,0.5)}
 /* FOOTER */
-footer{background:#060612;color:rgba(255,255,255,0.4);padding:60px 0 40px;border-top:1px solid rgba(255,255,255,0.04)}
-.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:30px}
-.footer-brand p{font-size:13px;line-height:1.7;max-width:280px;margin-top:12px}
-footer h4{color:#fff;font-size:13px;font-weight:700;margin-bottom:16px;text-transform:uppercase;letter-spacing:0.5px}
-footer a{display:block;color:rgba(255,255,255,0.4);text-decoration:none;font-size:13px;padding:4px 0;transition:all 0.3s}
-footer a:hover{color:var(--primary-light);padding-left:4px}
-.footer-bottom{grid-column:1/-1;border-top:1px solid rgba(255,255,255,0.04);padding-top:24px;margin-top:16px;font-size:12px;text-align:center}
+footer{background:linear-gradient(180deg,#0a0a1a 0%,#060612 100%);color:rgba(255,255,255,0.4);padding:64px 0 32px;border-top:1px solid rgba(255,255,255,0.04)}
+.footer-grid{display:grid;grid-template-columns:1.8fr 1fr 1fr 1.2fr;gap:32px}
+.footer-brand p{font-size:13px;line-height:1.8;max-width:320px;margin-top:12px;color:rgba(255,255,255,0.35)}
+footer h4{color:#fff;font-size:12px;font-weight:700;margin-bottom:16px;text-transform:uppercase;letter-spacing:1px;opacity:0.6}
+footer a{display:block;color:rgba(255,255,255,0.4);text-decoration:none;font-size:13px;padding:3px 0;transition:all 0.3s}
+footer a:hover{color:var(--primary-light);padding-left:3px}
+.footer-newsletter{display:flex;gap:8px;margin-top:14px}
+.footer-newsletter input{flex:1;padding:10px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.04);color:#fff;font-size:12px;outline:none;min-width:0}
+.footer-newsletter input:focus{border-color:var(--primary)}
+.social-icon{width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:14px;color:rgba(255,255,255,0.4);padding:0;transition:all 0.3s;text-decoration:none}
+.social-icon:hover{transform:translateY(-2px);color:#fff!important}
+.social-icon[title="Twitter"]:hover{background:#1DA1F2!important}
+.social-icon[title="LinkedIn"]:hover{background:#0A66C2!important}
+.social-icon[title="Facebook"]:hover{background:#1877F2!important}
+.social-icon[title="YouTube"]:hover{background:#FF0000!important}
+.social-icon[title="Email"]:hover{background:#6C5CE7!important}
+.footer-newsletter button{white-space:nowrap;padding:10px 16px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--primary),#8B7CF0);color:#fff;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.3s}
+.footer-newsletter button:hover{opacity:0.9}
+.footer-bottom{grid-column:1/-1;border-top:1px solid rgba(255,255,255,0.04);padding-top:20px;margin-top:20px;font-size:12px;text-align:center;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.footer-bottom-links{display:flex;gap:16px}
+.footer-bottom-links a{display:inline;font-size:11px;color:rgba(255,255,255,0.3)}
 /* RESPONSIVE */
+@media(max-width:900px){
+  .comparison table{font-size:12px}
+  .comparison th,.comparison td{padding:10px 12px}
+}
 @media(max-width:768px){
   .nav-toggle{display:block}
   .nav-links{position:fixed;top:72px;left:0;right:0;background:rgba(10,10,26,0.98);backdrop-filter:blur(24px);flex-direction:column;padding:24px 24px;gap:16px;display:flex;transform:translateY(-110%);opacity:0;transition:all 0.4s cubic-bezier(0.4,0,0.2,1);border-bottom:1px solid rgba(255,255,255,0.05)}
@@ -191,8 +209,15 @@ footer a:hover{color:var(--primary-light);padding-left:4px}
   .section{padding:60px 0}
   .section-header h2{font-size:26px}
   .calc-grid{grid-template-columns:1fr}
-  .footer-grid{grid-template-columns:1fr 1fr;gap:30px}
+  .footer-grid{grid-template-columns:1fr;gap:24px;text-align:center}
+  .footer-brand p{max-width:100%}
+  .footer-newsletter{justify-content:center}
+  .footer-bottom{flex-direction:column;text-align:center}
   .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+}
+@media(max-width:700px){
+  section .container > div[style*="grid-template-columns:1.2fr 2fr"]{grid-template-columns:1fr!important}
+  section .container > div[style*="grid-template-columns:1fr 1fr"][style*="gap:32px"]{grid-template-columns:1fr!important}
 }
 @media(max-width:600px){
   .hero-stats{grid-template-columns:1fr 1fr}
@@ -200,12 +225,11 @@ footer a:hover{color:var(--primary-light);padding-left:4px}
 }
 @media(max-width:480px){
   .hero-stats{grid-template-columns:1fr;max-width:280px}
-}
-@media(max-width:480px){
   .hero{padding:100px 0 60px}
   .hero-actions{flex-direction:column;align-items:center}
   .footer-grid{grid-template-columns:1fr;text-align:center}
   .footer-brand p{max-width:100%}
+  footer .footer-bottom-links{justify-content:center}
 }
 </style>
 </head>
@@ -336,48 +360,6 @@ footer a:hover{color:var(--primary-light);padding-left:4px}
   </div>
 </section>
 
-<section class="section" id="ad-formats" style="background:#fff">
-  <div class="container">
-    <div class="section-header">
-      <div class="label">&#9879; Ad Formats</div>
-      <h2>6 High-Performance Ad Formats</h2>
-      <p>Choose from a range of formats optimized for maximum revenue and user experience</p>
-    </div>
-    <div class="grid-3">
-      <div class="card" style="text-align:center;padding:28px 20px">
-        <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#e8f4fd,#d0ecfb);color:#2196F3;display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 12px">&#9879;</div>
-        <h3 style="font-size:15px;font-weight:700;margin-bottom:4px">Display Ads</h3>
-        <p style="font-size:13px;color:var(--gray)">Standard banner and display units in various sizes. Ideal for sidebar, header, and in-content placements with high viewability.</p>
-      </div>
-      <div class="card" style="text-align:center;padding:28px 20px">
-        <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#fef3e2,#fde8c8);color:#f39c12;display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 12px">&#128279;</div>
-        <h3 style="font-size:15px;font-weight:700;margin-bottom:4px">Banner Ads</h3>
-        <p style="font-size:13px;color:var(--gray)">Image and rich media banners with responsive sizing. Supports 728x90, 300x250, 160x600 and custom dimensions.</p>
-      </div>
-      <div class="card" style="text-align:center;padding:28px 20px">
-        <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#f3e8ff,#e8d5ff);color:#9b59b6;display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 12px">&#9783;</div>
-        <h3 style="font-size:15px;font-weight:700;margin-bottom:4px">Native Ads</h3>
-        <p style="font-size:13px;color:var(--gray)">In-content ads that match your site's look and feel. Higher engagement rates with less intrusive user experience.</p>
-      </div>
-      <div class="card" style="text-align:center;padding:28px 20px">
-        <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#e0f7fa,#c8f0f5);color:#00acc1;display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 12px">&#9851;</div>
-        <h3 style="font-size:15px;font-weight:700;margin-bottom:4px">Responsive Ads</h3>
-        <p style="font-size:13px;color:var(--gray)">Auto-adapting ad units that adjust to any screen size. Perfect for mobile-first websites and responsive layouts.</p>
-      </div>
-      <div class="card" style="text-align:center;padding:28px 20px">
-        <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#fce4ec,#fbd0db);color:#e91e63;display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 12px">&#128250;</div>
-        <h3 style="font-size:15px;font-weight:700;margin-bottom:4px">Mobile Ads</h3>
-        <p style="font-size:13px;color:var(--gray)">Mobile-optimized ad formats including sticky anchors, interstitials, and rewarded video for app-like experiences.</p>
-      </div>
-      <div class="card" style="text-align:center;padding:28px 20px">
-        <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#e8f8f5,#d0f5eb);color:#00b894;display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 12px">&#9889;</div>
-        <h3 style="font-size:15px;font-weight:700;margin-bottom:4px">Popunder + Interstitial</h3>
-        <p style="font-size:13px;color:var(--gray)">High-CPM popunder and full-screen interstitial formats. Serve once per session with user-initiated triggers.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
 <section class="section-dark">
   <div class="container">
     <div class="section-header">
@@ -420,149 +402,65 @@ footer a:hover{color:var(--primary-light);padding-left:4px}
   </div>
 </section>
 
-<section style="background:#fff;padding:80px 0">
-  <div class="container">
-    <div class="section-header">
-      <div class="label">&#128221; Publisher Documentation Center</div>
-      <h2>Everything You Need to Succeed</h2>
-      <p>Comprehensive guides, policies, and best practices for every stage of your journey</p>
-    </div>
-    <div class="grid-4">
-      <a href="/docs/getting-started.html" class="card" style="text-decoration:none;padding:0;display:block;overflow:hidden">
-        <div style="height:80px;background:linear-gradient(135deg,#6C5CE7,#A29BFE);display:flex;align-items:center;justify-content:center;font-size:32px">&#128640;</div>
-        <div style="padding:16px 18px 18px">
-          <h3 style="font-size:14px;font-weight:700;color:#333">Getting Started</h3>
-          <p style="font-size:12px;color:var(--gray);margin-top:4px;line-height:1.5">Step-by-step onboarding guide for new publishers.</p>
-        </div>
-      </a>
-      <a href="/docs/publisher-requirements.html" class="card" style="text-decoration:none;padding:0;display:block;overflow:hidden">
-        <div style="height:80px;background:linear-gradient(135deg,#00CEC9,#81ECEC);display:flex;align-items:center;justify-content:center;font-size:32px">&#128203;</div>
-        <div style="padding:16px 18px 18px">
-          <h3 style="font-size:14px;font-weight:700;color:#333">Requirements</h3>
-          <p style="font-size:12px;color:var(--gray);margin-top:4px;line-height:1.5">Eligibility criteria and content guidelines.</p>
-        </div>
-      </a>
-      <a href="/docs/ad-placement-guidelines.html" class="card" style="text-decoration:none;padding:0;display:block;overflow:hidden">
-        <div style="height:80px;background:linear-gradient(135deg,#FD79A8,#FAB1A0);display:flex;align-items:center;justify-content:center;font-size:32px">&#128204;</div>
-        <div style="padding:16px 18px 18px">
-          <h3 style="font-size:14px;font-weight:700;color:#333">Ad Placement Guide</h3>
-          <p style="font-size:12px;color:var(--gray);margin-top:4px;line-height:1.5">Best practices for positioning and formats.</p>
-        </div>
-      </a>
-      <a href="/docs/payment-policy.html" class="card" style="text-decoration:none;padding:0;display:block;overflow:hidden">
-        <div style="height:80px;background:linear-gradient(135deg,#00b894,#55EFC4);display:flex;align-items:center;justify-content:center;font-size:32px">&#128176;</div>
-        <div style="padding:16px 18px 18px">
-          <h3 style="font-size:14px;font-weight:700;color:#333">Payment Policy</h3>
-          <p style="font-size:12px;color:var(--gray);margin-top:4px;line-height:1.5">Payout schedule, methods, and minimums.</p>
-        </div>
-      </a>
-      <a href="/docs/traffic-policy.html" class="card" style="text-decoration:none;padding:0;display:block;overflow:hidden">
-        <div style="height:80px;background:linear-gradient(135deg,#0984E3,#74B9FF);display:flex;align-items:center;justify-content:center;font-size:32px">&#128200;</div>
-        <div style="padding:16px 18px 18px">
-          <h3 style="font-size:14px;font-weight:700;color:#333">Traffic Policy</h3>
-          <p style="font-size:12px;color:var(--gray);margin-top:4px;line-height:1.5">Allowed and prohibited traffic sources.</p>
-        </div>
-      </a>
-      <a href="/docs/invalid-click-policy.html" class="card" style="text-decoration:none;padding:0;display:block;overflow:hidden">
-        <div style="height:80px;background:linear-gradient(135deg,#E17055,#FAB1A0);display:flex;align-items:center;justify-content:center;font-size:32px">&#128683;</div>
-        <div style="padding:16px 18px 18px">
-          <h3 style="font-size:14px;font-weight:700;color:#333">Invalid Click Policy</h3>
-          <p style="font-size:12px;color:var(--gray);margin-top:4px;line-height:1.5">Fraud prevention and consequences.</p>
-        </div>
-      </a>
-      <a href="/docs/account-approval.html" class="card" style="text-decoration:none;padding:0;display:block;overflow:hidden">
-        <div style="height:80px;background:linear-gradient(135deg,#e84393,#FD79A8);display:flex;align-items:center;justify-content:center;font-size:32px">&#9989;</div>
-        <div style="padding:16px 18px 18px">
-          <h3 style="font-size:14px;font-weight:700;color:#333">Account Approval</h3>
-          <p style="font-size:12px;color:var(--gray);margin-top:4px;line-height:1.5">Review process and approval timeline.</p>
-        </div>
-      </a>
-      <a href="/faq.html" class="card" style="text-decoration:none;padding:0;display:block;overflow:hidden">
-        <div style="height:80px;background:linear-gradient(135deg,#6C5CE7,#00CEC9);display:flex;align-items:center;justify-content:center;font-size:32px">&#10067;</div>
-        <div style="padding:16px 18px 18px">
-          <h3 style="font-size:14px;font-weight:700;color:#333">FAQ</h3>
-          <p style="font-size:12px;color:var(--gray);margin-top:4px;line-height:1.5">Frequently asked questions answered.</p>
-        </div>
-      </a>
-    </div>
-  </div>
-</section>
-
 <section class="section-dark">
   <div class="container">
     <div class="section-header">
-      <div class="label">&#128218; Knowledge Base &amp; Blog</div>
-      <h2>Publisher Education Center</h2>
-      <p>Learn how to maximize your ad revenue with expert guides and industry insights</p>
+      <div class="label">&#128218; Publisher Resources</div>
+      <h2>Learn &amp; Grow With Us</h2>
+      <p>Expert guides, docs, and industry insights — everything you need to maximize revenue</p>
     </div>
-    <div class="grid-3">
-      <a href="/blog/how-display-ads-work.html" class="card-dark" style="text-decoration:none;display:block;padding:0;overflow:hidden">
-        <div style="height:100px;background:linear-gradient(135deg,#6C5CE7,#A29BFE);display:flex;align-items:center;justify-content:center;font-size:28px">&#9879;</div>
-        <div style="padding:18px 20px 20px">
-          <div style="display:flex;gap:6px;margin-bottom:8px"><span style="font-size:10px;color:var(--primary-light);background:rgba(108,92,231,0.15);padding:2px 8px;border-radius:12px">Advertising</span><span style="font-size:10px;color:rgba(255,255,255,0.3)">5 min read</span></div>
-          <h3 style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px">How Display Ads Work</h3>
-          <p style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6">From ad creation to impression delivery — a complete guide.</p>
+    <div style="display:grid;grid-template-columns:1.2fr 2fr;gap:32px;align-items:start">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <h4 style="color:rgba(255,255,255,0.3);font-size:11px;text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:4px">&#128221; Documentation</h4>
+        <a href="/docs/getting-started.html" class="doc-link"><span class="d-icon">&#128640;</span> Getting Started</a>
+        <a href="/docs/publisher-requirements.html" class="doc-link"><span class="d-icon">&#128203;</span> Publisher Requirements</a>
+        <a href="/docs/ad-placement-guidelines.html" class="doc-link"><span class="d-icon">&#128204;</span> Ad Placement Guide</a>
+        <a href="/docs/payment-policy.html" class="doc-link"><span class="d-icon">&#128176;</span> Payment Policy</a>
+        <a href="/docs/traffic-policy.html" class="doc-link"><span class="d-icon">&#128200;</span> Traffic Policy</a>
+        <a href="/docs/invalid-click-policy.html" class="doc-link"><span class="d-icon">&#128683;</span> Invalid Click Policy</a>
+        <a href="/docs/account-approval.html" class="doc-link"><span class="d-icon">&#9989;</span> Account Approval</a>
+        <a href="/faq.html" class="doc-link"><span class="d-icon">&#10067;</span> FAQ</a>
+      </div>
+      <div>
+        <h4 style="color:rgba(255,255,255,0.3);font-size:11px;text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:12px">&#128240; Latest From Our Blog</h4>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <a href="/blog/how-display-ads-work.html" style="display:flex;gap:14px;padding:12px;background:rgba(255,255,255,0.03);border-radius:12px;text-decoration:none;transition:all 0.3s;border:1px solid rgba(255,255,255,0.04)" onmouseover="this.style.background='rgba(108,92,231,0.08)';this.style.borderColor='rgba(108,92,231,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.borderColor='rgba(255,255,255,0.04)'">
+            <div style="width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,#6C5CE7,#A29BFE);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px">&#9879;</div>
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;gap:6px;margin-bottom:2px"><span style="font-size:10px;color:var(--primary-light);background:rgba(108,92,231,0.15);padding:1px 8px;border-radius:10px">Advertising</span><span style="font-size:10px;color:rgba(255,255,255,0.25)">5 min</span></div>
+              <h4 style="color:#fff;font-size:13px;font-weight:600;margin:0">How Display Ads Work</h4>
+              <p style="color:rgba(255,255,255,0.4);font-size:11px;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Complete guide to the display advertising ecosystem.</p>
+            </div>
+          </a>
+          <a href="/blog/cpm-vs-cpc.html" style="display:flex;gap:14px;padding:12px;background:rgba(255,255,255,0.03);border-radius:12px;text-decoration:none;transition:all 0.3s;border:1px solid rgba(255,255,255,0.04)" onmouseover="this.style.background='rgba(108,92,231,0.08)';this.style.borderColor='rgba(108,92,231,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.borderColor='rgba(255,255,255,0.04)'">
+            <div style="width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,#00CEC9,#81ECEC);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px">&#128202;</div>
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;gap:6px;margin-bottom:2px"><span style="font-size:10px;color:var(--primary-light);background:rgba(108,92,231,0.15);padding:1px 8px;border-radius:10px">Pricing</span><span style="font-size:10px;color:rgba(255,255,255,0.25)">5 min</span></div>
+              <h4 style="color:#fff;font-size:13px;font-weight:600;margin:0">CPM vs CPC Explained</h4>
+              <p style="color:rgba(255,255,255,0.4);font-size:11px;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Choose the right pricing model for your traffic.</p>
+            </div>
+          </a>
+          <a href="/blog/website-monetization-guide.html" style="display:flex;gap:14px;padding:12px;background:rgba(255,255,255,0.03);border-radius:12px;text-decoration:none;transition:all 0.3s;border:1px solid rgba(255,255,255,0.04)" onmouseover="this.style.background='rgba(108,92,231,0.08)';this.style.borderColor='rgba(108,92,231,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.borderColor='rgba(255,255,255,0.04)'">
+            <div style="width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,#FD79A8,#FDCB6E);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px">&#128176;</div>
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;gap:6px;margin-bottom:2px"><span style="font-size:10px;color:var(--primary-light);background:rgba(108,92,231,0.15);padding:1px 8px;border-radius:10px">Monetization</span><span style="font-size:10px;color:rgba(255,255,255,0.25)">6 min</span></div>
+              <h4 style="color:#fff;font-size:13px;font-weight:600;margin:0">Web Monetization Guide</h4>
+              <p style="color:rgba(255,255,255,0.4);font-size:11px;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Monetization strategies for Indian publishers.</p>
+            </div>
+          </a>
+          <a href="/blog/ad-optimization-tips.html" style="display:flex;gap:14px;padding:12px;background:rgba(255,255,255,0.03);border-radius:12px;text-decoration:none;transition:all 0.3s;border:1px solid rgba(255,255,255,0.04)" onmouseover="this.style.background='rgba(108,92,231,0.08)';this.style.borderColor='rgba(108,92,231,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.borderColor='rgba(255,255,255,0.04)'">
+            <div style="width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,#0984E3,#74B9FF);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px">&#128736;</div>
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;gap:6px;margin-bottom:2px"><span style="font-size:10px;color:var(--primary-light);background:rgba(108,92,231,0.15);padding:1px 8px;border-radius:10px">Optimization</span><span style="font-size:10px;color:rgba(255,255,255,0.25)">5 min</span></div>
+              <h4 style="color:#fff;font-size:13px;font-weight:600;margin:0">Ad Optimization Tips</h4>
+              <p style="color:rgba(255,255,255,0.4);font-size:11px;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Increase RPM without sacrificing user experience.</p>
+            </div>
+          </a>
         </div>
-      </a>
-      <a href="/blog/cpm-vs-cpc.html" class="card-dark" style="text-decoration:none;display:block;padding:0;overflow:hidden">
-        <div style="height:100px;background:linear-gradient(135deg,#00CEC9,#81ECEC);display:flex;align-items:center;justify-content:center;font-size:28px">&#128202;</div>
-        <div style="padding:18px 20px 20px">
-          <div style="display:flex;gap:6px;margin-bottom:8px"><span style="font-size:10px;color:var(--primary-light);background:rgba(108,92,231,0.15);padding:2px 8px;border-radius:12px">Pricing</span><span style="font-size:10px;color:rgba(255,255,255,0.3)">5 min read</span></div>
-          <h3 style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px">CPM vs CPC Explained</h3>
-          <p style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6">Choose the right pricing model for your traffic profile.</p>
+        <div style="text-align:right;margin-top:12px">
+          <a href="/blog/" class="btn btn-primary btn-sm">View All Articles &#8594;</a>
         </div>
-      </a>
-      <a href="/blog/website-monetization-guide.html" class="card-dark" style="text-decoration:none;display:block;padding:0;overflow:hidden">
-        <div style="height:100px;background:linear-gradient(135deg,#FD79A8,#FDCB6E);display:flex;align-items:center;justify-content:center;font-size:28px">&#128176;</div>
-        <div style="padding:18px 20px 20px">
-          <div style="display:flex;gap:6px;margin-bottom:8px"><span style="font-size:10px;color:var(--primary-light);background:rgba(108,92,231,0.15);padding:2px 8px;border-radius:12px">Monetization</span><span style="font-size:10px;color:rgba(255,255,255,0.3)">6 min read</span></div>
-          <h3 style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px">Web Monetization Guide</h3>
-          <p style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6">Complete strategies for Indian publishers.</p>
-        </div>
-      </a>
-      <a href="/blog/ad-optimization-tips.html" class="card-dark" style="text-decoration:none;display:block;padding:0;overflow:hidden">
-        <div style="height:100px;background:linear-gradient(135deg,#0984E3,#74B9FF);display:flex;align-items:center;justify-content:center;font-size:28px">&#128736;</div>
-        <div style="padding:18px 20px 20px">
-          <div style="display:flex;gap:6px;margin-bottom:8px"><span style="font-size:10px;color:var(--primary-light);background:rgba(108,92,231,0.15);padding:2px 8px;border-radius:12px">Optimization</span><span style="font-size:10px;color:rgba(255,255,255,0.3)">5 min read</span></div>
-          <h3 style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px">Ad Optimization Tips</h3>
-          <p style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6">Increase RPM without sacrificing user experience.</p>
-        </div>
-      </a>
-      <a href="/blog/increase-revenue.html" class="card-dark" style="text-decoration:none;display:block;padding:0;overflow:hidden">
-        <div style="height:100px;background:linear-gradient(135deg,#E17055,#FAB1A0);display:flex;align-items:center;justify-content:center;font-size:28px">&#128200;</div>
-        <div style="padding:18px 20px 20px">
-          <div style="display:flex;gap:6px;margin-bottom:8px"><span style="font-size:10px;color:var(--primary-light);background:rgba(108,92,231,0.15);padding:2px 8px;border-radius:12px">Revenue</span><span style="font-size:10px;color:rgba(255,255,255,0.3)">7 min read</span></div>
-          <h3 style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px">Increase Revenue</h3>
-          <p style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6">Grow ad revenue by 50%+ with proven strategies.</p>
-        </div>
-      </a>
-      <a href="/blog/publisher-best-practices.html" class="card-dark" style="text-decoration:none;display:block;padding:0;overflow:hidden">
-        <div style="height:100px;background:linear-gradient(135deg,#00b894,#55EFC4);display:flex;align-items:center;justify-content:center;font-size:28px">&#9989;</div>
-        <div style="padding:18px 20px 20px">
-          <div style="display:flex;gap:6px;margin-bottom:8px"><span style="font-size:10px;color:var(--primary-light);background:rgba(108,92,231,0.15);padding:2px 8px;border-radius:12px">Best Practices</span><span style="font-size:10px;color:rgba(255,255,255,0.3)">6 min read</span></div>
-          <h3 style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px">Publisher Best Practices</h3>
-          <p style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6">Long-term sustainability for serious publishers.</p>
-        </div>
-      </a>
-      <a href="/blog/programmatic-advertising-basics.html" class="card-dark" style="text-decoration:none;display:block;padding:0;overflow:hidden">
-        <div style="height:100px;background:linear-gradient(135deg,#6C5CE7,#00CEC9);display:flex;align-items:center;justify-content:center;font-size:28px">&#9881;</div>
-        <div style="padding:18px 20px 20px">
-          <div style="display:flex;gap:6px;margin-bottom:8px"><span style="font-size:10px;color:var(--primary-light);background:rgba(108,92,231,0.15);padding:2px 8px;border-radius:12px">Programmatic</span><span style="font-size:10px;color:rgba(255,255,255,0.3)">6 min read</span></div>
-          <h3 style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px">Programmatic Advertising</h3>
-          <p style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6">RTB, SSP, DSP, and automated ad buying explained.</p>
-        </div>
-      </a>
-      <a href="/blog/traffic-monetization-tips.html" class="card-dark" style="text-decoration:none;display:block;padding:0;overflow:hidden">
-        <div style="height:100px;background:linear-gradient(135deg,#e84393,#FD79A8);display:flex;align-items:center;justify-content:center;font-size:28px">&#128640;</div>
-        <div style="padding:18px 20px 20px">
-          <div style="display:flex;gap:6px;margin-bottom:8px"><span style="font-size:10px;color:var(--primary-light);background:rgba(108,92,231,0.15);padding:2px 8px;border-radius:12px">Traffic Tips</span><span style="font-size:10px;color:rgba(255,255,255,0.3)">5 min read</span></div>
-          <h3 style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px">Traffic Monetization Tips</h3>
-          <p style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6">Monetize every visitor segment effectively.</p>
-        </div>
-      </a>
-    </div>
-    <div style="text-align:center;margin-top:28px">
-      <a href="/blog/" class="btn btn-primary btn-sm">View All Articles &#8594;</a>
+      </div>
     </div>
   </div>
 </section>
@@ -570,70 +468,64 @@ footer a:hover{color:var(--primary-light);padding-left:4px}
 <section class="section-dark" style="background:linear-gradient(135deg,#0a0a1a 0%,#150a2e 50%,#0a0a1a 100%)">
   <div class="container">
     <div class="section-header">
-      <div class="label">&#128197; Revenue Estimator</div>
-      <h2>Calculate Your Monthly Earnings</h2>
-      <p>See how much you can earn with Indranex AdNet based on your traffic</p>
+      <div class="label">&#128197; Revenue Tools</div>
+      <h2>Estimate &amp; Compare Your Earnings</h2>
+      <p>See how much you can earn and how we stack up against other networks</p>
     </div>
-    <div style="max-width:640px;margin:0 auto;background:rgba(255,255,255,0.04);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:36px;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
-      <div class="calc-grid">
-        <div class="calc-form">
-          <div class="form-group">
-            <label>Monthly Pageviews</label>
-            <input type="number" id="calcTraffic" value="100000" min="1000" oninput="calcRevenue()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#fff;border-radius:10px;padding:12px 16px;font-size:15px;width:100%;outline:none">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start">
+      <div style="background:rgba(255,255,255,0.04);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:36px;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
+        <div class="calc-grid" style="max-width:100%">
+          <div class="calc-form">
+            <div class="form-group">
+              <label>Monthly Pageviews</label>
+              <input type="number" id="calcTraffic" value="100000" min="1000" oninput="calcRevenue()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#fff;border-radius:10px;padding:12px 16px;font-size:15px;width:100%;outline:none">
+            </div>
+            <div class="form-group">
+              <label>Traffic Region</label>
+              <select id="calcRegion" onchange="calcRevenue()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#fff;border-radius:10px;padding:12px 16px;font-size:14px;width:100%;outline:none;cursor:pointer">
+                <option value="0.5">India (mixed)</option>
+                <option value="1.5">US / UK / Canada</option>
+                <option value="0.8">Europe</option>
+                <option value="0.3">Southeast Asia</option>
+                <option value="0.2">Rest of World</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Ad Formats Used</label>
+              <select id="calcFormats" onchange="calcRevenue()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#fff;border-radius:10px;padding:12px 16px;font-size:14px;width:100%;outline:none;cursor:pointer">
+                <option value="1">Banners only</option>
+                <option value="1.5" selected>Banners + Popunders</option>
+                <option value="2">All formats (recommended)</option>
+              </select>
+            </div>
           </div>
-          <div class="form-group">
-            <label>Traffic Region</label>
-            <select id="calcRegion" onchange="calcRevenue()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#fff;border-radius:10px;padding:12px 16px;font-size:14px;width:100%;outline:none;cursor:pointer">
-              <option value="0.5">India (mixed)</option>
-              <option value="1.5">US / UK / Canada</option>
-              <option value="0.8">Europe</option>
-              <option value="0.3">Southeast Asia</option>
-              <option value="0.2">Rest of World</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Ad Formats Used</label>
-            <select id="calcFormats" onchange="calcRevenue()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#fff;border-radius:10px;padding:12px 16px;font-size:14px;width:100%;outline:none;cursor:pointer">
-              <option value="1">Banners only</option>
-              <option value="1.5" selected>Banners + Popunders</option>
-              <option value="2">All formats (recommended)</option>
-            </select>
-          </div>
-        </div>
-        <div class="calc-result">
-          <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:8px">Estimated Monthly Revenue</div>
-          <div class="big" id="calcResult">$75.00</div>
-          <div style="margin-top:12px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-            <span style="font-size:11px;color:rgba(255,255,255,0.3);background:rgba(108,92,231,0.12);padding:4px 12px;border-radius:20px">70% Rev Share</span>
-            <span style="font-size:11px;color:rgba(255,255,255,0.3);background:rgba(0,206,201,0.1);padding:4px 12px;border-radius:20px">NET-30 Payouts</span>
+          <div class="calc-result">
+            <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:8px">Estimated Monthly Revenue</div>
+            <div class="big" id="calcResult">$75.00</div>
+            <div style="margin-top:12px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+              <span style="font-size:11px;color:rgba(255,255,255,0.3);background:rgba(108,92,231,0.12);padding:4px 12px;border-radius:20px">70% Rev Share</span>
+              <span style="font-size:11px;color:rgba(255,255,255,0.3);background:rgba(0,206,201,0.1);padding:4px 12px;border-radius:20px">NET-30 Payouts</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</section>
-
-<section class="section-dark" id="pricing">
-  <div class="container">
-    <div class="section-header">
-      <div class="label">&#36; Simple Pricing</div>
-      <h2>Transparent Plans for Every Publisher</h2>
-      <p>No hidden fees. No surprise charges. Start free and scale as you grow.</p>
-    </div>
-    <div class="comparison">
-      <table>
-        <thead><tr><th>Feature</th><th>Indranex AdNet <span class="badge-best">Best</span></th><th>Other Networks</th></tr></thead>
-        <tbody>
-          <tr><td>Revenue Share</td><td class="check">70%<span class="bar"><span class="bar-track"><span class="bar-fill" style="width:70%"></span></span>70%</span></td><td class="cross">50-60%<span class="bar"><span class="bar-track"><span class="bar-fill" style="width:55%;background:rgba(255,255,255,0.15)"></span></span>55%</span></td></tr>
-          <tr><td>Minimum Payout</td><td class="check">$50 <span style="color:rgba(255,255,255,0.3);font-weight:400;font-size:11px">lowest</span></td><td class="cross">$100-$500</td></tr>
-          <tr><td>Payment Methods</td><td class="check">Bank, PayPal, Crypto</td><td class="cross">Limited options</td></tr>
-          <tr><td>Ad Formats</td><td class="check">6 formats</td><td class="cross">2-3 formats</td></tr>
-          <tr><td>Real-Time Analytics</td><td class="check">Live dashboard</td><td class="cross">Delayed reports</td></tr>
-          <tr><td>Integration Time</td><td class="check">Under 5 minutes</td><td class="cross">Days or weeks</td></tr>
-          <tr><td>Fraud Protection</td><td class="check">AI-powered</td><td class="cross">Basic only</td></tr>
-          <tr><td>Dedicated Support</td><td class="check">48-hour response</td><td class="cross">Ticket-only</td></tr>
-        </tbody>
-      </table>
+      <div>
+        <div class="comparison">
+          <table>
+            <thead><tr><th>Feature</th><th>Indranex AdNet <span class="badge-best">Best</span></th><th>Other Networks</th></tr></thead>
+            <tbody>
+              <tr><td>Revenue Share</td><td class="check">70%<span class="bar"><span class="bar-track"><span class="bar-fill" style="width:70%"></span></span>70%</span></td><td class="cross">50-60%<span class="bar"><span class="bar-track"><span class="bar-fill" style="width:55%;background:rgba(255,255,255,0.15)"></span></span>55%</span></td></tr>
+              <tr><td>Minimum Payout</td><td class="check">$50 <span style="color:rgba(255,255,255,0.3);font-weight:400;font-size:11px">lowest</span></td><td class="cross">$100-$500</td></tr>
+              <tr><td>Payment Methods</td><td class="check">Bank, PayPal, Crypto</td><td class="cross">Limited options</td></tr>
+              <tr><td>Ad Formats</td><td class="check">6 formats</td><td class="cross">2-3 formats</td></tr>
+              <tr><td>Real-Time Analytics</td><td class="check">Live dashboard</td><td class="cross">Delayed reports</td></tr>
+              <tr><td>Integration Time</td><td class="check">Under 5 minutes</td><td class="cross">Days or weeks</td></tr>
+              <tr><td>Fraud Protection</td><td class="check">AI-powered</td><td class="cross">Basic only</td></tr>
+              <tr><td>Dedicated Support</td><td class="check">48-hour response</td><td class="cross">Ticket-only</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -840,6 +732,10 @@ footer a:hover{color:var(--primary-light);padding-left:4px}
       <div class="footer-brand">
         <a href="/" class="logo"><span class="logo-icon"><img src="https://i.ibb.co/zVsdtWK9/Chat-GPT-Image-Jun-24-2026-10-56-29-AM.png" alt="Indranex AdNet"></span>Indranex AdNet</a>
         <p>Full-featured private ad network for publishers and advertisers. Popunders, banners, native, video &amp; more. Real-time analytics, instant integration, reliable payouts.</p>
+        <div class="footer-newsletter">
+          <input type="email" placeholder="your@email.com" aria-label="Email for updates">
+          <button onclick="alert('Coming soon!')">Subscribe</button>
+        </div>
       </div>
       <div>
         <h4>Platform</h4>
@@ -849,7 +745,7 @@ footer a:hover{color:var(--primary-light);padding-left:4px}
         <a href="/demo/">Live Demo</a>
       </div>
       <div>
-        <h4>Documentation</h4>
+        <h4>Docs</h4>
         <a href="/docs/getting-started.html">Getting Started</a>
         <a href="/docs/payment-policy.html">Payment Policy</a>
         <a href="/docs/ad-placement-guidelines.html">Ad Placement Guide</a>
@@ -857,34 +753,27 @@ footer a:hover{color:var(--primary-light);padding-left:4px}
         <a href="/faq.html">FAQ</a>
       </div>
       <div>
-        <h4>Company</h4>
+        <h4>Connect</h4>
         <a href="/about.html">About Us</a>
         <a href="/contact.html">Contact</a>
         <a href="/blog/">Blog</a>
-        <a href="/privacy.html">Privacy Policy</a>
-        <a href="/terms.html">Terms of Service</a>
-        <a href="/cookie-policy.html">Cookie Policy</a>
-      </div>
-      <div>
-        <h4>Follow Us</h4>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px">
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
           <a href="https://twitter.com/indranexadnet" target="_blank" rel="noopener" class="social-icon" title="Twitter">&#120143;</a>
           <a href="https://linkedin.com/company/indranexadnet" target="_blank" rel="noopener" class="social-icon" title="LinkedIn">&#10005;</a>
           <a href="https://facebook.com/indranexadnet" target="_blank" rel="noopener" class="social-icon" title="Facebook">&#119817;</a>
           <a href="https://youtube.com/@indranexadnet" target="_blank" rel="noopener" class="social-icon" title="YouTube">&#9654;</a>
           <a href="mailto:support@indranexadnet.com" class="social-icon" title="Email">&#9993;</a>
         </div>
-        <style>
-        .social-icon{width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:14px;color:rgba(255,255,255,0.4);padding:0;transition:all 0.3s;text-decoration:none}
-        .social-icon:hover{transform:translateY(-2px);color:#fff!important}
-        .social-icon[title="Twitter"]:hover{background:#1DA1F2!important}
-        .social-icon[title="LinkedIn"]:hover{background:#0A66C2!important}
-        .social-icon[title="Facebook"]:hover{background:#1877F2!important}
-        .social-icon[title="YouTube"]:hover{background:#FF0000!important}
-        .social-icon[title="Email"]:hover{background:#6C5CE7!important}
-        </style>
       </div>
-      <div class="footer-bottom">&copy; 2026 Indranex AdNet. All rights reserved. &bull; Built for publishers, backed by transparency.</div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Indranex AdNet. All rights reserved. &bull; Built for publishers, backed by transparency.</span>
+        <div class="footer-bottom-links">
+          <a href="/privacy.html">Privacy</a>
+          <a href="/terms.html">Terms</a>
+          <a href="/cookie-policy.html">Cookies</a>
+          <a href="/disclaimer.html">Disclaimer</a>
+        </div>
+      </div>
     </div>
   </div>
 </footer>
