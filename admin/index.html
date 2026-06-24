@@ -132,6 +132,8 @@ tr:hover td{background:rgba(108,92,231,0.06)}
 
 /* RESPONSIVE */
 @media(max-width:768px){.sidebar{display:none;position:fixed;z-index:200;width:260px}.sidebar.open{display:flex}.main{margin-left:0}.content{padding:14px}.stats-grid{grid-template-columns:repeat(2,1fr)}}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+@media(max-width:768px){.table-wrap table{font-size:12px}.table-wrap th,.table-wrap td{padding:8px 10px}}
 </style>
 </head>
 <body>
@@ -161,6 +163,7 @@ tr:hover td{background:rgba(108,92,231,0.06)}
       <a href="#" data-tab="ads"><span>&#9879;</span> Ad Campaigns</a>
       <a href="#" data-tab="publishers"><span>&#9781;</span> Publishers</a>
       <a href="#" data-tab="advertisers"><span>&#9881;</span> Advertisers</a>
+      <a href="#" data-tab="verification"><span>&#9989;</span> Payment Verification</a>
       <a href="#" data-tab="analytics"><span>&#9783;</span> Analytics</a>
       <a href="#" data-tab="payments"><span>&#36;</span> Payments</a>
       <a href="#" data-tab="settings"><span>&#9881;</span> Settings</a>
@@ -200,6 +203,15 @@ tr:hover td{background:rgba(108,92,231,0.06)}
       <div class="tab-content" id="tabAdvertisers">
         <div class="card"><div class="card-head"><h3>Advertisers</h3></div><div class="card-body" id="advertisersList"><div class="empty-state">Loading...</div></div></div>
       </div>
+      <div class="tab-content" id="tabVerification">
+  <div class="card"><div class="card-head"><h3>&#9989; Pending Advertiser Deposits</h3></div><div class="card-body" id="pendingDeposits"><div class="empty-state">Loading...</div></div></div>
+  <div class="card"><div class="card-head"><h3>&#36; Reconciliation</h3></div><div class="card-body" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+    <p style="color:rgba(255,255,255,0.6);font-size:13px;flex:1">Auto-deduct wallet balances based on unprocessed impressions/clicks.</p>
+    <button class="btn btn-primary" onclick="runReconciliation()">Run Reconciliation</button>
+    <div id="reconResult" style="width:100%;font-size:13px;color:var(--success);display:none"></div>
+  </div></div>
+  <div class="card"><div class="card-head"><h3>&#128196; All Payment History</h3></div><div class="card-body" id="allPaymentHistory"><div class="empty-state">Loading...</div></div></div>
+</div>
       <div class="tab-content" id="tabAnalytics">
         <div class="stats-grid">
           <div class="stat-card"><div class="stat-bar" style="background:#2196F3"></div><div class="stat-label">Impressions</div><div class="stat-value mono" id="anaImps">0</div></div>
@@ -319,11 +331,68 @@ document.querySelectorAll('.sidebar nav a[data-tab]').forEach(function(a){
     document.getElementById('pageTitle').textContent=a.textContent.trim();
     if(t==='analytics')loadAnalytics();
     if(t==='payments')loadWithdrawals();
+    if(t==='verification'){loadPendingDeposits();loadAllPaymentHistory()}
     if(t==='advertisers')loadAdvertisers();
   });
 });
 
-function initApp(){loadOverview();loadAds();loadPublishers()}
+function initApp(){loadOverview();loadAds();loadPublishers();loadPendingDeposits();loadAllPaymentHistory()}
+
+function loadPendingDeposits(){
+  db.ref('payments/advertisers').once('value',function(s){
+    var all=s.val()||{};var h='';var hasAny=false;
+    var keys=Object.keys(all);
+    if(keys.length){
+      h='<div class="table-wrap"><table><thead><tr><th>Advertiser</th><th>Amount</th><th>Method</th><th>Date</th><th>Status</th><th>Action</th></tr></thead><tbody>';
+      keys.forEach(function(advKey){
+        Object.keys(all[advKey]).forEach(function(txnId){
+          var t=all[advKey][txnId];
+          if(t.status==='pending'){
+            hasAny=true;
+            h+='<tr><td>'+advKey+'</td><td><strong>$'+parseFloat(t.amount).toFixed(2)+'</strong></td><td>'+(t.method||'-')+'</td><td>'+new Date(t.createdAt).toLocaleDateString()+'</td>';
+            h+='<td><span class="badge badge-inactive">pending</span></td>';
+            h+='<td><button class="btn btn-success btn-sm" onclick="approveDeposit(\''+advKey+'\',\''+txnId+'\','+t.amount+')">Approve</button> <button class="btn btn-danger btn-sm" onclick="rejectDeposit(\''+advKey+'\',\''+txnId+'\')">Reject</button></td></tr>';
+          }
+        });
+      });
+      h+='</tbody></table></div>';
+      if(!hasAny)h='<div class="empty-state">No pending deposits.</div>';
+    } else h='<div class="empty-state">No payment data.</div>';
+    document.getElementById('pendingDeposits').innerHTML=h;
+  });
+}
+
+function loadAllPaymentHistory(){
+  db.ref('payments/advertisers').once('value',function(s){
+    var all=s.val()||{};var h='';var hasAny=false;
+    var keys=Object.keys(all);
+    if(keys.length){
+      h='<div class="table-wrap"><table><thead><tr><th>Advertiser</th><th>Amount</th><th>Type</th><th>Status</th><th>Date</th></tr></thead><tbody>';
+      keys.forEach(function(advKey){
+        Object.keys(all[advKey]).forEach(function(txnId){
+          var t=all[advKey][txnId];hasAny=true;
+          var statusClass=t.status==='completed'||t.status==='paid'?'active':t.status==='pending'?'inactive':'';
+          h+='<tr><td>'+advKey+'</td><td>$'+parseFloat(t.amount).toFixed(2)+'</td><td>'+(t.type||'deposit')+'</td><td><span class="badge badge-'+statusClass+'">'+(t.status||'completed')+'</span></td><td>'+new Date(t.createdAt).toLocaleDateString()+'</td></tr>';
+        });
+      });
+      h+='</tbody></table></div>';
+      if(!hasAny)h='<div class="empty-state">No payment history.</div>';
+    } else h='<div class="empty-state">No payment history.</div>';
+    document.getElementById('allPaymentHistory').innerHTML=h;
+  });
+}
+
+function approveDeposit(advKey,txnId,amt){
+  if(!confirm('Approve $'+parseFloat(amt).toFixed(2)+' deposit for '+advKey+'?'))return;
+  db.ref('payments/advertisers/'+advKey+'/'+txnId+'/status').set('completed');
+  db.ref('advertisers/'+advKey+'/balance').transaction(function(b){return (parseFloat(b)||0)+parseFloat(amt)});
+  toast('Deposit approved!');loadPendingDeposits();loadAllPaymentHistory();
+}
+
+function rejectDeposit(advKey,txnId){
+  if(!confirm('Reject this deposit request?'))return;
+  db.ref('payments/advertisers/'+advKey+'/'+txnId+'/status').set('rejected').then(function(){toast('Deposit rejected.');loadPendingDeposits();loadAllPaymentHistory()});
+}
 
 function loadOverview(){
   db.ref('ads').once('value',function(s){var ads=s.val()||{};var k=Object.keys(ads);document.getElementById('statTotalAds').textContent=k.length;document.getElementById('statActiveAds').textContent=k.filter(function(x){return ads[x].status==='active'}).length});
@@ -551,14 +620,87 @@ function rejectWithdraw(sid,wkId){
 
 /* ADJUST ADVERTISER WALLET */
 function adjustWallet(key){
-  var amt=prompt('Enter amount to ADD (positive) or DEDUCT (negative) for '+key+':\n(e.g. 50 or -20)');
-  if(amt===null)return;
-  var num=parseFloat(amt);
-  if(isNaN(num)||num===0){toast('Enter a valid number');return}
-  db.ref('advertisers/'+key+'/balance').transaction(function(b){return Math.max(0,(parseFloat(b)||0)+num)});
-  db.ref('payments/advertisers/'+key).push({amount:Math.abs(num),type:num>0?'admin_deposit':'admin_deduction',status:'completed',createdAt:Date.now()});
-  toast('Wallet updated for '+key);
-  loadAdvertisers();
+  if(!document.getElementById('walletModal')){
+    var m=document.createElement('div');m.id='walletModal';m.className='modal-overlay';
+    m.innerHTML='<div class="modal" style="max-width:400px"><h3>Adjust Wallet &mdash; <span id="walletAdvKey">'+key+'</span></h3>'
+      +'<div class="form-group"><label>Amount</label><input type="number" id="walletAmount" placeholder="Positive to add, negative to deduct" step="0.01"></div>'
+      +'<div class="form-group"><label>Reason</label><input id="walletReason" placeholder="e.g. Manual deposit"></div>'
+      +'<div class="modal-actions"><button class="btn btn-outline" onclick="closeModal(\'walletModal\')">Cancel</button><button class="btn btn-success" onclick="saveWalletAdjust()">Save</button></div>'
+      +'<div id="walletError" style="color:var(--danger);font-size:13px;display:none;margin-top:10px"></div></div>';
+    document.body.appendChild(m);
+  }
+  document.getElementById('walletAdvKey').textContent=key;
+  document.getElementById('walletAmount').value='';
+  document.getElementById('walletReason').value='';
+  document.getElementById('walletModal').dataset.advKey=key;
+  document.getElementById('walletModal').classList.add('active');
+}
+function saveWalletAdjust(){
+  var key=document.getElementById('walletModal').dataset.advKey;
+  var amt=parseFloat(document.getElementById('walletAmount').value);
+  var reason=document.getElementById('walletReason').value.trim()||'admin adjustment';
+  var errEl=document.getElementById('walletError');
+  if(isNaN(amt)||amt===0){errEl.textContent='Enter a valid non-zero amount.';errEl.style.display='block';return}
+  errEl.style.display='none';
+  db.ref('advertisers/'+key+'/balance').transaction(function(b){return Math.max(0,(parseFloat(b)||0)+amt)});
+  db.ref('payments/advertisers/'+key).push({
+    amount:Math.abs(amt),type:amt>0?'admin_deposit':'admin_deduction',
+    reason:reason,status:'completed',createdAt:Date.now()
+  });
+  toast('Wallet updated for '+key+': $'+(amt>0?'+':'')+amt.toFixed(2));
+  closeModal('walletModal');loadAdvertisers();
+}
+
+function runReconciliation(){
+  document.getElementById('reconResult').style.display='none';
+  var btn=document.querySelector('#tabVerification .btn-primary');
+  btn.disabled=true;btn.textContent='Processing...';
+  db.ref('analytics/impressions').once('value',function(ims){
+    var impData=ims.val()||{};
+    db.ref('analytics/clicks').once('value',function(cls){
+      var clkData=cls.val()||{};
+      db.ref('ads').once('value',function(ads){
+        var adsData=ads.val()||{};
+        var advCosts={};
+        Object.keys(adsData).forEach(function(adId){
+          var ad=adsData[adId];
+          if(!ad.advertiser)return;
+          var advKey=ad.advertiser;
+          if(!advCosts[advKey])advCosts[advKey]={imps:0,clks:0,cost:0};
+          Object.keys(impData).forEach(function(k){
+            if(impData[k].adId===adId)advCosts[advKey].imps++;
+          });
+          Object.keys(clkData).forEach(function(k){
+            if(clkData[k].adId===adId)advCosts[advKey].clks++;
+          });
+        });
+        var totalCost=0;
+        Object.keys(advCosts).forEach(function(ak){
+          var c=advCosts[ak];
+          c.cost=(c.imps*0.0005)+(c.clks*0.01);
+          totalCost+=c.cost;
+        });
+        // Deduct from wallets
+        var promises=[];
+        Object.keys(advCosts).forEach(function(ak){
+          var c=advCosts[ak];
+          if(c.cost>0){
+            promises.push(db.ref('advertisers/'+ak+'/balance').transaction(function(b){
+              return Math.max(0,(parseFloat(b)||0)-c.cost);
+            }));
+          }
+        });
+        Promise.all(promises).then(function(){
+          var el=document.getElementById('reconResult');
+          el.style.display='block';
+          var advCount=Object.keys(advCosts).length;
+          el.innerHTML='&#10003; Reconciliation complete. Processed $'+totalCost.toFixed(2)+' from '+advCount+' advertisers.';
+          el.style.color='var(--success)';
+          btn.disabled=false;btn.textContent='Run Reconciliation';
+        });
+      });
+    });
+  });
 }
 
 function changePwd(){

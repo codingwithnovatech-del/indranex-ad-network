@@ -74,9 +74,11 @@ tr:hover td{background:#f5f3ff}
 .time-btn{padding:6px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.5);font-size:12px;cursor:pointer;transition:all 0.2s}
 .time-btn:hover,.time-btn.active{background:rgba(108,92,231,0.2);color:#fff;border-color:var(--primary)}
 
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
 footer{padding:24px 0;text-align:center;border-top:1px solid #eee;color:var(--gray);font-size:12px;margin-top:24px}
 footer a{color:var(--primary)}
-@media(max-width:600px){.stats-row{grid-template-columns:repeat(2,1fr)}.chart-bar-label{min-width:80px;font-size:12px}}
+@media(max-width:600px){.stats-row{grid-template-columns:repeat(2,1fr)}.chart-bar-label{min-width:80px;font-size:12px}.time-btn{padding:4px 10px;font-size:11px}}
 </style>
 </head>
 <body>
@@ -91,8 +93,14 @@ footer a{color:var(--primary)}
         <a href="/advertisers/">Advertisers</a>
       </nav>
     </div>
-    <h1>Real-Time Analytics</h1>
-    <p>Live performance data across all campaigns and publishers</p>
+    <h1>Analytics Dashboard</h1>
+    <p>Performance data across all campaigns and publishers</p>
+    <div class="time-range" style="margin-top:12px">
+      <button class="time-btn" data-range="today" onclick="setTimeRange('today',this)">Today</button>
+      <button class="time-btn active" data-range="7d" onclick="setTimeRange('7d',this)">7 Days</button>
+      <button class="time-btn" data-range="30d" onclick="setTimeRange('30d',this)">30 Days</button>
+      <button class="time-btn" data-range="all" onclick="setTimeRange('all',this)">All Time</button>
+    </div>
   </div>
 </div>
 
@@ -121,11 +129,35 @@ footer a{color:var(--primary)}
 var FIREBASE_CONFIG={apiKey:"AIzaSyBUqHKr6vuXqKr5cWMkSM5oTxG1LgPzFEw",authDomain:"indranex-ads-network.firebaseapp.com",databaseURL:"https://indranex-ads-network-default-rtdb.firebaseio.com",projectId:"indranex-ads-network",storageBucket:"indranex-ads-network.firebasestorage.app",messagingSenderId:"665770384201",appId:"1:665770384201:web:0126de06a6919e9f1e1898"};
 if(!firebase.apps.length){firebase.initializeApp(FIREBASE_CONFIG)}var db=firebase.database();
 
+var currentTimeRange='7d';
+function setTimeRange(range,btn){
+  document.querySelectorAll('.time-btn').forEach(function(b){b.classList.remove('active')});
+  if(btn)btn.classList.add('active');
+  currentTimeRange=range;
+  loadDashboard();
+}
+
 function loadDashboard(){
-  var impsP=db.ref('analytics/impressions').once('value');
-  var clksP=db.ref('analytics/clicks').once('value');
+  var now=Date.now();
+  var rangeStart=0;
+  if(currentTimeRange==='today')rangeStart=now-86400000;
+  else if(currentTimeRange==='7d')rangeStart=now-604800000;
+  else if(currentTimeRange==='30d')rangeStart=now-2592000000;
+
+  var impsP,clksP;
+  if(rangeStart>0){
+    impsP=db.ref('analytics/impressions').orderByChild('timestamp').startAt(rangeStart).once('value');
+    clksP=db.ref('analytics/clicks').orderByChild('timestamp').startAt(rangeStart).once('value');
+  } else {
+    impsP=db.ref('analytics/impressions').once('value');
+    clksP=db.ref('analytics/clicks').once('value');
+  }
   var adsP=db.ref('ads').once('value');
   var pubsP=db.ref('publishers').once('value');
+
+  // Loading states
+  document.getElementById('chartBody').innerHTML='<div class="loading"><div class="spinner"></div>Loading analytics...</div>';
+  document.getElementById('publisherBody').innerHTML='<div class="loading"><div class="spinner"></div>Loading publishers...</div>';
 
   Promise.all([impsP,clksP,adsP,pubsP]).then(function(results){
     var impData=results[0].val()||{};var clkData=results[1].val()||{};var adsData=results[2].val()||{};var pubsData=results[3].val()||{};
@@ -139,12 +171,23 @@ function loadDashboard(){
     var active=0;adKeys.forEach(function(k){if(ads[k].status==='active')active++});
     document.getElementById('activeAds').textContent=active;
 
-    // animate bars
     var maxVal=Math.max(imps,clks,1);
     document.getElementById('impsBar').style.width=(imps/maxVal*100)+'%';
     document.getElementById('clicksBar').style.width=(clks/maxVal*100)+'%';
 
-    // Campaign performance
+    // Time-series chart: daily breakdown
+    var days=[];
+    var dayCount=currentTimeRange==='today'?1:currentTimeRange==='30d'?30:currentTimeRange==='7d'?7:30;
+    for(var i=dayCount-1;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);days.push(d.toISOString().split('T')[0])}
+    var dayData={};days.forEach(function(d){dayData[d]={imps:0,clks:0}});
+    Object.values(impData).forEach(function(v){
+      if(v&&v.timestamp){var day=(typeof v.timestamp==='number'?new Date(v.timestamp):new Date(v.timestamp)).toISOString().split('T')[0];if(dayData[day]!==undefined)dayData[day].imps++}
+    });
+    Object.values(clkData).forEach(function(v){
+      if(v&&v.timestamp){var day=(typeof v.timestamp==='number'?new Date(v.timestamp):new Date(v.timestamp)).toISOString().split('T')[0];if(dayData[day]!==undefined)dayData[day].clks++}
+    });
+
+    // Campaign performance chart
     if(adKeys.length){
       var promises=[];var adMap={};
       adKeys.forEach(function(k){
@@ -166,26 +209,82 @@ function loadDashboard(){
           html+='<div class="chart-bar-row"><div class="chart-bar-label" title="'+(ad.title||k.substring(0,10))+'">'+(ad.title||k.substring(0,10))+'</div><div class="chart-bar-track"><div class="chart-bar-fill" style="width:'+pct+'%;background:'+colors[i%colors.length]+'">'+aimp+'</div></div><div class="chart-bar-value">'+aclk+' clicks &bull; '+(aimp>0?((aclk/aimp)*100).toFixed(1):'0')+'% CTR</div></div>';
         });
         html+='</div>';
+
+        // Time-series chart
+        var maxD=1;days.forEach(function(d){if(dayData[d].imps>maxD)maxD=dayData[d].imps});
+        html+='<h4 style="margin:24px 0 12px;font-size:14px;font-weight:600">Daily '+(currentTimeRange==='today'?'Hourly':'')+' Performance</h4>';
+        html+='<div style="overflow-x:auto"><div style="display:flex;align-items:end;gap:6px;height:100px;min-width:'+Math.max(days.length*24,200)+'px;padding:10px 0">';
+        days.forEach(function(d){
+          var dd=dayData[d]||{imps:0,clks:0};
+          var impH=Math.max(3,(dd.imps/maxD)*80);
+          var clkH=Math.max(3,(dd.clks/Math.max(dd.imps,1))*60);
+          var lbl=currentTimeRange==='today'?d.slice(8):d.slice(5);
+          html+='<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px"><div style="width:100%;border-radius:3px;min-height:3px;height:'+impH+'px;background:linear-gradient(180deg,#6C5CE7,#A29BFE)" title="'+dd.imps+' impressions"></div><div style="width:100%;border-radius:3px;min-height:3px;height:'+clkH+'px;background:linear-gradient(180deg,#00CEC9,#00e0db)" title="'+dd.clks+' clicks"></div><div style="font-size:8px;color:#999;white-space:nowrap">'+lbl+'</div></div>';
+        });
+        html+='</div></div><p style="color:rgba(255,255,255,0.3);font-size:11px;margin-top:4px;text-align:center">Purple = Impressions &bull; Teal = Clicks</p>';
         document.getElementById('chartBody').innerHTML=html;
       });
     } else {
       document.getElementById('chartBody').innerHTML='<div class="loading">No campaigns yet.</div>';
     }
 
-    // Publishers table
+    // Publishers table with stats
     var pk=Object.keys(pubsData);
     if(pk.length){
-      var h='<table><thead><tr><th>Site ID</th><th>Name</th><th>Domain</th></tr></thead><tbody>';
-      pk.forEach(function(k){var p=pubsData[k];h+='<tr><td><code style="background:#f0f0f0;padding:2px 8px;border-radius:4px;font-size:11px;">'+k+'</code></td><td><strong>'+(p.name||'')+'</strong></td><td>'+(p.domain||'*')+'</td></tr>'});
-      h+='</tbody></table>';
-      document.getElementById('publisherBody').innerHTML=h;
+      var pubPromises=[];
+      var pubHtml='<div class="table-wrap"><table><thead><tr><th>Site ID</th><th>Name</th><th>Domain</th><th>Impressions</th><th>Clicks</th><th>CTR</th></tr></thead><tbody>';
+      pk.forEach(function(k){
+        var p=pubsData[k];
+        pubPromises.push(Promise.all([
+          db.ref('analytics/impressions').orderByChild('siteId').equalTo(k).once('value'),
+          db.ref('analytics/clicks').orderByChild('siteId').equalTo(k).once('value')
+        ]).then(function(r){
+          var pimps=r[0].val()?Object.keys(r[0].val()).length:0;
+          var pclks=r[1].val()?Object.keys(r[1].val()).length:0;
+          pubHtml+='<tr><td><code style="background:#f0f0f0;padding:2px 8px;border-radius:4px;font-size:11px;">'+k+'</code></td><td><strong>'+(p.name||'')+'</strong></td><td>'+(p.domain||'*')+'</td><td>'+pimps.toLocaleString()+'</td><td>'+pclks.toLocaleString()+'</td><td>'+(pimps>0?((pclks/pimps)*100).toFixed(2)+'%':'0%')+'</td></tr>';
+        }));
+      });
+      Promise.all(pubPromises).then(function(){
+        document.getElementById('publisherBody').innerHTML=pubHtml+'</tbody></table></div>';
+      });
     } else {
       document.getElementById('publisherBody').innerHTML='<div class="loading">No publishers registered.</div>';
     }
+
+    // Advertiser performance section
+    db.ref('advertisers').once('value',function(advs){
+      var advData=advs.val()||{};var advKeys=Object.keys(advData);
+      if(advKeys.length){
+        var advPromises=[];var advHtml='<div class="card" style="margin-top:20px"><div class="card-head"><h3>&#9881; Advertiser Performance</h3></div><div class="card-body"><div class="table-wrap"><table><thead><tr><th>Advertiser</th><th>Campaigns</th><th>Impressions</th><th>Clicks</th><th>Wallet</th><th>Spent</th></tr></thead><tbody>';
+        advKeys.forEach(function(ak){
+          var a=advData[ak];
+          var bal=parseFloat(a.balance)||0;
+          advPromises.push(db.ref('ads').orderByChild('advertiser').equalTo(ak).once('value').then(function(adsSnap){
+            var advAds=adsSnap.val()||{};var advAdKeys=Object.keys(advAds);
+            var aimpP=Promise.all(advAdKeys.map(function(aid){
+              return db.ref('analytics/impressions').orderByChild('adId').equalTo(aid).once('value').then(function(is){return is.val()?Object.keys(is.val()).length:0});
+            }));
+            var aclkP=Promise.all(advAdKeys.map(function(aid){
+              return db.ref('analytics/clicks').orderByChild('adId').equalTo(aid).once('value').then(function(cs){return cs.val()?Object.keys(cs.val()).length:0});
+            }));
+            return Promise.all([aimpP,aclkP]).then(function(r){
+              var aimp=r[0].reduce(function(a,b){return a+b},0);
+              var aclk=r[1].reduce(function(a,b){return a+b},0);
+              var spent=(aimp*0.0005)+(aclk*0.01);
+              advHtml+='<tr><td><strong>'+(a.name||ak.substring(0,12))+'</strong></td><td>'+advAdKeys.length+'</td><td>'+aimp.toLocaleString()+'</td><td>'+aclk.toLocaleString()+'</td><td>$'+bal.toFixed(2)+'</td><td>$'+spent.toFixed(2)+'</td></tr>';
+            });
+          }));
+        });
+        Promise.all(advPromises).then(function(){
+          document.getElementById('publisherBody').innerHTML+=advHtml+'</tbody></table></div></div></div>';
+        });
+      }
+    });
   });
 }
 
 loadDashboard();
+setInterval(function(){loadDashboard()},30000);
 </script>
 </body>
 </html>

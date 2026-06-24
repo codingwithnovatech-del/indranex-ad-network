@@ -114,7 +114,8 @@ tr:hover td{background:rgba(108,92,231,0.06)}
 .toast.show{opacity:1;transform:translateY(0)}
 
 footer{padding:24px 0;text-align:center;border-top:1px solid rgba(255,255,255,0.05);color:rgba(255,255,255,0.3);font-size:12px;margin-top:24px}
-@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.dash-head{flex-direction:column;align-items:flex-start}}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.dash-head{flex-direction:column;align-items:flex-start}.table-wrap table{font-size:12px}.table-wrap th,.table-wrap td{padding:8px 10px}}
 </style>
 </head>
 <body>
@@ -142,6 +143,7 @@ footer{padding:24px 0;text-align:center;border-top:1px solid rgba(255,255,255,0.
   <div class="divider">OR</div>
   <button class="btn-google" onclick="googleSignIn()"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.54 28.59A14.5 14.5 0 0 1 9.5 24c0-1.59.28-3.14.76-4.59l-7.98-6.19A23.99 23.99 0 0 0 0 24c0 3.77.87 7.35 2.56 10.56l7.98-5.97z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 5.97C6.51 42.62 14.62 48 24 48z"/></svg> Sign in with Google</button>
   <p style="margin-top:14px;font-size:13px;color:rgba(255,255,255,0.4);">New publisher? <span class="toggle" onclick="showReg()">Create account</span></p>
+<p style="margin-top:6px;font-size:12px"><span class="toggle" onclick="pubForgotPwd()" style="font-size:12px">Forgot password?</span></p>
   <div style="color:var(--danger);font-size:13px;display:none;margin-top:10px" id="loginError">Invalid site ID or password</div>
   <p style="margin-top:14px;font-size:11px;color:rgba(255,255,255,0.25);line-height:1.5">By signing in you agree to our <a href="/terms.html" target="_blank" style="color:var(--primary-light)">Terms</a> &amp; <a href="/privacy.html" target="_blank" style="color:var(--primary-light)">Privacy Policy</a></p>
 </div>
@@ -178,7 +180,7 @@ footer{padding:24px 0;text-align:center;border-top:1px solid rgba(255,255,255,0.
   <div class="container">
     <div class="dash-head">
       <div>
-        <h2>Welcome, <span id="pubName"></span></h2>
+        <h1 style="font-size:20px;font-weight:700">Welcome, <span id="pubName"></span></h1>
         <div class="info">Site ID: <code id="pubSiteIdDisplay"></code></div>
       </div>
       <button class="btn btn-outline btn-sm" onclick="pubLogout()">Logout</button>
@@ -403,32 +405,52 @@ function pubLogin(){
   }).catch(function(){setLoginError('CAPTCHA service unavailable')});
 }
 
-function pubLogout(){pubClearSession();auth.signOut();document.getElementById('dashboard').style.display='none';document.getElementById('loginCard').style.display='block';document.getElementById('googleRegCard').style.display='none'}
+function pubLogout(){
+  if(currentSid){
+    db.ref('analytics/impressions').orderByChild('siteId').equalTo(currentSid).off();
+    db.ref('analytics/clicks').orderByChild('siteId').equalTo(currentSid).off();
+    db.ref('ads').off();
+    db.ref('publishers/'+currentSid).off();
+    db.ref('payments/publishers/'+currentSid).off();
+  }
+  pubClearSession();auth.signOut();
+  document.getElementById('dashboard').style.display='none';document.getElementById('loginCard').style.display='block';document.getElementById('googleRegCard').style.display='none';
+}
 
 function loadDash(sid){
   currentSid=sid;
   document.getElementById('loginCard').style.display='none';document.getElementById('regCard').style.display='none';document.getElementById('dashboard').style.display='block';window.scrollTo(0,0);
-  db.ref('publishers/'+sid).once('value',function(s){
+  db.ref('publishers/'+sid).on('value',function(s){
     var p=s.val()||{};document.getElementById('pubName').textContent=p.name||sid;document.getElementById('pubSiteIdDisplay').textContent=sid;
     document.getElementById('setName').value=p.name||'';document.getElementById('setDomain').value=p.domain||'';
     var dm=window.location.origin;
     document.getElementById('integrationCode').textContent='<!-- Ad Slots -->\n<div class="adnet-slot" data-position="header"></div>\n<div class="adnet-slot" data-position="sidebar"></div>\n<div class="adnet-slot" data-position="inline"></div>\n\n<!-- Special Formats (optional) -->\n<div class="adnet-slot" data-position="popunder"></div>\n<div class="adnet-slot" data-position="interstitial"></div>\n<div class="adnet-slot" data-position="social-bar"></div>\n\n<!-- Script -->\n<script src="'+dm+'/publisher-script/ad.js" data-site-id="'+sid+'">\x3C/script>';
   });
   var imps=0,clks=0;
-  db.ref('analytics/impressions').orderByChild('siteId').equalTo(sid).once('value',function(s){imps=s.val()?Object.keys(s.val()).length:0;document.getElementById('pubImps').textContent=imps.toLocaleString();
-    db.ref('analytics/clicks').orderByChild('siteId').equalTo(sid).once('value',function(s2){clks=s2.val()?Object.keys(s2.val()).length:0;document.getElementById('pubClicks').textContent=clks.toLocaleString();document.getElementById('pubCtr').textContent=imps>0?((clks/imps)*100).toFixed(2)+'%':'0%'})});
-  db.ref('ads').once('value',function(s){
-    var ads=s.val()||{};var active=0;var rows='';var keys=Object.keys(ads);var done=0;var total=keys.length;
-    if(!total){document.getElementById('pubAdPerf').innerHTML='<div class="empty">No ads assigned to your site yet.</div>';document.getElementById('pubActiveAds').textContent='0';return}
-    rows='<table><thead><tr><th>Ad</th><th>Type</th><th>Position</th><th>Impressions</th><th>Clicks</th><th>CTR</th></tr></thead><tbody>';
+  db.ref('analytics/impressions').orderByChild('siteId').equalTo(sid).on('value',function(s){imps=s.val()?Object.keys(s.val()).length:0;document.getElementById('pubImps').textContent=imps.toLocaleString();
+    db.ref('analytics/clicks').orderByChild('siteId').equalTo(sid).on('value',function(s2){clks=s2.val()?Object.keys(s2.val()).length:0;document.getElementById('pubClicks').textContent=clks.toLocaleString();document.getElementById('pubCtr').textContent=imps>0?((clks/imps)*100).toFixed(2)+'%':'0%'})});
+  db.ref('ads').on('value',function(s){
+    var ads=s.val()||{};var active=0;var keys=Object.keys(ads);
+    if(!keys.length){document.getElementById('pubAdPerf').innerHTML='<div class="empty">No ads assigned to your site yet.</div>';document.getElementById('pubActiveAds').textContent='0';return}
+    var promises=[];var rows='';
     keys.forEach(function(k){
       var a=ads[k];
       if(a.sites&&a.sites[sid]&&a.status==='active')active++;
-      if(!a.sites||!a.sites[sid]){done++;if(done>=total)finalize();return}
+      if(!a.sites||!a.sites[sid])return;
       var pos=a.positions?Object.keys(a.positions).filter(function(p){return a.positions[p]}).join(', '):'-';
-      db.ref('analytics/impressions').orderByChild('adId').equalTo(k).once('value',function(is){var aimp=is.val()?Object.keys(is.val()).length:0;
-        db.ref('analytics/clicks').orderByChild('adId').equalTo(k).once('value',function(cs){var aclk=cs.val()?Object.keys(cs.val()).length:0;rows+='<tr><td>'+(a.title||k.substring(0,10))+'</td><td>'+a.type+'</td><td>'+pos+'</td><td>'+aimp+'</td><td>'+aclk+'</td><td>'+(aimp>0?((aclk/aimp)*100).toFixed(2)+'%':'0%')+'</td></tr>';done++;if(done>=total)finalize()})})});
-    function finalize(){document.getElementById('pubAdPerf').innerHTML=rows+'</tbody></table>';document.getElementById('pubActiveAds').textContent=active}
+      promises.push(Promise.all([
+        db.ref('analytics/impressions').orderByChild('adId').equalTo(k).once('value'),
+        db.ref('analytics/clicks').orderByChild('adId').equalTo(k).once('value')
+      ]).then(function(r){
+        var aimp=r[0].val()?Object.keys(r[0].val()).length:0;
+        var aclk=r[1].val()?Object.keys(r[1].val()).length:0;
+        rows+='<tr><td>'+(a.title||k.substring(0,10))+'</td><td>'+a.type+'</td><td>'+pos+'</td><td>'+aimp+'</td><td>'+aclk+'</td><td>'+(aimp>0?((aclk/aimp)*100).toFixed(2)+'%':'0%')+'</td></tr>';
+      }));
+    });
+    Promise.all(promises).then(function(){
+      document.getElementById('pubAdPerf').innerHTML='<div class="table-wrap"><table><thead><tr><th>Ad</th><th>Type</th><th>Position</th><th>Impressions</th><th>Clicks</th><th>CTR</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+      document.getElementById('pubActiveAds').textContent=active;
+    });
   });
   loadPubEarnings(sid);loadPubDailyStats(sid);loadWithdrawHistory(sid);
 }
@@ -463,18 +485,17 @@ function previewAd(){
 
 /* EARNINGS */
 function loadPubEarnings(sid){
-  var est=0,pend=0,paid=0;
-  db.ref('analytics/impressions').orderByChild('siteId').equalTo(sid).once('value',function(ims){
+  db.ref('analytics/impressions').orderByChild('siteId').equalTo(sid).on('value',function(ims){
     var ic=ims.val()?Object.keys(ims.val()).length:0;
-    est=ic*0.0005;
-    db.ref('analytics/clicks').orderByChild('siteId').equalTo(sid).once('value',function(cls){
+    var est=ic*0.0005;
+    db.ref('analytics/clicks').orderByChild('siteId').equalTo(sid).on('value',function(cls){
       var cc=cls.val()?Object.keys(cls.val()).length:0;
       est+=cc*0.01;
-      db.ref('payments/publishers/'+sid).once('value',function(ps){
-        var pdata=ps.val()||{};
+      db.ref('payments/publishers/'+sid).on('value',function(ps){
+        var pdata=ps.val()||{};var pend=0,paid=0;
         Object.values(pdata).forEach(function(p){
           if(p.status==='paid')paid+=parseFloat(p.amount)||0;
-          if(p.status==='pending')pend+=parseFloat(p.amount)||0
+          if(p.status==='pending')pend+=parseFloat(p.amount)||0;
         });
         document.getElementById('pubEstEarnings').textContent='$'+est.toFixed(2);
         document.getElementById('pubPendingEarnings').textContent='$'+pend.toFixed(2);
@@ -494,44 +515,58 @@ function submitWithdraw(){
   var errEl=document.getElementById('wdError');
   if(!amt||amt<10||!details){errEl.textContent='Enter a valid amount ($10+) and payment details.';errEl.style.display='block';return}
   errEl.style.display='none';
-  db.ref('payments/publishers/'+currentSid).push({
-    amount:amt,method:method,details:details,status:'pending',requestedAt:Date.now()
-  }).then(function(){toast('Withdrawal request submitted!');closeModal();document.getElementById('wdAmount').value='';document.getElementById('wdDetails').value='';loadWithdrawHistory(currentSid)})
+  db.ref('analytics/impressions').orderByChild('siteId').equalTo(currentSid).once('value',function(ims){
+    var ic=ims.val()?Object.keys(ims.val()).length:0;
+    var estEarnings=ic*0.0005;
+    db.ref('analytics/clicks').orderByChild('siteId').equalTo(currentSid).once('value',function(cls){
+      var cc=cls.val()?Object.keys(cls.val()).length:0;
+      estEarnings+=cc*0.01;
+      db.ref('payments/publishers/'+currentSid).once('value',function(ps){
+        var pdata=ps.val()||{};var paid=0;
+        Object.values(pdata).forEach(function(p){if(p.status==='paid')paid+=parseFloat(p.amount)||0});
+        var available=estEarnings-paid;
+        if(amt>available){errEl.textContent='Insufficient earnings. Available: $'+available.toFixed(2);errEl.style.display='block';return}
+        db.ref('payments/publishers/'+currentSid).push({
+          amount:amt,method:method,details:details,status:'pending',requestedAt:Date.now()
+        }).then(function(){toast('Withdrawal request submitted!');closeModal();document.getElementById('wdAmount').value='';document.getElementById('wdDetails').value='';loadWithdrawHistory(currentSid)});
+      });
+    });
+  });
 }
 function loadWithdrawHistory(sid){
-  db.ref('payments/publishers/'+sid).orderByChild('requestedAt').limitToLast(20).once('value',function(s){
+  db.ref('payments/publishers/'+sid).orderByChild('requestedAt').limitToLast(20).on('value',function(s){
     var data=s.val();var el=document.getElementById('pubWithdrawHistory');
     if(!data){el.innerHTML='<div class="empty">No withdrawal history yet.</div>';return}
-    var h='<table><thead><tr><th>Date</th><th>Amount</th><th>Method</th><th>Status</th></tr></thead><tbody>';
+    var h='<div class="table-wrap"><table><thead><tr><th>Date</th><th>Amount</th><th>Method</th><th>Status</th></tr></thead><tbody>';
     Object.keys(data).reverse().forEach(function(k){
       var p=data[k];var d=new Date(p.requestedAt);
       h+='<tr><td>'+d.toLocaleDateString()+'</td><td>$'+parseFloat(p.amount).toFixed(2)+'</td><td>'+p.method+'</td><td><span class="badge badge-'+(p.status==='paid'?'active':p.status==='pending'?'inactive':'')+'">'+p.status+'</span></td></tr>'
     });
-    el.innerHTML=h+'</tbody></table>'
+    el.innerHTML=h+'</tbody></table></div>'
   })
 }
 
 /* DAILY STATS */
 function loadPubDailyStats(sid){
-  var days=[];for(var i=6;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);days.push(d.toISOString().split('T')[0])}
+  var days=[];for(var i=29;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);days.push(d.toISOString().split('T')[0])}
   var dayData={};days.forEach(function(d){dayData[d]={imps:0,clks:0}});
-  db.ref('analytics/impressions').orderByChild('siteId').equalTo(sid).once('value',function(ims){
+  db.ref('analytics/impressions').orderByChild('siteId').equalTo(sid).on('value',function(ims){
     if(ims.val())Object.values(ims.val()).forEach(function(v){
-      if(v&&v.timestamp){var day=v.timestamp.split('T')[0];if(dayData[day]!==undefined)dayData[day].imps++}
+      if(v&&v.timestamp){var day=(typeof v.timestamp==='number'?new Date(v.timestamp):new Date(v.timestamp)).toISOString().split('T')[0];if(dayData[day]!==undefined)dayData[day].imps++}
     });
-    db.ref('analytics/clicks').orderByChild('siteId').equalTo(sid).once('value',function(cls){
+    db.ref('analytics/clicks').orderByChild('siteId').equalTo(sid).on('value',function(cls){
       if(cls.val())Object.values(cls.val()).forEach(function(v){
-        if(v&&v.timestamp){var day=v.timestamp.split('T')[0];if(dayData[day]!==undefined)dayData[day].clks++}
+        if(v&&v.timestamp){var day=(typeof v.timestamp==='number'?new Date(v.timestamp):new Date(v.timestamp)).toISOString().split('T')[0];if(dayData[day]!==undefined)dayData[day].clks++}
       });
       var maxV=1;days.forEach(function(d){if(dayData[d].imps>maxV)maxV=dayData[d].imps});
-      var h='<div class="chart-row">';
+      var h='<div style="overflow-x:auto"><div class="chart-row" style="min-width:'+(days.length*28)+'px">';
       days.forEach(function(d){
         var impH=Math.max(4,(dayData[d].imps/maxV)*80);
         var clkH=Math.max(4,(dayData[d].clks/Math.max(dayData[d].imps,1))*60);
         var label=d.slice(5);
         h+='<div class="chart-bar"><div class="bar imp" style="height:'+impH+'px" title="'+dayData[d].imps+' impressions"></div><div class="bar clk" style="height:'+clkH+'px" title="'+dayData[d].clks+' clicks"></div><div class="label">'+label+'</div></div>'
       });
-      document.getElementById('pubDailyChart').innerHTML=h+'</div><p style="color:rgba(255,255,255,0.3);font-size:11px;margin-top:8px;text-align:center">Blue = Impressions &bull; Teal = Clicks</p>'
+      document.getElementById('pubDailyChart').innerHTML=h+'</div></div><p style="color:rgba(255,255,255,0.3);font-size:11px;margin-top:8px;text-align:center">Blue = Impressions &bull; Teal = Clicks &bull; Last 30 days</p>'
     })
   })
 }
@@ -555,6 +590,17 @@ auth.onAuthStateChanged(function(user){
     }
   }
 });
+
+function pubForgotPwd(){
+  var email=document.getElementById('loginEmail').value.trim();
+  if(!email){setLoginError('Enter your email first.');return}
+  var token=typeof turnstile!=='undefined'?turnstile.getResponse():'';
+  if(!token){setLoginError('Please complete the CAPTCHA');return}
+  fetch('https://broad-resonance-0af8.ayushkumar20265f.workers.dev',{method:'POST',body:JSON.stringify({token:token}),headers:{'Content-Type':'application/json'}}).then(function(r){return r.json()}).then(function(resp){
+    if(!resp.success){setLoginError('CAPTCHA verification failed');return}
+    auth.sendPasswordResetEmail(email).then(function(){toast('Password reset email sent! Check inbox.');setLoginError('')}).catch(function(e){setLoginError(e.message)});
+  }).catch(function(){setLoginError('Service unavailable')});
+}
 
 // Modal overlay click & ESC close
 document.addEventListener('click',function(e){if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('active')});

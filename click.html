@@ -24,7 +24,7 @@ var siteId=params.get('site')||'unknown';
 var pos=params.get('pos')||'unknown';
 var target=params.get('url');
 db.ref('analytics/clicks').push({
-  adId:adId,siteId:siteId,position:pos,timestamp:new Date().toISOString(),
+  adId:adId,siteId:siteId,position:pos,  timestamp:Date.now(),
   referrer:document.referrer||'',pageUrl:location.href
 }).then(function(){
   if(target)setTimeout(function(){location.href=target},300);

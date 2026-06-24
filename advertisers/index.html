@@ -136,6 +136,7 @@ footer{padding:24px 0;text-align:center;border-top:1px solid rgba(255,255,255,0.
   <div class="form-group"><label>Password</label><input type="password" id="loginPwd" placeholder="Enter password"></div>
   <div class="form-group"><div class="cf-turnstile" data-sitekey="0x4AAAAAADpyYbUVl_BY83xh"></div></div>
   <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;margin-bottom:12px;color:rgba(255,255,255,0.5)"><input type="checkbox" id="rememberMe" style="accent-color:var(--primary)"> Remember me for 24h</label>
+  <p style="text-align:right;margin:-8px 0 12px"><span class="toggle" onclick="advForgotPwd()" style="font-size:12px">Forgot password?</span></p>
   <button class="btn btn-primary" onclick="advLogin()">Sign In</button>
   <div class="divider">OR</div>
   <button class="btn-google" onclick="googleSignIn()"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.54 28.59A14.5 14.5 0 0 1 9.5 24c0-1.59.28-3.14.76-4.59l-7.98-6.19A23.99 23.99 0 0 0 0 24c0 3.77.87 7.35 2.56 10.56l7.98-5.97z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 5.97C6.51 42.62 14.62 48 24 48z"/></svg> Sign in with Google</button>
@@ -209,7 +210,7 @@ footer{padding:24px 0;text-align:center;border-top:1px solid rgba(255,255,255,0.
 
     <div class="tab-content" id="tabBilling">
       <div class="card">
-        <div class="card-head"><h3>&#36; Wallet</h3><button class="btn btn-primary btn-sm" onclick="showFundModal()">+ Add Funds</button></div>
+        <div class="card-head"><h3>&#36; Wallet</h3><div style="display:flex;gap:8px"><button class="btn btn-outline btn-sm" onclick="showAdvWithdrawModal()">Withdraw</button><button class="btn btn-primary btn-sm" onclick="showFundModal()">+ Add Funds</button></div></div>
         <div class="card-body" style="display:flex;gap:24px;align-items:center;flex-wrap:wrap">
           <div style="font-size:13px;color:rgba(255,255,255,0.5)">Available Balance</div>
           <div style="font-size:32px;font-weight:800;background:linear-gradient(135deg,var(--primary),var(--primary-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent" id="advBalDisplay">$0.00</div>
@@ -259,6 +260,26 @@ footer{padding:24px 0;text-align:center;border-top:1px solid rgba(255,255,255,0.
       <button class="btn btn-primary" onclick="addFunds()">Add Funds</button>
     </div>
     <div id="fundError" style="color:var(--danger);font-size:13px;display:none;margin-top:10px"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="advWithdrawModal">
+  <div class="modal" style="max-width:400px">
+    <h3>&#36; Withdraw Funds</h3>
+    <div class="form-group"><label>Amount ($)</label><input type="number" id="advWdAmount" placeholder="Minimum $10" min="10" step="0.01"></div>
+    <div class="form-group"><label>Payment Method</label>
+      <select id="advWdMethod" style="width:100%;padding:12px 16px;border:1px solid rgba(255,255,255,0.12);border-radius:10px;font-size:14px;outline:none;background:rgba(255,255,255,0.06);color:#fff">
+        <option value="bank">Bank Transfer</option>
+        <option value="upi">UPI</option>
+        <option value="paypal">PayPal</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Payment Details</label><input id="advWdDetails" placeholder="Account number / UPI ID / PayPal email"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="document.getElementById('advWithdrawModal').classList.remove('active')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitAdvWithdraw()">Submit</button>
+    </div>
+    <div id="advWdError" style="color:var(--danger);font-size:13px;display:none;margin-top:10px"></div>
   </div>
 </div>
 
@@ -418,25 +439,33 @@ function loadDash(key){
     var d=s.val()||{};document.getElementById('advName').textContent=d.name||key;
     document.getElementById('setName').value=d.name||'';document.getElementById('setWebsite').value=d.website||'';
   });
-  loadCampaigns(key);loadAdvWallet(key);
+  loadCampaigns(key);loadAdvWallet(key);processAdvertiserDeductions(key);
 }
 
 function loadCampaigns(key){
-  db.ref('ads').once('value',function(s){
+  db.ref('ads').on('value',function(s){
     var ads=s.val()||{};var mine=[];var totalImps=0,totalClks=0;
     Object.keys(ads).forEach(function(k){if(ads[k].advertiser===key)mine.push({id:k,data:ads[k]})});
     document.getElementById('advCampaigns').textContent=mine.length;
     if(!mine.length){document.getElementById('advAdsList').innerHTML='<div class="empty">No campaigns yet. Click "+ New Campaign" to start.</div>';document.getElementById('advImps').textContent='0';document.getElementById('advClicks').textContent='0';document.getElementById('advCtr').textContent='0%';return}
-    var html='<table><thead><tr><th>Campaign</th><th>Format</th><th>Status</th><th>Placement</th><th>Impressions</th><th>Clicks</th><th>CTR</th><th>Actions</th></tr></thead><tbody>';
+    var html='<table><thead><tr><th>Campaign</th><th>Format</th><th>Status</th><th>Budget</th><th>Impressions</th><th>Clicks</th><th>CTR</th><th>Actions</th></tr></thead><tbody>';
     var pending=mine.length;
     mine.forEach(function(item){
       var ad=item.data;
       db.ref('analytics/impressions').orderByChild('adId').equalTo(item.id).once('value',function(is){var aimp=is.val()?Object.keys(is.val()).length:0;totalImps+=aimp;
         db.ref('analytics/clicks').orderByChild('adId').equalTo(item.id).once('value',function(cs){var aclk=cs.val()?Object.keys(cs.val()).length:0;totalClks+=aclk;
+          var spend = (aimp * 0.0005) + (aclk * 0.01);
+          var dbudget = parseFloat(ad.dailyBudget)||0;
+          var tbudget = parseFloat(ad.totalBudget)||0;
+          var budgetHtml = '';
+          if(tbudget>0){
+            var pct = Math.min(100, (spend/tbudget*100));
+            budgetHtml = '<div style="min-width:80px"><div style="background:rgba(255,255,255,0.1);border-radius:4px;height:6px;overflow:hidden"><div style="width:'+pct+'%;height:100%;background:'+(pct>90?'var(--danger)':'var(--success)')+';border-radius:4px"></div></div><span style="font-size:10px;color:rgba(255,255,255,0.4)">$'+(tbudget-spend).toFixed(2)+' left</span></div>';
+          } else { budgetHtml = '<span style="font-size:11px;color:rgba(255,255,255,0.3)">No limit</span>'; }
           var pos=ad.positions?Object.keys(ad.positions).filter(function(p){return ad.positions[p]}).join(', '):'-';
           html+='<tr><td><strong>'+(ad.title||'Untitled')+'</strong></td><td>'+ad.type+'</td>';
           html+='<td><span class="badge badge-'+(ad.status==='active'?'active':'inactive')+'">'+ad.status+'</span></td>';
-          html+='<td style="font-size:11px;">'+pos+'</td><td>'+aimp+'</td><td>'+aclk+'</td><td>'+(aimp>0?((aclk/aimp)*100).toFixed(2)+'%':'0%')+'</td>';
+          html+='<td>'+budgetHtml+'</td><td>'+aimp+'</td><td>'+aclk+'</td><td>'+(aimp>0?((aclk/aimp)*100).toFixed(2)+'%':'0%')+'</td>';
           html+='<td><button class="btn btn-outline btn-sm" onclick="campaignForm(\''+item.id+'\')">Edit</button> <button class="btn btn-danger btn-sm" onclick="deleteCampaign(\''+item.id+'\')">Del</button></td></tr>';
           pending--;if(pending===0){html+='</tbody></table>';document.getElementById('advAdsList').innerHTML=html;document.getElementById('advImps').textContent=totalImps;document.getElementById('advClicks').textContent=totalClks;document.getElementById('advCtr').textContent=totalImps>0?((totalClks/totalImps)*100).toFixed(2)+'%':'0%'}
         });
@@ -481,9 +510,9 @@ function saveCampaign(){
   var tbudget=parseFloat(document.getElementById('campaignTotalBudget').value)||0;
   var data={type:type,status:status,title:title,description:desc,imageUrl:img,videoUrl:vid,targetUrl:target||'#',dailyBudget:dbudget,totalBudget:tbudget,positions:pos,sites:sites,advertiser:currentAdv,createdAt:Date.now(),impressions:0,clicks:0};
   var ref=id?db.ref('ads/'+id):db.ref('ads').push();
-  ref.set(data).then(function(){toast(id?'Campaign updated.':'Campaign created!');closeModal();loadCampaigns(currentAdv)});
+  ref.set(data).then(function(){toast(id?'Campaign updated.':'Campaign created!');closeModal()});
 }
-function deleteCampaign(id){if(!confirm('Delete this campaign?'))return;db.ref('ads/'+id).remove().then(function(){toast('Campaign deleted.');loadCampaigns(currentAdv)})}
+function deleteCampaign(id){if(!confirm('Delete this campaign?'))return;db.ref('ads/'+id).remove().then(function(){toast('Campaign deleted.')})}
 
 /* TABS */
 function switchAdvTab(tab,btn){
@@ -494,28 +523,27 @@ function switchAdvTab(tab,btn){
 
 /* WALLET & BILLING */
 function loadAdvWallet(key){
-  db.ref('advertisers/'+key+'/balance').once('value',function(s){
+  db.ref('advertisers/'+key+'/balance').on('value',function(s){
     var bal=parseFloat(s.val())||0;
     document.getElementById('advBalance').textContent='$'+bal.toFixed(2);
     document.getElementById('advBalDisplay').textContent='$'+bal.toFixed(2);
   });
-  db.ref('payments/advertisers/'+key).once('value',function(s){
-    var data=s.val();var totalDeposits=0;
-    if(data)Object.values(data).forEach(function(t){if(t.type==='deposit'||!t.type)totalDeposits+=parseFloat(t.amount)||0});
+  db.ref('payments/advertisers/'+key).orderByChild('createdAt').limitToLast(50).on('value',function(s){
+    var data=s.val();var el=document.getElementById('advTxHistory');
+    if(!data){el.innerHTML='<div class="empty">No transactions yet.</div>';return}
+    var h='<table><thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead><tbody>';
+    var totalDeposits=0;
+    Object.keys(data).reverse().forEach(function(k){
+      var t=data[k];var d=new Date(t.createdAt);
+      if(t.type==='deposit'||!t.type)totalDeposits+=parseFloat(t.amount)||0;
+      var statusClass=t.status==='completed'||t.status==='paid'?'active':t.status==='pending'?'inactive':'';
+      h+='<tr><td>'+d.toLocaleDateString()+'</td><td>'+(t.type||'deposit')+'</td><td>$'+parseFloat(t.amount).toFixed(2)+'</td><td><span class="badge badge-'+statusClass+'">'+(t.status||'completed')+'</span></td></tr>';
+    });
     db.ref('advertisers/'+key+'/balance').once('value',function(ss){
       var curBal=parseFloat(ss.val())||0;
       document.getElementById('advSpent').textContent='$'+Math.max(0,totalDeposits-curBal).toFixed(2);
     });
-  });
-  db.ref('payments/advertisers/'+key).orderByChild('createdAt').limitToLast(20).once('value',function(s){
-    var data=s.val();var el=document.getElementById('advTxHistory');
-    if(!data){el.innerHTML='<div class="empty">No transactions yet.</div>';return}
-    var h='<table><thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead><tbody>';
-    Object.keys(data).reverse().forEach(function(k){
-      var t=data[k];var d=new Date(t.createdAt);
-      h+='<tr><td>'+d.toLocaleDateString()+'</td><td>'+(t.type||'deposit')+'</td><td>$'+parseFloat(t.amount).toFixed(2)+'</td><td><span class="badge badge-active">completed</span></td></tr>'
-    });
-    el.innerHTML=h+'</tbody></table>'
+    el.innerHTML=h+'</tbody></table>';
   });
   loadAdvDailyStats(key);
 }
@@ -534,10 +562,22 @@ function addFunds(){
   if(!amt||amt<10){errEl.textContent='Minimum $10.';errEl.style.display='block';return}
   errEl.style.display='none';
   var key=currentAdv;
-  db.ref('advertisers/'+key+'/balance').transaction(function(b){return (parseFloat(b)||0)+amt});
-  db.ref('payments/advertisers/'+key).push({amount:amt,method:method,type:'deposit',status:'completed',createdAt:Date.now()});
-  toast('$'+amt.toFixed(2)+' added to wallet!');
-  closeFundModal();document.getElementById('fundAmount').value='';loadAdvWallet(key)
+  var txnId = db.ref('payments/advertisers/'+key).push().key;
+  var paymentData = {
+    amount: amt,
+    method: method,
+    type: 'deposit',
+    status: 'pending',
+    createdAt: Date.now(),
+    txnId: txnId,
+    upiId: 'indranex@upi',
+    bankRef: 'TXN' + Date.now().toString(36).toUpperCase()
+  };
+  db.ref('payments/advertisers/'+key+'/'+txnId).set(paymentData);
+  toast('Payment request #' + txnId.substring(0,8) + ' submitted! Admin will verify within 24hrs.');
+  closeFundModal();
+  document.getElementById('fundAmount').value='';
+  loadAdvWallet(key);
 }
 
 /* DAILY STATS */
@@ -579,6 +619,49 @@ function saveAdvSettings(){
   db.ref('advertisers/'+currentAdv+'/website').set(website).then(function(){toast('Settings saved!')})
 }
 
+function processAdvertiserDeductions(key){
+  db.ref('pending-deductions/'+key).once('value',function(s){
+    var data=s.val();if(!data)return;
+    var totalCost=0;
+    Object.keys(data).forEach(function(k){
+      totalCost+=parseFloat(data[k].cost)||0;
+    });
+    db.ref('advertisers/'+key+'/balance').transaction(function(b){
+      var cur=parseFloat(b)||0;
+      return Math.max(0,cur-totalCost);
+    });
+    db.ref('pending-deductions/'+key).remove();
+  });
+}
+function advForgotPwd(){
+  var email=document.getElementById('loginEmail').value.trim();
+  if(!email){setLoginError('Enter your email first.');return}
+  auth.sendPasswordResetEmail(email).then(function(){
+    toast('Password reset email sent! Check inbox.');
+  }).catch(function(e){
+    setLoginError(e.message);
+  });
+}
+function showAdvWithdrawModal(){document.getElementById('advWithdrawModal').classList.add('active')}
+function submitAdvWithdraw(){
+  var amt=parseFloat(document.getElementById('advWdAmount').value);
+  var method=document.getElementById('advWdMethod').value;
+  var details=document.getElementById('advWdDetails').value.trim();
+  var errEl=document.getElementById('advWdError');
+  db.ref('advertisers/'+currentAdv+'/balance').once('value',function(s){
+    var bal=parseFloat(s.val())||0;
+    if(!amt||amt<10||!details){errEl.textContent='Enter amount ($10+) and payment details.';errEl.style.display='block';return}
+    if(amt>bal){errEl.textContent='Insufficient balance. You have $'+bal.toFixed(2);errEl.style.display='block';return}
+    errEl.style.display='none';
+    db.ref('advertisers/'+currentAdv+'/balance').transaction(function(b){return Math.max(0,(parseFloat(b)||0)-amt)});
+    db.ref('payments/advertisers/'+currentAdv).push({
+      amount:amt,method:method,details:details,type:'withdrawal',status:'pending',createdAt:Date.now()
+    }).then(function(){
+      toast('Withdrawal request submitted!');document.getElementById('advWithdrawModal').classList.remove('active');
+      document.getElementById('advWdAmount').value='';document.getElementById('advWdDetails').value='';loadAdvWallet(currentAdv);
+    });
+  });
+}
 auth.onAuthStateChanged(function(user){
   if(user){
     var ls=localStorage.getItem('adnet_adv');var ss=sessionStorage.getItem('adnet_adv');
