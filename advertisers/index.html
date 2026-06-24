@@ -83,12 +83,29 @@ tr:hover td{background:rgba(108,92,231,0.06)}
 .checkbox-group{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-top:6px}
 .checkbox-group label{display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer}
 
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:1000}
+/* TABS */
+.tab-bar{display:flex;gap:0;margin-bottom:20px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:10px;overflow:hidden}
+.tab-bar button{flex:1;padding:12px 16px;border:none;background:transparent;font-size:13px;font-weight:600;color:rgba(255,255,255,0.4);cursor:pointer;transition:all 0.2s;border-bottom:2px solid transparent}
+.tab-bar button:hover{color:#fff}
+.tab-bar button.active{color:var(--primary-light);border-bottom-color:var(--primary);background:rgba(108,92,231,0.1)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* CHARTS */
+.chart-row{display:flex;align-items:end;gap:8px;height:100px;padding:10px 0}
+.chart-bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.chart-bar .bar{width:100%;border-radius:4px 4px 0 0;min-height:4px;transition:height 0.6s}
+.chart-bar .bar.imp{background:linear-gradient(180deg,var(--primary),var(--primary-light))}
+.chart-bar .bar.clk{background:linear-gradient(180deg,var(--secondary),#00e0db)}
+.chart-bar .label{font-size:9px;color:rgba(255,255,255,0.3);white-space:nowrap}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:1000}
 .modal-overlay.active{display:flex}
-.modal{background:#fff;border-radius:20px;width:620px;max-width:92vw;max-height:90vh;overflow-y:auto;padding:30px 32px;box-shadow:0 30px 80px rgba(0,0,0,0.15)}
-.modal h3{font-size:19px;font-weight:700;margin-bottom:20px}
+.modal{background:rgba(20,20,50,0.98);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.1);border-radius:20px;width:620px;max-width:92vw;max-height:90vh;overflow-y:auto;padding:30px 32px;box-shadow:0 30px 80px rgba(0,0,0,0.5)}
+.modal h3{font-size:18px;font-weight:700;margin-bottom:16px;color:#fff}
 .modal-actions{display:flex;gap:12px;margin-top:20px}
 .modal-actions .btn{flex:1}
+.modal select option{background:#1a1a3e;color:#fff}
 
 .toast{position:fixed;bottom:24px;right:24px;background:var(--dark);color:#fff;padding:14px 24px;border-radius:12px;font-size:13px;z-index:9999;opacity:0;transform:translateY(16px);transition:all 0.3s;max-width:380px;box-shadow:0 10px 40px rgba(0,0,0,0.15)}
 .toast.show{opacity:1;transform:translateY(0)}
@@ -164,12 +181,77 @@ footer{padding:24px 0;text-align:center;border-top:1px solid rgba(255,255,255,0.
       <div class="stat"><div class="stat-bar" style="background:var(--secondary)"></div><div class="stat-label">Clicks</div><div class="stat-value" id="advClicks">0</div></div>
       <div class="stat"><div class="stat-bar" style="background:var(--success)"></div><div class="stat-label">CTR</div><div class="stat-value" id="advCtr">0%</div></div>
     </div>
-    <div class="card">
-      <div class="card-head"><h3>&#9879; Campaigns</h3><button class="btn btn-primary btn-sm" onclick="campaignForm(null)">+ New Campaign</button></div>
-      <div class="card-body" id="advAdsList"><div class="empty">Loading...</div></div>
+    <div class="tab-bar" id="advTabs">
+      <button class="active" onclick="switchAdvTab('campaigns',this)">Campaigns</button>
+      <button onclick="switchAdvTab('analytics',this)">Analytics</button>
+      <button onclick="switchAdvTab('billing',this)">Billing</button>
+      <button onclick="switchAdvTab('settings',this)">Settings</button>
     </div>
+
+    <div class="tab-content active" id="tabCampaigns">
+      <div class="card">
+        <div class="card-head"><h3>&#9879; Campaigns</h3><button class="btn btn-primary btn-sm" onclick="campaignForm(null)">+ New Campaign</button></div>
+        <div class="card-body" id="advAdsList"><div class="empty">Loading...</div></div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tabAnalytics">
+      <div class="stats">
+        <div class="stat"><div class="stat-bar"></div><div class="stat-label">Total Spent</div><div class="stat-value mono" id="advSpent">$0.00</div></div>
+        <div class="stat"><div class="stat-bar" style="background:var(--success)"></div><div class="stat-label">Wallet Balance</div><div class="stat-value mono" id="advBalance">$0.00</div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>&#9783; Daily Performance (Last 7 Days)</h3></div>
+        <div class="card-body" id="advDailyChart"><div class="empty">Loading stats...</div></div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tabBilling">
+      <div class="card">
+        <div class="card-head"><h3>&#36; Wallet</h3><button class="btn btn-primary btn-sm" onclick="showFundModal()">+ Add Funds</button></div>
+        <div class="card-body" style="display:flex;gap:24px;align-items:center;flex-wrap:wrap">
+          <div style="font-size:13px;color:rgba(255,255,255,0.5)">Available Balance</div>
+          <div style="font-size:32px;font-weight:800;background:linear-gradient(135deg,var(--primary),var(--primary-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent" id="advBalDisplay">$0.00</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>&#128196; Transaction History</h3></div>
+        <div class="card-body" id="advTxHistory"><div class="empty">No transactions yet.</div></div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tabSettings">
+      <div class="card">
+        <div class="card-head"><h3>&#9881; Profile Settings</h3></div>
+        <div class="card-body" style="max-width:400px">
+          <div class="form-group"><label>Company Name</label><input id="setName" placeholder="Your company name"></div>
+          <div class="form-group"><label>Website</label><input id="setWebsite" placeholder="https://yourwebsite.com"></div>
+          <button class="btn btn-primary" onclick="saveAdvSettings()" style="width:auto">Save Changes</button>
+        </div>
+      </div>
+    </div>
+
   </div>
   <footer><div class="container">&copy; 2026 Indranex AdNet &bull; <a href="/">Home</a> &bull; <a href="/publishers/">Publishers</a></div></footer>
+</div>
+
+<div class="modal-overlay" id="fundModal">
+  <div class="modal" style="max-width:400px">
+    <h3>&#36; Add Funds</h3>
+    <div class="form-group"><label>Amount ($)</label><input type="number" id="fundAmount" placeholder="Minimum $10" min="10" step="0.01"></div>
+    <div class="form-group"><label>Payment Method</label>
+      <select id="fundMethod" style="width:100%;padding:12px 16px;border:1px solid rgba(255,255,255,0.12);border-radius:10px;font-size:14px;outline:none;background:rgba(255,255,255,0.06);color:#fff">
+        <option value="card">Credit/Debit Card</option>
+        <option value="bank">Bank Transfer</option>
+        <option value="crypto">Cryptocurrency</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeFundModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="addFunds()">Add Funds</button>
+    </div>
+    <div id="fundError" style="color:var(--danger);font-size:13px;display:none;margin-top:10px"></div>
+  </div>
 </div>
 
 <div class="modal-overlay" id="campaignModal">
@@ -185,6 +267,10 @@ footer{padding:24px 0;text-align:center;border-top:1px solid rgba(255,255,255,0.
     <div class="form-group"><label>Image URL</label><input id="campaignImage" placeholder="https://example.com/ad.jpg"></div>
     <div class="form-group"><label>Video URL</label><input id="campaignVideo" placeholder="https://example.com/video.mp4 or YouTube URL"></div>
     <div class="form-group"><label>Destination URL</label><input id="campaignTarget" placeholder="https://yourwebsite.com/landing"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Daily Budget ($)</label><input type="number" id="campaignDailyBudget" placeholder="e.g. 10" min="0" step="0.01"></div>
+      <div class="form-group"><label>Total Budget ($)</label><input type="number" id="campaignTotalBudget" placeholder="e.g. 100" min="0" step="0.01"></div>
+    </div>
     <div class="form-group"><label>Placement Positions</label>
       <div class="checkbox-group" id="campaignPositions">
         <label><input type="checkbox" value="header"> Header</label>
@@ -314,8 +400,11 @@ function advLogout(){advClearSession();currentAdv=null;auth.signOut();document.g
 function loadDash(key){
   currentAdv=key;
   document.getElementById('loginCard').style.display='none';document.getElementById('regCard').style.display='none';document.getElementById('dashboard').style.display='block';window.scrollTo(0,0);
-  db.ref('advertisers/'+key).once('value',function(s){var d=s.val()||{};document.getElementById('advName').textContent=d.name||key});
-  loadCampaigns(key);
+  db.ref('advertisers/'+key).once('value',function(s){
+    var d=s.val()||{};document.getElementById('advName').textContent=d.name||key;
+    document.getElementById('setName').value=d.name||'';document.getElementById('setWebsite').value=d.website||'';
+  });
+  loadCampaigns(key);loadAdvWallet(key);
 }
 
 function loadCampaigns(key){
@@ -346,7 +435,7 @@ function campaignForm(adId){
   document.getElementById('campaignEditId').value=adId||'';
   document.getElementById('campaignTitle').textContent=adId?'Edit Campaign':'New Campaign';
   document.getElementById('campaignType').value='banner';document.getElementById('campaignStatus').value='active';
-  ['campaignTitle','campaignDesc','campaignImage','campaignVideo','campaignTarget'].forEach(function(x){document.getElementById(x).value=''});
+  ['campaignTitle','campaignDesc','campaignImage','campaignVideo','campaignTarget','campaignDailyBudget','campaignTotalBudget'].forEach(function(x){document.getElementById(x).value=''});
   document.querySelectorAll('#campaignPositions input').forEach(function(c){c.checked=false});
   db.ref('publishers').once('value',function(s){
     var pubs=s.val()||{};var h='<label><input type="checkbox" value="all"> All Sites</label>';
@@ -358,6 +447,7 @@ function campaignForm(adId){
     document.getElementById('campaignTitle').value=ad.title||'';document.getElementById('campaignDesc').value=ad.description||'';
     document.getElementById('campaignImage').value=ad.imageUrl||'';document.getElementById('campaignVideo').value=ad.videoUrl||'';
     document.getElementById('campaignTarget').value=ad.targetUrl||'#';
+    document.getElementById('campaignDailyBudget').value=ad.dailyBudget||'';document.getElementById('campaignTotalBudget').value=ad.totalBudget||'';
     if(ad.positions)document.querySelectorAll('#campaignPositions input').forEach(function(c){c.checked=ad.positions[c.value]===true});
     setTimeout(function(){if(ad.sites)document.querySelectorAll('#campaignSites input').forEach(function(c){c.checked=ad.sites[c.value]===true})},300);
   });
@@ -373,11 +463,94 @@ function saveCampaign(){
   var sites={};document.querySelectorAll('#campaignSites input:checked').forEach(function(c){sites[c.value]=true});
   if(!Object.keys(pos).length){toast('Select at least one position.');return}
   if(!Object.keys(sites).length){toast('Select at least one publisher site.');return}
-  var data={type:type,status:status,title:title,description:desc,imageUrl:img,videoUrl:vid,targetUrl:target||'#',positions:pos,sites:sites,advertiser:currentAdv,createdAt:Date.now(),impressions:0,clicks:0};
+  var dbudget=parseFloat(document.getElementById('campaignDailyBudget').value)||0;
+  var tbudget=parseFloat(document.getElementById('campaignTotalBudget').value)||0;
+  var data={type:type,status:status,title:title,description:desc,imageUrl:img,videoUrl:vid,targetUrl:target||'#',dailyBudget:dbudget,totalBudget:tbudget,positions:pos,sites:sites,advertiser:currentAdv,createdAt:Date.now(),impressions:0,clicks:0};
   var ref=id?db.ref('ads/'+id):db.ref('ads').push();
   ref.set(data).then(function(){toast(id?'Campaign updated.':'Campaign created!');closeModal();loadCampaigns(currentAdv)});
 }
 function deleteCampaign(id){if(!confirm('Delete this campaign?'))return;db.ref('ads/'+id).remove().then(function(){toast('Campaign deleted.');loadCampaigns(currentAdv)})}
+
+/* TABS */
+function switchAdvTab(tab,btn){
+  document.querySelectorAll('#advTabs button').forEach(function(b){b.classList.remove('active')});
+  document.querySelectorAll('.tab-content').forEach(function(t){t.classList.remove('active')});
+  btn.classList.add('active');document.getElementById('tab'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active')
+}
+
+/* WALLET & BILLING */
+function loadAdvWallet(key){
+  db.ref('advertisers/'+key+'/balance').once('value',function(s){
+    var bal=parseFloat(s.val())||0;
+    document.getElementById('advBalance').textContent='$'+bal.toFixed(2);
+    document.getElementById('advBalDisplay').textContent='$'+bal.toFixed(2);
+  });
+  db.ref('payments/advertisers/'+key).orderByChild('createdAt').limitToLast(20).once('value',function(s){
+    var data=s.val();var el=document.getElementById('advTxHistory');
+    if(!data){el.innerHTML='<div class="empty">No transactions yet.</div>';return}
+    var h='<table><thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead><tbody>';
+    Object.keys(data).reverse().forEach(function(k){
+      var t=data[k];var d=new Date(t.createdAt);
+      h+='<tr><td>'+d.toLocaleDateString()+'</td><td>'+(t.type||'deposit')+'</td><td>$'+parseFloat(t.amount).toFixed(2)+'</td><td><span class="badge badge-active">completed</span></td></tr>'
+    });
+    el.innerHTML=h+'</tbody></table>'
+  });
+  loadAdvDailyStats(key);
+}
+
+function showFundModal(){document.getElementById('fundModal').classList.add('active')}
+function closeFundModal(){document.getElementById('fundModal').classList.remove('active')}
+function addFunds(){
+  var amt=parseFloat(document.getElementById('fundAmount').value);
+  var method=document.getElementById('fundMethod').value;
+  var errEl=document.getElementById('fundError');
+  if(!amt||amt<10){errEl.textContent='Minimum $10.';errEl.style.display='block';return}
+  errEl.style.display='none';
+  var key=currentAdv;
+  db.ref('advertisers/'+key+'/balance').transaction(function(b){return (parseFloat(b)||0)+amt});
+  db.ref('payments/advertisers/'+key).push({amount:amt,method:method,type:'deposit',status:'completed',createdAt:Date.now()});
+  toast('$'+amt.toFixed(2)+' added to wallet!');
+  closeFundModal();document.getElementById('fundAmount').value='';loadAdvWallet(key)
+}
+
+/* DAILY STATS */
+function loadAdvDailyStats(key){
+  var days=[];for(var i=6;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);days.push(d.toISOString().split('T')[0])}
+  var dayData={};days.forEach(function(d){dayData[d]={imps:0,clks:0}});
+  db.ref('ads').once('value',function(ads){
+    var myAds=[];Object.keys(ads.val()||{}).forEach(function(k){if(ads.val()[k].advertiser===key)myAds.push(k)});
+    if(!myAds.length){document.getElementById('advDailyChart').innerHTML='<div class="empty">No campaign data yet.</div>';return}
+    var done=0;
+    myAds.forEach(function(aid){
+      db.ref('analytics/impressions').orderByChild('adId').equalTo(aid).once('value',function(ims){
+        if(ims.val())Object.values(ims.val()).forEach(function(v){if(v&&v.timestamp){var day=v.timestamp.split('T')[0];if(dayData[day]!==undefined)dayData[day].imps++}});
+        db.ref('analytics/clicks').orderByChild('adId').equalTo(aid).once('value',function(cls){
+          if(cls.val())Object.values(cls.val()).forEach(function(v){if(v&&v.timestamp){var day=v.timestamp.split('T')[0];if(dayData[day]!==undefined)dayData[day].clks++}});
+          done++;if(done===myAds.length)renderAdvChart(dayData,days)
+        })
+      })
+    })
+  })
+}
+function renderAdvChart(dayData,days){
+  var maxV=1;days.forEach(function(d){if(dayData[d].imps>maxV)maxV=dayData[d].imps});
+  var h='<div class="chart-row">';
+  days.forEach(function(d){
+    var impH=Math.max(4,(dayData[d].imps/maxV)*80);
+    var clkH=Math.max(4,(dayData[d].clks/Math.max(dayData[d].imps,1))*60);
+    h+='<div class="chart-bar"><div class="bar imp" style="height:'+impH+'px" title="'+dayData[d].imps+' impressions"></div><div class="bar clk" style="height:'+clkH+'px" title="'+dayData[d].clks+' clicks"></div><div class="label">'+d.slice(5)+'</div></div>'
+  });
+  document.getElementById('advDailyChart').innerHTML=h+'</div><p style="color:rgba(255,255,255,0.3);font-size:11px;margin-top:8px;text-align:center">Blue = Impressions &bull; Teal = Clicks</p>'
+}
+
+/* SETTINGS */
+function saveAdvSettings(){
+  var name=document.getElementById('setName').value.trim();
+  var website=document.getElementById('setWebsite').value.trim();
+  if(!name){toast('Enter your company name.');return}
+  db.ref('advertisers/'+currentAdv+'/name').set(name);
+  db.ref('advertisers/'+currentAdv+'/website').set(website).then(function(){toast('Settings saved!')})
+}
 
 auth.onAuthStateChanged(function(user){
   if(user){

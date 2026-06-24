@@ -73,6 +73,10 @@ input,select,textarea,button{font-family:inherit}
 .stat-card .stat-value.mono{-webkit-background-clip:unset;-webkit-text-fill-color:unset;color:#fff}
 .stat-card .stat-sub{font-size:11px;color:rgba(255,255,255,0.3);margin-top:2px}
 
+/* MODAL DARK OVERRIDE (dark theme) */
+.modal{background:rgba(20,20,50,0.98);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.1);color:#fff}
+.modal h3{color:#fff}
+.modal select option{background:#1a1a3e;color:#fff}
 /* CARDS & TABLES */
 .card{background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius);box-shadow:0 8px 32px rgba(0,0,0,0.12);margin-bottom:20px;overflow:hidden}
 .card-head{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
@@ -177,6 +181,8 @@ tr:hover td{background:rgba(108,92,231,0.06)}
           <div class="stat-card"><div class="stat-bar" style="background:var(--warning)"></div><div class="stat-label">Advertisers</div><div class="stat-value" id="statAdvs">0</div><div class="stat-sub">Active accounts</div></div>
           <div class="stat-card"><div class="stat-bar" style="background:#2196F3"></div><div class="stat-label">Impressions</div><div class="stat-value" id="statImps">0</div><div class="stat-sub">All time</div></div>
           <div class="stat-card"><div class="stat-bar" style="background:#f39c12"></div><div class="stat-label">Clicks</div><div class="stat-value" id="statClks">0</div><div class="stat-sub">All time</div></div>
+          <div class="stat-card"><div class="stat-bar" style="background:var(--success)"></div><div class="stat-label">Total Revenue</div><div class="stat-value mono" id="statRevenue">$0</div><div class="stat-sub">From advertisers</div></div>
+          <div class="stat-card"><div class="stat-bar" style="background:#e74c3c"></div><div class="stat-label">Pending Payouts</div><div class="stat-value mono" id="statPendingPayouts">$0</div><div class="stat-sub">Publisher withdrawals</div></div>
         </div>
         <div class="card"><div class="card-head"><h3>Recent Activity</h3></div><div class="card-body" id="recentActivity"><div class="empty-state">Loading...</div></div></div>
       </div>
@@ -200,15 +206,8 @@ tr:hover td{background:rgba(108,92,231,0.06)}
         <div class="card"><div class="card-head"><h3>Ad Performance</h3></div><div class="card-body" id="adPerfBody"><div class="empty-state">Loading...</div></div></div>
       </div>
       <div class="tab-content" id="tabPayments">
-        <div class="card"><div class="card-head"><h3>Payment Management</h3></div><div class="card-body">
-          <p style="color:rgba(255,255,255,0.5);font-size:14px;margin-bottom:16px;">Record publisher payments based on their earnings.</p>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px;">
-            <input id="payPubId" placeholder="Publisher Site ID" style="padding:11px 14px;border:2px solid #e8e8e8;border-radius:10px;outline:none;font-size:13px;flex:1;min-width:160px;">
-            <input id="payAmount" type="number" placeholder="Amount" style="padding:11px 14px;border:2px solid #e8e8e8;border-radius:10px;outline:none;font-size:13px;width:120px;">
-            <button class="btn btn-primary btn-sm" onclick="addPayment()">Record Payment</button>
-          </div>
-          <div id="paymentsList"></div>
-        </div></div>
+        <div class="card"><div class="card-head"><h3>&#36; Publisher Withdrawal Requests</h3></div><div class="card-body" id="withdrawalsList"><div class="empty-state">Loading...</div></div></div>
+        <div class="card"><div class="card-head"><h3>&#128196; All Payments History</h3></div><div class="card-body" id="paymentsList"><div class="empty-state">Loading...</div></div></div>
       </div>
       <div class="tab-content" id="tabSettings">
         <div class="card"><div class="card-head"><h3>Settings</h3></div><div class="card-body">
@@ -326,7 +325,7 @@ document.querySelectorAll('.sidebar nav a[data-tab]').forEach(function(a){
     if(el)el.classList.add('active');
     document.getElementById('pageTitle').textContent=a.textContent.trim();
     if(t==='analytics')loadAnalytics();
-    if(t==='payments')loadPayments();
+    if(t==='payments')loadWithdrawals();
     if(t==='advertisers')loadAdvertisers();
   });
 });
@@ -336,9 +335,20 @@ function initApp(){loadOverview();loadAds();loadPublishers()}
 function loadOverview(){
   db.ref('ads').once('value',function(s){var ads=s.val()||{};var k=Object.keys(ads);document.getElementById('statTotalAds').textContent=k.length;document.getElementById('statActiveAds').textContent=k.filter(function(x){return ads[x].status==='active'}).length});
   db.ref('publishers').once('value',function(s){document.getElementById('statPubs').textContent=s.val()?Object.keys(s.val()).length:0});
-  db.ref('advertisers').once('value',function(s){document.getElementById('statAdvs').textContent=s.val()?Object.keys(s.val()).length:0});
+  db.ref('advertisers').once('value',function(s){
+    var advs=s.val()||{};document.getElementById('statAdvs').textContent=Object.keys(advs).length;
+    var totalBal=0;Object.values(advs).forEach(function(a){if(a.balance)totalBal+=parseFloat(a.balance)});
+    document.getElementById('statRevenue').textContent='$'+totalBal.toFixed(2);
+  });
   db.ref('analytics/impressions').once('value',function(s){document.getElementById('statImps').textContent=s.val()?Object.keys(s.val()).length:0});
   db.ref('analytics/clicks').once('value',function(s){document.getElementById('statClks').textContent=s.val()?Object.keys(s.val()).length:0});
+  db.ref('payments/publishers').once('value',function(s){
+    var ps=s.val()||{};var pend=0;
+    Object.values(ps).forEach(function(pubPs){
+      Object.values(pubPs).forEach(function(p){if(p.status==='pending')pend+=parseFloat(p.amount)||0})
+    });
+    document.getElementById('statPendingPayouts').textContent='$'+pend.toFixed(2);
+  });
   db.ref('analytics/impressions').orderByKey().limitToLast(8).once('value',function(s){
     var d=s.val(),h='';
     if(d){Object.entries(d).reverse().forEach(function(e){var x=e[1];h+='<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:13px;color:rgba(255,255,255,0.7);"><span>Impression: <strong style="color:#fff;">'+(x.adId?x.adId.substring(0,10):'?')+'</strong> / '+(x.siteId||'?')+' / '+(x.position||'?')+'</span><span style="color:rgba(255,255,255,0.35);">'+new Date(x.timestamp).toLocaleString()+'</span></div>'})}
@@ -461,12 +471,14 @@ function loadAdvertisers(){
   db.ref('advertisers').once('value',function(s){
     var advs=s.val()||{},k=Object.keys(advs),h='';
     if(k.length){
-      h='<table><thead><tr><th>Email</th><th>Name</th><th>Website</th><th>Campaigns</th></tr></thead><tbody>';
+      h='<table><thead><tr><th>Email</th><th>Name</th><th>Website</th><th>Wallet</th><th>Campaigns</th><th>Action</th></tr></thead><tbody>';
       k.forEach(function(ek){
         var a=advs[ek];
         db.ref('ads').orderByChild('advertiser').equalTo(ek).once('value',function(as){
           var cnt=as.val()?Object.keys(as.val()).length:0;
-          h+='<tr><td>'+ek+'</td><td>'+(a.name||'')+'</td><td>'+(a.website||'-')+'</td><td>'+cnt+'</td></tr>';
+          var bal=parseFloat(a.balance)||0;
+          h+='<tr><td>'+ek+'</td><td>'+(a.name||'')+'</td><td>'+(a.website||'-')+'</td><td><strong>$'+bal.toFixed(2)+'</strong></td><td>'+cnt+'</td>';
+          h+='<td><button class="btn btn-primary btn-sm" onclick="adjustWallet(\''+ek+'\')">Adjust</button></td></tr>';
         });
       });
       setTimeout(function(){document.getElementById('advertisersList').innerHTML=h+'</tbody></table>'},1000);
@@ -488,18 +500,69 @@ function loadAnalytics(){
   });
 }
 
-function loadPayments(){
-  db.ref('payments').once('value',function(s){
-    var ps=s.val()||{},k=Object.keys(ps),h='';
-    if(k.length){h='<table><thead><tr><th>Publisher</th><th>Amount</th><th>Date</th></tr></thead><tbody>';k.forEach(function(pk){var p=ps[pk];h+='<tr><td>'+(p.publisher||'')+'</td><td>$'+(p.amount||0)+'</td><td>'+new Date(p.timestamp).toLocaleDateString()+'</td></tr>'});h+='</tbody></table>'}
-    else h='<div class="empty-state">No payments recorded.</div>';
+function loadWithdrawals(){
+  db.ref('payments/publishers').once('value',function(s){
+    var all=s.val()||{};var h='';var hasAny=false;
+    var pkeys=Object.keys(all);
+    if(pkeys.length){
+      h='<table><thead><tr><th>Site ID</th><th>Amount</th><th>Method</th><th>Details</th><th>Date</th><th>Status</th><th>Action</th></tr></thead><tbody>';
+      pkeys.forEach(function(sid){
+        Object.keys(all[sid]).forEach(function(wk){
+          var w=all[sid][wk];hasAny=true;var d=new Date(w.requestedAt);
+          if(w.status!=='paid'){
+            h+='<tr><td><code style="font-size:11px;background:rgba(255,255,255,0.06);padding:2px 6px;border-radius:4px;">'+sid+'</code></td>';
+            h+='<td><strong>$'+parseFloat(w.amount).toFixed(2)+'</strong></td><td>'+(w.method||'-')+'</td><td style="max-width:100px;overflow:hidden;text-overflow:ellipsis">'+(w.details||'-')+'</td>';
+            h+='<td style="font-size:11px">'+d.toLocaleDateString()+'</td><td><span class="badge badge-inactive">pending</span></td>';
+            h+='<td><button class="btn btn-success btn-sm" onclick="approveWithdraw(\''+sid+'\',\''+wk+'\','+w.amount+')">Approve</button>';
+            h+=' <button class="btn btn-danger btn-sm" onclick="rejectWithdraw(\''+sid+'\',\''+wk+'\')">Reject</button></td></tr>'
+          } else {
+            h+='<tr><td><code style="font-size:11px;background:rgba(255,255,255,0.06);padding:2px 6px;border-radius:4px;">'+sid+'</code></td>';
+            h+='<td><strong>$'+parseFloat(w.amount).toFixed(2)+'</strong></td><td>'+(w.method||'-')+'</td><td style="max-width:100px;overflow:hidden;text-overflow:ellipsis">'+(w.details||'-')+'</td>';
+            h+='<td style="font-size:11px">'+d.toLocaleDateString()+'</td><td><span class="badge badge-active">paid</span></td><td>-</td></tr>'
+          }
+        });
+      });
+      h+='</tbody></table>';
+      if(!hasAny)h='<div class="empty-state">No withdrawal requests.</div>';
+    } else h='<div class="empty-state">No withdrawal requests.</div>';
+    document.getElementById('withdrawalsList').innerHTML=h;
+  });
+  db.ref('payments/publishers').once('value',function(s){
+    var all=s.val()||{};var h='';var hasAny=false;
+    var keys=Object.keys(all);
+    if(keys.length){
+      h='<table><thead><tr><th>Site ID</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody>';
+      keys.forEach(function(sid){
+        Object.keys(all[sid]).forEach(function(wk){
+          var w=all[sid][wk];hasAny=true;
+          h+='<tr><td>'+sid+'</td><td>$'+parseFloat(w.amount).toFixed(2)+'</td><td><span class="badge badge-'+(w.status==='paid'?'active':'inactive')+'">'+w.status+'</span></td><td>'+new Date(w.requestedAt).toLocaleDateString()+'</td></tr>'
+        });
+      });
+      h+='</tbody></table>';
+      if(!hasAny)h='<div class="empty-state">No payments yet.</div>';
+    } else h='<div class="empty-state">No payments yet.</div>';
     document.getElementById('paymentsList').innerHTML=h;
   });
 }
-function addPayment(){
-  var pub=document.getElementById('payPubId').value.trim(),amt=parseFloat(document.getElementById('payAmount').value);
-  if(!pub||!amt){toast('Enter publisher ID and amount');return}
-  db.ref('payments').push({publisher:pub,amount:amt,timestamp:Date.now()}).then(function(){toast('Payment recorded!');document.getElementById('payPubId').value='';document.getElementById('payAmount').value='';loadPayments()});
+function approveWithdraw(sid,wkId,amt){
+  if(!confirm('Approve $'+amt.toFixed(2)+' withdrawal for '+sid+'?'))return;
+  db.ref('payments/publishers/'+sid+'/'+wkId+'/status').set('paid').then(function(){toast('Withdrawal approved!');loadWithdrawals()});
+}
+function rejectWithdraw(sid,wkId){
+  if(!confirm('Reject this withdrawal request?'))return;
+  db.ref('payments/publishers/'+sid+'/'+wkId+'/status').set('rejected').then(function(){toast('Withdrawal rejected.');loadWithdrawals()});
+}
+
+/* ADJUST ADVERTISER WALLET */
+function adjustWallet(key){
+  var amt=prompt('Enter amount to ADD (positive) or DEDUCT (negative) for '+key+':\n(e.g. 50 or -20)');
+  if(amt===null)return;
+  var num=parseFloat(amt);
+  if(isNaN(num)||num===0){toast('Enter a valid number');return}
+  db.ref('advertisers/'+key+'/balance').transaction(function(b){return Math.max(0,(parseFloat(b)||0)+num)});
+  db.ref('payments/advertisers/'+key).push({amount:Math.abs(num),type:num>0?'admin_deposit':'admin_deduction',status:'completed',createdAt:Date.now()});
+  toast('Wallet updated for '+key);
+  loadAdvertisers();
 }
 
 function changePwd(){

@@ -83,6 +83,29 @@ th{font-size:11px;text-transform:uppercase;color:rgba(255,255,255,0.4);font-weig
 tr:hover td{background:rgba(108,92,231,0.06)}
 .empty{padding:40px;text-align:center;color:rgba(255,255,255,0.35);font-size:14px}
 
+.tab-bar{display:flex;gap:0;margin-bottom:20px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:10px;overflow:hidden}
+.tab-bar button{flex:1;padding:12px 16px;border:none;background:transparent;font-size:13px;font-weight:600;color:rgba(255,255,255,0.4);cursor:pointer;transition:all 0.2s;border-bottom:2px solid transparent}
+.tab-bar button:hover{color:#fff}
+.tab-bar button.active{color:var(--primary-light);border-bottom-color:var(--primary);background:rgba(108,92,231,0.1)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* CHARTS */
+.chart-row{display:flex;align-items:end;gap:8px;height:100px;padding:10px 0}
+.chart-bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.chart-bar .bar{width:100%;border-radius:4px 4px 0 0;min-height:4px;transition:height 0.6s;position:relative}
+.chart-bar .bar.imp{background:linear-gradient(180deg,var(--primary),var(--primary-light))}
+.chart-bar .bar.clk{background:linear-gradient(180deg,var(--secondary),#00e0db)}
+.chart-bar .label{font-size:9px;color:rgba(255,255,255,0.3);white-space:nowrap}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:1000}
+.modal-overlay.active{display:flex}
+.modal{background:rgba(20,20,50,0.98);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.1);border-radius:20px;width:480px;max-width:92vw;padding:32px;box-shadow:0 30px 80px rgba(0,0,0,0.5)}
+.modal h3{font-size:18px;font-weight:700;margin-bottom:16px;color:#fff}
+.modal-actions{display:flex;gap:12px;margin-top:20px}
+.modal-actions .btn{flex:1}
+
 .toast{position:fixed;bottom:24px;right:24px;background:var(--dark);color:#fff;padding:14px 24px;border-radius:12px;font-size:13px;z-index:9999;opacity:0;transform:translateY(16px);transition:all 0.3s;max-width:380px;box-shadow:0 10px 40px rgba(0,0,0,0.15)}
 .toast.show{opacity:1;transform:translateY(0)}
 
@@ -162,22 +185,82 @@ footer{padding:24px 0;text-align:center;border-top:1px solid rgba(255,255,255,0.
       <div class="stat"><div class="stat-bar" style="background:var(--success)"></div><div class="stat-label">CTR</div><div class="stat-value" id="pubCtr">0%</div><div class="stat-sub">Click-through rate</div></div>
       <div class="stat"><div class="stat-bar" style="background:var(--warning)"></div><div class="stat-label">Active Ads</div><div class="stat-value mono" id="pubActiveAds">0</div><div class="stat-sub">Running on your site</div></div>
     </div>
-    <div class="card">
-      <div class="card-head">
-        <h3>&#128279; Integration Code</h3>
-        <button class="btn btn-primary btn-sm" onclick="copyCode()">Copy Code</button>
+    <div class="tab-bar" id="pubTabs">
+      <button class="active" onclick="switchPubTab('overview',this)">Overview</button>
+      <button onclick="switchPubTab('earnings',this)">Earnings</button>
+      <button onclick="switchPubTab('stats',this)">Traffic Stats</button>
+      <button onclick="switchPubTab('settings',this)">Settings</button>
+    </div>
+
+    <div class="tab-content active" id="tabOverview">
+      <div class="card">
+        <div class="card-head">
+          <h3>&#128279; Integration Code</h3>
+          <button class="btn btn-primary btn-sm" onclick="copyCode()">Copy Code</button>
+        </div>
+        <div class="card-body">
+          <p style="color:rgba(255,255,255,0.5);font-size:13px;margin-bottom:12px;">Add these ad slots and script to your website HTML:</p>
+          <div class="code-box" id="integrationCode"></div>
+        </div>
       </div>
-      <div class="card-body">
-        <p style="color:rgba(255,255,255,0.5);font-size:13px;margin-bottom:12px;">Add these ad slots and script to your website HTML:</p>
-        <div class="code-box" id="integrationCode"></div>
+      <div class="card">
+        <div class="card-head"><h3>&#9879; Ad Performance</h3></div>
+        <div class="card-body" id="pubAdPerf"><div class="empty">Loading...</div></div>
       </div>
     </div>
-    <div class="card">
-      <div class="card-head"><h3>&#9879; Ad Performance</h3></div>
-      <div class="card-body" id="pubAdPerf"><div class="empty">Loading...</div></div>
+
+    <div class="tab-content" id="tabEarnings">
+      <div class="stats">
+        <div class="stat"><div class="stat-bar" style="background:var(--success)"></div><div class="stat-label">Estimated Earnings</div><div class="stat-value mono" id="pubEstEarnings">$0.00</div><div class="stat-sub">All time</div></div>
+        <div class="stat"><div class="stat-bar" style="background:#f39c12"></div><div class="stat-label">Pending</div><div class="stat-value mono" id="pubPendingEarnings">$0.00</div><div class="stat-sub">Awaiting payout</div></div>
+        <div class="stat"><div class="stat-bar" style="background:#2196F3"></div><div class="stat-label">Paid Out</div><div class="stat-value mono" id="pubPaidEarnings">$0.00</div><div class="stat-sub">Total received</div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>&#36; Withdrawal</h3><button class="btn btn-primary btn-sm" onclick="showWithdrawModal()">Request Payout</button></div>
+        <div class="card-body" id="pubWithdrawHistory"><div class="empty">No withdrawal history yet.</div></div>
+      </div>
     </div>
+
+    <div class="tab-content" id="tabStats">
+      <div class="card">
+        <div class="card-head"><h3>&#9783; Last 7 Days</h3></div>
+        <div class="card-body" id="pubDailyChart"><div class="empty">Loading stats...</div></div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tabSettings">
+      <div class="card">
+        <div class="card-head"><h3>&#9881; Site Settings</h3></div>
+        <div class="card-body" style="max-width:400px">
+          <div class="form-group"><label>Publisher Name</label><input id="setName" placeholder="Your name or brand"></div>
+          <div class="form-group"><label>Website Domain</label><input id="setDomain" placeholder="example.com"></div>
+          <button class="btn btn-primary" onclick="savePubSettings()" style="width:auto">Save Changes</button>
+        </div>
+      </div>
+    </div>
+
   </div>
   <footer><div class="container">&copy; 2026 Indranex AdNet &bull; <a href="/">Home</a> &bull; <a href="/advertisers/">Advertisers</a></div></footer>
+</div>
+
+<div class="modal-overlay" id="withdrawModal">
+  <div class="modal">
+    <h3>&#36; Request Payout</h3>
+    <div class="form-group"><label>Amount ($)</label><input type="number" id="wdAmount" placeholder="Minimum $10" min="10" step="0.01"></div>
+    <div class="form-group"><label>Payment Method</label>
+      <select id="wdMethod" style="width:100%;padding:12px 16px;border:1px solid rgba(255,255,255,0.12);border-radius:10px;font-size:14px;outline:none;background:rgba(255,255,255,0.06);color:#fff">
+        <option value="paypal">PayPal</option>
+        <option value="bank">Bank Transfer</option>
+        <option value="crypto">Cryptocurrency</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Payment Details</label><input id="wdDetails" placeholder="PayPal email / Bank account / Wallet address"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitWithdraw()">Submit Request</button>
+    </div>
+    <div id="wdError" style="color:var(--danger);font-size:13px;display:none;margin-top:10px"></div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -297,9 +380,11 @@ function pubLogin(){
 function pubLogout(){pubClearSession();auth.signOut();document.getElementById('dashboard').style.display='none';document.getElementById('loginCard').style.display='block';document.getElementById('googleRegCard').style.display='none'}
 
 function loadDash(sid){
+  currentSid=sid;
   document.getElementById('loginCard').style.display='none';document.getElementById('regCard').style.display='none';document.getElementById('dashboard').style.display='block';window.scrollTo(0,0);
   db.ref('publishers/'+sid).once('value',function(s){
     var p=s.val()||{};document.getElementById('pubName').textContent=p.name||sid;document.getElementById('pubSiteIdDisplay').textContent=sid;
+    document.getElementById('setName').value=p.name||'';document.getElementById('setDomain').value=p.domain||'';
     var dm=window.location.hostname;
     document.getElementById('integrationCode').textContent='<!-- Ad Slots -->\n<div class="adnet-slot" data-position="header"></div>\n<div class="adnet-slot" data-position="sidebar"></div>\n<div class="adnet-slot" data-position="inline"></div>\n\n<!-- Special Formats (optional) -->\n<div class="adnet-slot" data-position="popunder"></div>\n<div class="adnet-slot" data-position="interstitial"></div>\n<div class="adnet-slot" data-position="social-bar"></div>\n\n<!-- Script -->\n<script src="https://'+dm+'/publisher-script/ad.js" data-site-id="'+sid+'">\x3C/script>';
   });
@@ -319,9 +404,102 @@ function loadDash(sid){
         db.ref('analytics/clicks').orderByChild('adId').equalTo(k).once('value',function(cs){var aclk=cs.val()?Object.keys(cs.val()).length:0;rows+='<tr><td>'+(a.title||k.substring(0,10))+'</td><td>'+a.type+'</td><td>'+pos+'</td><td>'+aimp+'</td><td>'+aclk+'</td><td>'+(aimp>0?((aclk/aimp)*100).toFixed(2)+'%':'0%')+'</td></tr>';done++;if(done>=total)finalize()})})});
     function finalize(){document.getElementById('pubAdPerf').innerHTML=rows+'</tbody></table>';document.getElementById('pubActiveAds').textContent=active}
   });
+  loadPubEarnings(sid);loadPubDailyStats(sid);loadWithdrawHistory(sid);
 }
 
 function copyCode(){var c=document.getElementById('integrationCode').textContent;navigator.clipboard.writeText(c).then(function(){toast('Code copied!')}).catch(function(){toast('Copy failed')})}
+
+/* TAB SWITCHING */
+function switchPubTab(tab,btn){
+  document.querySelectorAll('#pubTabs button').forEach(function(b){b.classList.remove('active')});
+  document.querySelectorAll('.tab-content').forEach(function(t){t.classList.remove('active')});
+  btn.classList.add('active');document.getElementById('tab'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active')
+}
+
+/* EARNINGS */
+function loadPubEarnings(sid){
+  var est=0,pend=0,paid=0;
+  db.ref('analytics/impressions').orderByChild('siteId').equalTo(sid).once('value',function(ims){
+    var ic=ims.val()?Object.keys(ims.val()).length:0;
+    est=ic*0.0005;
+    db.ref('analytics/clicks').orderByChild('siteId').equalTo(sid).once('value',function(cls){
+      var cc=cls.val()?Object.keys(cls.val()).length:0;
+      est+=cc*0.01;
+      db.ref('payments/publishers/'+sid).once('value',function(ps){
+        var pdata=ps.val()||{};
+        Object.values(pdata).forEach(function(p){
+          if(p.status==='paid')paid+=parseFloat(p.amount)||0;
+          if(p.status==='pending')pend+=parseFloat(p.amount)||0
+        });
+        document.getElementById('pubEstEarnings').textContent='$'+est.toFixed(2);
+        document.getElementById('pubPendingEarnings').textContent='$'+pend.toFixed(2);
+        document.getElementById('pubPaidEarnings').textContent='$'+paid.toFixed(2);
+      });
+    });
+  });
+}
+
+/* WITHDRAWAL */
+var currentSid='';
+function showWithdrawModal(){document.getElementById('withdrawModal').classList.add('active')}
+function closeModal(){document.getElementById('withdrawModal').classList.remove('active')}
+function submitWithdraw(){
+  var amt=parseFloat(document.getElementById('wdAmount').value);
+  var method=document.getElementById('wdMethod').value;
+  var details=document.getElementById('wdDetails').value.trim();
+  var errEl=document.getElementById('wdError');
+  if(!amt||amt<10||!details){errEl.textContent='Enter a valid amount ($10+) and payment details.';errEl.style.display='block';return}
+  errEl.style.display='none';
+  db.ref('payments/publishers/'+currentSid).push({
+    amount:amt,method:method,details:details,status:'pending',requestedAt:Date.now()
+  }).then(function(){toast('Withdrawal request submitted!');closeModal();document.getElementById('wdAmount').value='';document.getElementById('wdDetails').value='';loadWithdrawHistory(currentSid)})
+}
+function loadWithdrawHistory(sid){
+  db.ref('payments/publishers/'+sid).orderByChild('requestedAt').limitToLast(20).once('value',function(s){
+    var data=s.val();var el=document.getElementById('pubWithdrawHistory');
+    if(!data){el.innerHTML='<div class="empty">No withdrawal history yet.</div>';return}
+    var h='<table><thead><tr><th>Date</th><th>Amount</th><th>Method</th><th>Status</th></tr></thead><tbody>';
+    Object.keys(data).reverse().forEach(function(k){
+      var p=data[k];var d=new Date(p.requestedAt);
+      h+='<tr><td>'+d.toLocaleDateString()+'</td><td>$'+parseFloat(p.amount).toFixed(2)+'</td><td>'+p.method+'</td><td><span class="badge badge-'+(p.status==='paid'?'active':p.status==='pending'?'inactive':'')+'">'+p.status+'</span></td></tr>'
+    });
+    el.innerHTML=h+'</tbody></table>'
+  })
+}
+
+/* DAILY STATS */
+function loadPubDailyStats(sid){
+  var days=[];for(var i=6;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);days.push(d.toISOString().split('T')[0])}
+  var dayData={};days.forEach(function(d){dayData[d]={imps:0,clks:0}});
+  db.ref('analytics/impressions').orderByChild('siteId').equalTo(sid).once('value',function(ims){
+    if(ims.val())Object.values(ims.val()).forEach(function(v){
+      if(v&&v.timestamp){var day=v.timestamp.split('T')[0];if(dayData[day]!==undefined)dayData[day].imps++}
+    });
+    db.ref('analytics/clicks').orderByChild('siteId').equalTo(sid).once('value',function(cls){
+      if(cls.val())Object.values(cls.val()).forEach(function(v){
+        if(v&&v.timestamp){var day=v.timestamp.split('T')[0];if(dayData[day]!==undefined)dayData[day].clks++}
+      });
+      var maxV=1;days.forEach(function(d){if(dayData[d].imps>maxV)maxV=dayData[d].imps});
+      var h='<div class="chart-row">';
+      days.forEach(function(d){
+        var impH=Math.max(4,(dayData[d].imps/maxV)*80);
+        var clkH=Math.max(4,(dayData[d].clks/Math.max(dayData[d].imps,1))*60);
+        var label=d.slice(5);
+        h+='<div class="chart-bar"><div class="bar imp" style="height:'+impH+'px" title="'+dayData[d].imps+' impressions"></div><div class="bar clk" style="height:'+clkH+'px" title="'+dayData[d].clks+' clicks"></div><div class="label">'+label+'</div></div>'
+      });
+      document.getElementById('pubDailyChart').innerHTML=h+'</div><p style="color:rgba(255,255,255,0.3);font-size:11px;margin-top:8px;text-align:center">Blue = Impressions &bull; Teal = Clicks</p>'
+    })
+  })
+}
+
+/* SETTINGS */
+function savePubSettings(){
+  var name=document.getElementById('setName').value.trim();
+  var domain=document.getElementById('setDomain').value.trim().replace(/^https?:\/\//,'').replace(/\/$/,'');
+  if(!name||!domain){toast('Fill all fields.');return}
+  db.ref('publishers/'+currentSid+'/name').set(name);
+  db.ref('publishers/'+currentSid+'/domain').set(domain).then(function(){toast('Settings saved!')})
+}
 
 auth.onAuthStateChanged(function(user){
   if(user){
