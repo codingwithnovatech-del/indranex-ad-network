@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Publisher Dashboard - Indranex AdNet</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%236C5CE7'/><text x='50' y='68' font-size='60' fill='white' text-anchor='middle' font-family='Arial' font-weight='bold'>I</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -11,7 +12,7 @@
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{--primary:#6C5CE7;--primary-dark:#5A4BD1;--primary-light:#A29BFE;--secondary:#00CEC9;--success:#00b894;--danger:#e74c3c;--dark:#0a0a1a;--gray:#636E72;--bg:#f0f2f8;--card:#fff;--radius:14px;--shadow:0 2px 20px rgba(0,0,0,0.04)}
+:root{--primary:#6C5CE7;--primary-dark:#5A4BD1;--primary-light:#A29BFE;--secondary:#00CEC9;--success:#00b894;--danger:#e74c3c;--warning:#f39c12;--dark:#0a0a1a;--gray:#636E72;--bg:#f0f2f8;--card:#fff;--radius:14px;--shadow:0 2px 20px rgba(0,0,0,0.04)}
 body{font-family:'Inter',-apple-system,sans-serif;background:#0a0a1a;color:#fff;min-height:100vh;font-size:14px}
 body::before{content:'';position:fixed;inset:0;background:linear-gradient(135deg,#0a0a1a 0%,#1a0a3e 25%,#0d1b2a 50%,#1a0a3e 75%,#0a0a1a 100%);background-size:400% 400%;animation:gradientShift 15s ease infinite;z-index:-2}
 body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(108,92,231,0.12) 0%,transparent 50%),radial-gradient(ellipse at 80% 20%,rgba(0,206,201,0.08) 0%,transparent 50%),radial-gradient(ellipse at 50% 80%,rgba(108,92,231,0.06) 0%,transparent 50%);z-index:-1}
@@ -62,7 +63,7 @@ input,button,select{font-family:inherit}
 .dash-head{display:flex;justify-content:space-between;align-items:center;margin:28px 0 24px;flex-wrap:wrap;gap:12px}
 .dash-head h2{font-size:20px;font-weight:700}
 .dash-head .info{font-size:13px;color:rgba(255,255,255,0.4)}
-.dash-head .info code{background:#f0f0f0;padding:2px 8px;border-radius:4px;font-size:12px;font-family:monospace}
+.dash-head .info code{background:rgba(255,255,255,0.1);padding:2px 8px;border-radius:4px;font-size:12px;font-family:monospace}
 
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:24px}
 .stat{background:rgba(255,255,255,0.06);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius);padding:20px;box-shadow:0 8px 32px rgba(0,0,0,0.2);position:relative;overflow:hidden;transition:transform 0.2s}
@@ -82,6 +83,9 @@ th,td{padding:12px 14px;text-align:left;border-bottom:1px solid rgba(255,255,255
 th{font-size:11px;text-transform:uppercase;color:rgba(255,255,255,0.4);font-weight:600;background:rgba(255,255,255,0.03)}
 tr:hover td{background:rgba(108,92,231,0.06)}
 .empty{padding:40px;text-align:center;color:rgba(255,255,255,0.35);font-size:14px}
+.badge{display:inline-block;padding:3px 10px;border-radius:50px;font-size:11px;font-weight:600}
+.badge-active{background:rgba(0,184,148,0.2);color:var(--success)}
+.badge-inactive{background:rgba(243,156,18,0.2);color:var(--warning)}
 
 .tab-bar{display:flex;gap:0;margin-bottom:20px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:10px;overflow:hidden}
 .tab-bar button{flex:1;padding:12px 16px;border:none;background:transparent;font-size:13px;font-weight:600;color:rgba(255,255,255,0.4);cursor:pointer;transition:all 0.2s;border-bottom:2px solid transparent}
@@ -267,7 +271,7 @@ footer{padding:24px 0;text-align:center;border-top:1px solid rgba(255,255,255,0.
 
 <script>
 var FIREBASE_CONFIG={apiKey:"AIzaSyBUqHKr6vuXqKr5cWMkSM5oTxG1LgPzFEw",authDomain:"indranex-ads-network.firebaseapp.com",databaseURL:"https://indranex-ads-network-default-rtdb.firebaseio.com",projectId:"indranex-ads-network",storageBucket:"indranex-ads-network.firebasestorage.app",messagingSenderId:"665770384201",appId:"1:665770384201:web:0126de06a6919e9f1e1898"};
-firebase.initializeApp(FIREBASE_CONFIG);var db=firebase.database();var auth=firebase.auth();var googleProvider = new firebase.auth.GoogleAuthProvider();var googleRegEmail='';var googleRegName='';
+firebase.initializeApp(FIREBASE_CONFIG);var db=firebase.database();var auth=firebase.auth();var googleProvider = new firebase.auth.GoogleAuthProvider();var googleRegEmail='';var googleRegName='';var currentSid='';
 function toast(m){var e=document.getElementById('toast');e.textContent=m;e.className='toast show';setTimeout(function(){e.className='toast'},3000)}
 function showReg(){document.getElementById('loginCard').style.display='none';document.getElementById('regCard').style.display='block';document.getElementById('googleRegCard').style.display='none'}
 function showLogin(){document.getElementById('loginCard').style.display='block';document.getElementById('regCard').style.display='none';document.getElementById('googleRegCard').style.display='none';document.getElementById('loginPwd').value='';document.getElementById('loginEmail').value=''}
@@ -281,7 +285,7 @@ function pubReg(){
   if(!sid||!name||!domain||!email||!pwd){toast('Fill all fields.');return}
   if(pwd.length<6){toast('Password min 6 characters.');return}
   var regTurnstile=document.querySelector('#regCard .cf-turnstile');
-  var token=turnstile.getResponse(regTurnstile);
+  var token=typeof turnstile!=='undefined'?turnstile.getResponse(regTurnstile):'';
   if(!token){toast('Please complete the CAPTCHA');return}
   fetch('https://broad-resonance-0af8.ayushkumar20265f.workers.dev',{method:'POST',body:JSON.stringify({token:token}),headers:{'Content-Type':'application/json'}}).then(function(r){return r.json()}).then(function(resp){
     if(!resp.success){toast('CAPTCHA verification failed');return}
@@ -339,7 +343,7 @@ function completeGoogleReg(){
   var name=document.getElementById('gRegName').value.trim();
   var domain=document.getElementById('gRegDomain').value.trim().replace(/^https?:\/\//,'').replace(/\/$/,'');
   if(!sid||!name||!domain){document.getElementById('googleRegError').textContent='Fill all fields.';document.getElementById('googleRegError').style.display='block';return}
-  var token=turnstile.getResponse(document.querySelector('#googleRegCard .cf-turnstile'));
+  var token=typeof turnstile!=='undefined'?turnstile.getResponse(document.querySelector('#googleRegCard .cf-turnstile')):'';
   if(!token){document.getElementById('googleRegError').textContent='Complete the CAPTCHA';document.getElementById('googleRegError').style.display='block';return}
   fetch('https://broad-resonance-0af8.ayushkumar20265f.workers.dev',{method:'POST',body:JSON.stringify({token:token}),headers:{'Content-Type':'application/json'}}).then(function(r){return r.json()}).then(function(resp){
     if(!resp.success){document.getElementById('googleRegError').textContent='CAPTCHA verification failed';document.getElementById('googleRegError').style.display='block';return}
@@ -356,7 +360,7 @@ function pubLogin(){
   var email=document.getElementById('loginEmail').value.trim();
   var pwd=document.getElementById('loginPwd').value;
   if(!email||!pwd){setLoginError('Enter email and password');return}
-  var token=turnstile.getResponse();if(!token){setLoginError('Please complete the CAPTCHA');return}
+  var token=typeof turnstile!=='undefined'?turnstile.getResponse():'';if(!token){setLoginError('Please complete the CAPTCHA');return}
   document.getElementById('loginError').style.display='none';
   fetch('https://broad-resonance-0af8.ayushkumar20265f.workers.dev',{method:'POST',body:JSON.stringify({token:token}),headers:{'Content-Type':'application/json'}}).then(function(r){return r.json()}).then(function(resp){
     if(!resp.success){setLoginError('CAPTCHA verification failed');return}
@@ -511,6 +515,10 @@ auth.onAuthStateChanged(function(user){
     }
   }
 });
+
+// Modal overlay click & ESC close
+document.addEventListener('click',function(e){if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('active')});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')document.querySelectorAll('.modal-overlay.active').forEach(function(m){m.classList.remove('active')})});
 </script>
 </body>
 </html>

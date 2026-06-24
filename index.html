@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Indranex AdNet - Premium Ad Network for Publishers &amp; Advertisers</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%236C5CE7'/><text x='50' y='68' font-size='60' fill='white' text-anchor='middle' font-family='Arial' font-weight='bold'>I</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -29,6 +30,8 @@ nav .container{display:flex;align-items:center;justify-content:space-between;hei
 .nav-links{display:flex;gap:32px;align-items:center}
 .nav-links a{text-decoration:none;color:rgba(255,255,255,0.55);font-size:13px;font-weight:500;transition:color 0.3s}
 .nav-links a:hover{color:#fff}
+.nav-toggle{display:none;background:none;border:none;color:#fff;font-size:24px;cursor:pointer;padding:4px}
+@media(max-width:768px){.nav-toggle{display:block}.nav-links{position:fixed;top:72px;left:0;right:0;background:rgba(10,10,26,0.98);backdrop-filter:blur(24px);flex-direction:column;padding:20px 24px;gap:16px;display:none;border-bottom:1px solid rgba(255,255,255,0.05)}.nav-links.open{display:flex}.nav-links a:not(.btn){display:block}}
 
 /* HERO */
 .hero{min-height:100vh;display:flex;align-items:center;background:linear-gradient(135deg,#0a0a1a 0%,#12122a 40%,#0a0a1a 100%);position:relative;overflow:hidden;padding:120px 0 80px}
@@ -165,7 +168,8 @@ footer a:hover{color:#fff}
       <a href="/publishers/">Publishers</a>
       <a href="/advertisers/">Advertisers</a>
       <a href="/dashboard/">Analytics</a>
-      <a href="/publishers/" class="btn btn-primary btn-sm">Get Started</a>
+      <a href="#" class="btn btn-primary btn-sm">Get Started</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">&#9776;</button>
     </div>
   </div>
 </nav>
@@ -312,7 +316,7 @@ footer a:hover{color:#fff}
         <div class="price">Custom</div>
         <div class="price-sub">For high-volume partners</div>
         <ul>
-          <li>Dedified account manager</li>
+          <li>Dedicated account manager</li>
           <li>Custom integrations &amp; SLA</li>
           <li>Priority 24/7 support</li>
           <li>Volume-based discounts</li>
@@ -392,6 +396,8 @@ footer a:hover{color:#fff}
 </footer>
 
 <script>
+// Mobile nav toggle
+document.getElementById('navToggle').addEventListener('click',function(){document.querySelector('.nav-links').classList.toggle('open')});
 // Animated counter
 function animateCounters(){document.querySelectorAll('.counter').forEach(function(el){var target=parseInt(el.getAttribute('data-target'));if(!target)return;var current=0;var increment=Math.ceil(target/60);var timer=setInterval(function(){current+=increment;if(current>=target){current=target;clearInterval(timer)}el.textContent=current.toLocaleString()},25)})}
 

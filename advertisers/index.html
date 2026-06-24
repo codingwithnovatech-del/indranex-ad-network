@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Advertiser Dashboard - Indranex AdNet</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%236C5CE7'/><text x='50' y='68' font-size='60' fill='white' text-anchor='middle' font-family='Arial' font-weight='bold'>I</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -249,8 +250,8 @@ footer{padding:24px 0;text-align:center;border-top:1px solid rgba(255,255,255,0.
     </div>
     <div id="upiSection" style="display:none;text-align:center;padding:16px;background:rgba(255,255,255,0.04);border-radius:12px;margin-bottom:16px">
       <p style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:8px">Scan & pay via UPI</p>
-      <img src="https://i.ibb.co/zVsdtWK9/Chat-GPT-Image-Jun-24-2026-10-56-29-AM.png" alt="UPI QR" style="width:140px;height:140px;border-radius:12px;margin-bottom:8px;background:#fff;padding:8px">
-      <p style="font-size:14px;font-weight:600;color:var(--primary-light)">UPI ID: <span id="upiIdDisplay">admin@indranexadnet@upi</span></p>
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=admin@indranexadnet&pn=IndranexAdNet" alt="UPI QR" style="width:140px;height:140px;border-radius:12px;margin-bottom:8px;background:#fff;padding:8px">
+      <p style="font-size:14px;font-weight:600;color:var(--primary-light)">UPI ID: <span id="upiIdDisplay">admin@indranexadnet</span></p>
       <button class="btn btn-outline btn-sm" onclick="copyUpiId()" style="margin-top:6px">&#128203; Copy UPI ID</button>
     </div>
     <div class="modal-actions">
@@ -269,7 +270,7 @@ footer{padding:24px 0;text-align:center;border-top:1px solid rgba(255,255,255,0.
       <div class="form-group"><label>Format</label><select id="campaignType"><option value="banner">Banner</option><option value="video">Video</option><option value="native">Native</option><option value="popunder">Popunder</option><option value="interstitial">Interstitial</option></select></div>
       <div class="form-group"><label>Status</label><select id="campaignStatus"><option value="active">Active</option><option value="inactive">Paused</option></select></div>
     </div>
-    <div class="form-group"><label>Campaign Title</label><input id="campaignTitle" placeholder="e.g. Summer Sale 2026"></div>
+    <div class="form-group"><label>Campaign Title</label><input id="campaignTitleInput" placeholder="e.g. Summer Sale 2026"></div>
     <div class="form-group"><label>Description</label><textarea id="campaignDesc" placeholder="Ad description"></textarea></div>
     <div class="form-group"><label>Image URL</label><input id="campaignImage" placeholder="https://example.com/ad.jpg"></div>
     <div class="form-group"><label>Video URL</label><input id="campaignVideo" placeholder="https://example.com/video.mp4 or YouTube URL"></div>
@@ -307,6 +308,10 @@ var FIREBASE_CONFIG={apiKey:"AIzaSyBUqHKr6vuXqKr5cWMkSM5oTxG1LgPzFEw",authDomain
 firebase.initializeApp(FIREBASE_CONFIG);var db=firebase.database();var auth=firebase.auth();var googleProvider = new firebase.auth.GoogleAuthProvider();var currentAdv=null;var googleRegEmail='';
 function toast(m){var e=document.getElementById('toast');e.textContent=m;e.className='toast show';setTimeout(function(){e.className='toast'},3000)}
 function closeModal(){document.getElementById('campaignModal').classList.remove('active')}
+
+// Modal overlay click & ESC close
+document.addEventListener('click',function(e){if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('active')});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')document.querySelectorAll('.modal-overlay.active').forEach(function(m){m.classList.remove('active')})});
 function showReg(){document.getElementById('loginCard').style.display='none';document.getElementById('regCard').style.display='block';document.getElementById('googleRegCard').style.display='none'}
 function showLogin(){document.getElementById('loginCard').style.display='block';document.getElementById('regCard').style.display='none';document.getElementById('googleRegCard').style.display='none';document.getElementById('loginPwd').value=''}
 
@@ -314,7 +319,7 @@ function advReg(){
   var n=document.getElementById('regName').value.trim(),e=document.getElementById('regEmail').value.trim(),p=document.getElementById('regPwd').value,w=document.getElementById('regWebsite').value.trim();
   if(!n||!e||!p){toast('Fill all fields.');return}
   if(p.length<6){toast('Password min 6 chars.');return}
-  var regTurnstile=document.querySelector('#regCard .cf-turnstile');var token=turnstile.getResponse(regTurnstile);
+  var regTurnstile=document.querySelector('#regCard .cf-turnstile');var token=typeof turnstile!=='undefined'?turnstile.getResponse(regTurnstile):'';
   if(!token){toast('Please complete the CAPTCHA');return}
   fetch('https://broad-resonance-0af8.ayushkumar20265f.workers.dev',{method:'POST',body:JSON.stringify({token:token}),headers:{'Content-Type':'application/json'}}).then(function(r){return r.json()}).then(function(resp){
     if(!resp.success){toast('CAPTCHA verification failed');return}
@@ -367,7 +372,7 @@ function googleSignIn(){
 function completeGoogleReg(){
   var n=document.getElementById('gRegName').value.trim(),w=document.getElementById('gRegWebsite').value.trim();
   if(!n){document.getElementById('googleRegError').textContent='Enter your company name';document.getElementById('googleRegError').style.display='block';return}
-  var token=turnstile.getResponse(document.querySelector('#googleRegCard .cf-turnstile'));
+  var token=typeof turnstile!=='undefined'?turnstile.getResponse(document.querySelector('#googleRegCard .cf-turnstile')):'';
   if(!token){document.getElementById('googleRegError').textContent='Complete the CAPTCHA';document.getElementById('googleRegError').style.display='block';return}
   fetch('https://broad-resonance-0af8.ayushkumar20265f.workers.dev',{method:'POST',body:JSON.stringify({token:token}),headers:{'Content-Type':'application/json'}}).then(function(r){return r.json()}).then(function(resp){
     if(!resp.success){document.getElementById('googleRegError').textContent='CAPTCHA verification failed';document.getElementById('googleRegError').style.display='block';return}
@@ -384,7 +389,7 @@ function completeGoogleReg(){
 function advLogin(){
   var e=document.getElementById('loginEmail').value.trim(),p=document.getElementById('loginPwd').value;
   if(!e||!p){setLoginError('Enter email and password');return}
-  var token=turnstile.getResponse();if(!token){setLoginError('Please complete the CAPTCHA');return}
+  var token=typeof turnstile!=='undefined'?turnstile.getResponse():'';if(!token){setLoginError('Please complete the CAPTCHA');return}
   document.getElementById('loginError').style.display='none';
   fetch('https://broad-resonance-0af8.ayushkumar20265f.workers.dev',{method:'POST',body:JSON.stringify({token:token}),headers:{'Content-Type':'application/json'}}).then(function(r){return r.json()}).then(function(resp){
     if(!resp.success){setLoginError('CAPTCHA verification failed');return}
@@ -442,7 +447,7 @@ function campaignForm(adId){
   document.getElementById('campaignEditId').value=adId||'';
   document.getElementById('campaignTitle').textContent=adId?'Edit Campaign':'New Campaign';
   document.getElementById('campaignType').value='banner';document.getElementById('campaignStatus').value='active';
-  ['campaignTitle','campaignDesc','campaignImage','campaignVideo','campaignTarget','campaignDailyBudget','campaignTotalBudget'].forEach(function(x){document.getElementById(x).value=''});
+  ['campaignTitleInput','campaignDesc','campaignImage','campaignVideo','campaignTarget','campaignDailyBudget','campaignTotalBudget'].forEach(function(x){document.getElementById(x).value=''});
   document.querySelectorAll('#campaignPositions input').forEach(function(c){c.checked=false});
   db.ref('publishers').once('value',function(s){
     var pubs=s.val()||{};var h='<label><input type="checkbox" value="all"> All Sites</label>';
@@ -451,7 +456,7 @@ function campaignForm(adId){
   if(adId)db.ref('ads/'+adId).once('value',function(s){
     var ad=s.val();if(!ad)return;
     document.getElementById('campaignType').value=ad.type||'banner';document.getElementById('campaignStatus').value=ad.status||'active';
-    document.getElementById('campaignTitle').value=ad.title||'';document.getElementById('campaignDesc').value=ad.description||'';
+    document.getElementById('campaignTitleInput').value=ad.title||'';document.getElementById('campaignDesc').value=ad.description||'';
     document.getElementById('campaignImage').value=ad.imageUrl||'';document.getElementById('campaignVideo').value=ad.videoUrl||'';
     document.getElementById('campaignTarget').value=ad.targetUrl||'#';
     document.getElementById('campaignDailyBudget').value=ad.dailyBudget||'';document.getElementById('campaignTotalBudget').value=ad.totalBudget||'';
@@ -464,7 +469,7 @@ function campaignForm(adId){
 function saveCampaign(){
   var id=document.getElementById('campaignEditId').value;
   var type=document.getElementById('campaignType').value,status=document.getElementById('campaignStatus').value;
-  var title=document.getElementById('campaignTitle').value,desc=document.getElementById('campaignDesc').value;
+  var title=document.getElementById('campaignTitleInput').value,desc=document.getElementById('campaignDesc').value;
   var img=document.getElementById('campaignImage').value,vid=document.getElementById('campaignVideo').value,target=document.getElementById('campaignTarget').value;
   var pos={};document.querySelectorAll('#campaignPositions input:checked').forEach(function(c){pos[c.value]=true});
   var sites={};document.querySelectorAll('#campaignSites input:checked').forEach(function(c){sites[c.value]=true});
@@ -491,6 +496,14 @@ function loadAdvWallet(key){
     var bal=parseFloat(s.val())||0;
     document.getElementById('advBalance').textContent='$'+bal.toFixed(2);
     document.getElementById('advBalDisplay').textContent='$'+bal.toFixed(2);
+  });
+  db.ref('payments/advertisers/'+key).once('value',function(s){
+    var data=s.val();var totalDeposits=0;
+    if(data)Object.values(data).forEach(function(t){if(t.type==='deposit'||!t.type)totalDeposits+=parseFloat(t.amount)||0});
+    db.ref('advertisers/'+key+'/balance').once('value',function(ss){
+      var curBal=parseFloat(ss.val())||0;
+      document.getElementById('advSpent').textContent='$'+Math.max(0,totalDeposits-curBal).toFixed(2);
+    });
   });
   db.ref('payments/advertisers/'+key).orderByChild('createdAt').limitToLast(20).once('value',function(s){
     var data=s.val();var el=document.getElementById('advTxHistory');

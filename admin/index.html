@@ -5,6 +5,7 @@
 <title>Admin - Indranex AdNet</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%236C5CE7'/><text x='50' y='68' font-size='60' fill='white' text-anchor='middle' font-family='Arial' font-weight='bold'>I</text></svg>">
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
@@ -61,6 +62,9 @@ input,select,textarea,button{font-family:inherit}
 .main{margin-left:240px;min-height:100vh}
 .topbar{background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.05);position:sticky;top:0;z-index:50}
 .topbar h2{font-size:18px;font-weight:700;color:#fff}
+.menu-toggle{display:none;background:none;border:none;color:rgba(255,255,255,0.5);font-size:24px;cursor:pointer;padding:4px 8px;border-radius:8px}
+.menu-toggle:hover{background:rgba(255,255,255,0.08);color:#fff}
+@media(max-width:768px){.menu-toggle{display:block}}
 .content{padding:24px 28px;max-width:1200px}
 
 /* STATS */
@@ -74,9 +78,9 @@ input,select,textarea,button{font-family:inherit}
 .stat-card .stat-sub{font-size:11px;color:rgba(255,255,255,0.3);margin-top:2px}
 
 /* MODAL DARK OVERRIDE (dark theme) */
-.modal{background:rgba(20,20,50,0.98);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.1);color:#fff}
-.modal h3{color:#fff}
-.modal select option{background:#1a1a3e;color:#fff}
+.modal-overlay .modal{background:rgba(20,20,50,0.98);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.1);color:#fff}
+.modal-overlay .modal h3{color:#fff}
+.modal-overlay .modal select option{background:#1a1a3e;color:#fff}
 /* CARDS & TABLES */
 .card{background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius);box-shadow:0 8px 32px rgba(0,0,0,0.12);margin-bottom:20px;overflow:hidden}
 .card-head{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
@@ -127,7 +131,7 @@ tr:hover td{background:rgba(108,92,231,0.06)}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.08)}
 
 /* RESPONSIVE */
-@media(max-width:768px){.sidebar{display:none}.main{margin-left:0}.content{padding:14px}.stats-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){.sidebar{display:none;position:fixed;z-index:200;width:260px}.sidebar.open{display:flex}.main{margin-left:0}.content{padding:14px}.stats-grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
@@ -170,7 +174,7 @@ tr:hover td{background:rgba(108,92,231,0.06)}
   </aside>
 
   <div class="main">
-    <div class="topbar"><h2 id="pageTitle">Overview</h2></div>
+    <div class="topbar"><h2 id="pageTitle">Overview</h2><button class="menu-toggle" onclick="toggleSidebar()">&#9776;</button></div>
     <div class="content">
 
       <div class="tab-content active" id="tabOverview">
@@ -237,6 +241,10 @@ firebase.initializeApp(FC);var db=firebase.database();var auth=firebase.auth();
 
 function toast(m){var e=document.getElementById('toast');e.textContent=m;e.className='toast show';setTimeout(function(){e.className='toast'},3000)}
 function closeModal(id){document.getElementById(id).classList.remove('active')}
+
+// Modal overlay click & ESC close
+document.addEventListener('click',function(e){if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('active')});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')document.querySelectorAll('.modal-overlay.active').forEach(function(m){m.classList.remove('active')})});
 function snapArr(snap){var a=[];if(!snap)return a;snap.forEach(function(c){var v=c.val();v['.key']=c.key;a.push(v)});return a}
 
 function setLoginError(m){var e=document.getElementById('loginError');e.textContent=m;e.style.display='block'}
@@ -313,6 +321,8 @@ auth.onAuthStateChanged(function(user){
     if(ls||ss){document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';window.scrollTo(0,0);initApp()}
   }
 });
+// Fallback for already-resolved auth state
+(function(){var ls=localStorage.getItem('adnet_auth');var ss=sessionStorage.getItem('adnet_auth');if(ls||ss&&auth.currentUser){document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';window.scrollTo(0,0);initApp()}})();
 
 document.querySelectorAll('.sidebar nav a[data-tab]').forEach(function(a){
   a.addEventListener('click',function(e){
@@ -546,7 +556,9 @@ function loadWithdrawals(){
 }
 function approveWithdraw(sid,wkId,amt){
   if(!confirm('Approve $'+amt.toFixed(2)+' withdrawal for '+sid+'?'))return;
-  db.ref('payments/publishers/'+sid+'/'+wkId+'/status').set('paid').then(function(){toast('Withdrawal approved!');loadWithdrawals()});
+  db.ref('payments/publishers/'+sid+'/'+wkId+'/status').set('paid');
+  db.ref('publishers/'+sid+'/balance').transaction(function(b){return Math.max(0,(parseFloat(b)||0)-amt)});
+  toast('Withdrawal approved!');loadWithdrawals();
 }
 function rejectWithdraw(sid,wkId){
   if(!confirm('Reject this withdrawal request?'))return;
@@ -571,9 +583,9 @@ function changePwd(){
   var cred=firebase.auth.EmailAuthProvider.credential(auth.currentUser.email,curPwd)
   auth.currentUser.reauthenticateWithCredential(cred).then(function(){
     auth.currentUser.updatePassword(p).then(function(){toast('Password updated!');document.getElementById('changePwd').value=''}).catch(function(e){toast(e.message)})
-  }).catch(function(){toast('Current password incorrect')});
+}).catch(function(){toast('Current password incorrect')});
 }
-
+function toggleSidebar(){document.querySelector('.sidebar').classList.toggle('open')}
 function checkSession(){
   var ls=localStorage.getItem('adnet_auth');var ss=sessionStorage.getItem('adnet_auth');
   if(ls||ss){auth.onAuthStateChanged(function(u){if(u){document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';window.scrollTo(0,0);initApp()}})}
