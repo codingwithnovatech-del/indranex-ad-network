@@ -8,7 +8,6 @@ const ADNET_FIREBASE_CONFIG = {
     appId: "1:665770384201:web:0126de06a6919e9f1e1898"
 };
 
-const ADNET_ADMIN_PASSWORD_HASH = "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9";
 const ADNET_DATABASE_URL = "https://indranex-ads-network-default-rtdb.firebaseio.com";
 
 let adnetApp = null;
@@ -46,7 +45,7 @@ async function adnetVerifyPassword(password) {
         const storedHash = snapshot.val();
         return hash === storedHash;
     } catch (e) {
-        return hash === ADNET_ADMIN_PASSWORD_HASH;
+        return false;
     }
 }
 

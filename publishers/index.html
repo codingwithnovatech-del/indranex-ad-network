@@ -2,8 +2,6 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="google-adsense-account" content="ca-pub-7499391070855373">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7499391070855373" crossorigin="anonymous"></script>
 <title>Publisher Dashboard - Indranex AdNet</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%236C5CE7'/><text x='50' y='68' font-size='60' fill='white' text-anchor='middle' font-family='Arial' font-weight='bold'>I</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -295,7 +293,7 @@ footer{padding:24px 0;text-align:center;border-top:1px solid rgba(255,255,255,0.
 
 <script>
 var FIREBASE_CONFIG={apiKey:"AIzaSyBUqHKr6vuXqKr5cWMkSM5oTxG1LgPzFEw",authDomain:"indranex-ads-network.firebaseapp.com",databaseURL:"https://indranex-ads-network-default-rtdb.firebaseio.com",projectId:"indranex-ads-network",storageBucket:"indranex-ads-network.firebasestorage.app",messagingSenderId:"665770384201",appId:"1:665770384201:web:0126de06a6919e9f1e1898"};
-firebase.initializeApp(FIREBASE_CONFIG);var db=firebase.database();var auth=firebase.auth();var googleProvider = new firebase.auth.GoogleAuthProvider();var googleRegEmail='';var googleRegName='';var currentSid='';
+if(!firebase.apps.length){firebase.initializeApp(FIREBASE_CONFIG)}var db=firebase.database();var auth=firebase.auth();var googleProvider = new firebase.auth.GoogleAuthProvider();var googleRegEmail='';var googleRegName='';var currentSid='';
 function toast(m){var e=document.getElementById('toast');e.textContent=m;e.className='toast show';setTimeout(function(){e.className='toast'},3000)}
 function showReg(){document.getElementById('loginCard').style.display='none';document.getElementById('regCard').style.display='block';document.getElementById('googleRegCard').style.display='none'}
 function showLogin(){document.getElementById('loginCard').style.display='block';document.getElementById('regCard').style.display='none';document.getElementById('googleRegCard').style.display='none';document.getElementById('loginPwd').value='';document.getElementById('loginEmail').value=''}

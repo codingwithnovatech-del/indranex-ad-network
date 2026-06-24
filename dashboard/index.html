@@ -2,8 +2,6 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="google-adsense-account" content="ca-pub-7499391070855373">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7499391070855373" crossorigin="anonymous"></script>
 <title>Analytics Dashboard - Indranex AdNet</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -121,7 +119,7 @@ footer a{color:var(--primary)}
 
 <script>
 var FIREBASE_CONFIG={apiKey:"AIzaSyBUqHKr6vuXqKr5cWMkSM5oTxG1LgPzFEw",authDomain:"indranex-ads-network.firebaseapp.com",databaseURL:"https://indranex-ads-network-default-rtdb.firebaseio.com",projectId:"indranex-ads-network",storageBucket:"indranex-ads-network.firebasestorage.app",messagingSenderId:"665770384201",appId:"1:665770384201:web:0126de06a6919e9f1e1898"};
-firebase.initializeApp(FIREBASE_CONFIG);var db=firebase.database();
+if(!firebase.apps.length){firebase.initializeApp(FIREBASE_CONFIG)}var db=firebase.database();
 
 function loadDashboard(){
   var impsP=db.ref('analytics/impressions').once('value');

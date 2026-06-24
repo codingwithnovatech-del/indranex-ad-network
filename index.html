@@ -167,6 +167,10 @@ nav.scrolled .container{height:60px}
 .doc-link{display:flex;align-items:center;gap:10px;padding:14px 18px;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid rgba(255,255,255,0.06);text-decoration:none;color:rgba(255,255,255,0.6);transition:all 0.3s;font-size:13px}
 .doc-link:hover{background:rgba(108,92,231,0.1);border-color:var(--primary);color:#fff;transform:translateX(4px)}
 .doc-link .d-icon{width:32px;height:32px;border-radius:8px;background:rgba(108,92,231,0.12);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.pill-link-purple:hover{background:rgba(108,92,231,0.18)!important}
+.pill-link-teal:hover{background:rgba(0,206,201,0.18)!important}
+.pill-link-orange:hover{background:rgba(225,112,85,0.18)!important}
+.blog-card-link:hover{background:rgba(108,92,231,0.08)!important;border-color:rgba(108,92,231,0.15)!important}
 /* BACK TO TOP */
 .back-to-top{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#8B7CF0);color:#fff;border:none;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;z-index:999;opacity:0;transform:translateY(20px);transition:all 0.4s;box-shadow:0 4px 20px rgba(108,92,231,0.3)}
 .back-to-top.show{opacity:1;transform:translateY(0)}
@@ -424,7 +428,7 @@ footer a:hover{color:var(--primary-light);padding-left:3px}
       <div>
         <h4 style="color:rgba(255,255,255,0.3);font-size:11px;text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:12px">&#128240; Latest From Our Blog</h4>
         <div style="display:flex;flex-direction:column;gap:10px">
-          <a href="/blog/how-display-ads-work.html" style="display:flex;gap:14px;padding:12px;background:rgba(255,255,255,0.03);border-radius:12px;text-decoration:none;transition:all 0.3s;border:1px solid rgba(255,255,255,0.04)" onmouseover="this.style.background='rgba(108,92,231,0.08)';this.style.borderColor='rgba(108,92,231,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.borderColor='rgba(255,255,255,0.04)'">
+          <a href="/blog/how-display-ads-work.html" class="blog-card-link" style="display:flex;gap:14px;padding:12px;background:rgba(255,255,255,0.03);border-radius:12px;text-decoration:none;transition:all 0.3s;border:1px solid rgba(255,255,255,0.04)">
             <div style="width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,#6C5CE7,#A29BFE);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px">&#9879;</div>
             <div style="flex:1;min-width:0">
               <div style="display:flex;gap:6px;margin-bottom:2px"><span style="font-size:10px;color:var(--primary-light);background:rgba(108,92,231,0.15);padding:1px 8px;border-radius:10px">Advertising</span><span style="font-size:10px;color:rgba(255,255,255,0.25)">5 min</span></div>
@@ -432,7 +436,7 @@ footer a:hover{color:var(--primary-light);padding-left:3px}
               <p style="color:rgba(255,255,255,0.4);font-size:11px;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Complete guide to the display advertising ecosystem.</p>
             </div>
           </a>
-          <a href="/blog/cpm-vs-cpc.html" style="display:flex;gap:14px;padding:12px;background:rgba(255,255,255,0.03);border-radius:12px;text-decoration:none;transition:all 0.3s;border:1px solid rgba(255,255,255,0.04)" onmouseover="this.style.background='rgba(108,92,231,0.08)';this.style.borderColor='rgba(108,92,231,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.borderColor='rgba(255,255,255,0.04)'">
+          <a href="/blog/cpm-vs-cpc.html" class="blog-card-link" style="display:flex;gap:14px;padding:12px;background:rgba(255,255,255,0.03);border-radius:12px;text-decoration:none;transition:all 0.3s;border:1px solid rgba(255,255,255,0.04)">
             <div style="width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,#00CEC9,#81ECEC);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px">&#128202;</div>
             <div style="flex:1;min-width:0">
               <div style="display:flex;gap:6px;margin-bottom:2px"><span style="font-size:10px;color:var(--primary-light);background:rgba(108,92,231,0.15);padding:1px 8px;border-radius:10px">Pricing</span><span style="font-size:10px;color:rgba(255,255,255,0.25)">5 min</span></div>
@@ -440,7 +444,7 @@ footer a:hover{color:var(--primary-light);padding-left:3px}
               <p style="color:rgba(255,255,255,0.4);font-size:11px;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Choose the right pricing model for your traffic.</p>
             </div>
           </a>
-          <a href="/blog/website-monetization-guide.html" style="display:flex;gap:14px;padding:12px;background:rgba(255,255,255,0.03);border-radius:12px;text-decoration:none;transition:all 0.3s;border:1px solid rgba(255,255,255,0.04)" onmouseover="this.style.background='rgba(108,92,231,0.08)';this.style.borderColor='rgba(108,92,231,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.borderColor='rgba(255,255,255,0.04)'">
+          <a href="/blog/website-monetization-guide.html" class="blog-card-link" style="display:flex;gap:14px;padding:12px;background:rgba(255,255,255,0.03);border-radius:12px;text-decoration:none;transition:all 0.3s;border:1px solid rgba(255,255,255,0.04)">
             <div style="width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,#FD79A8,#FDCB6E);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px">&#128176;</div>
             <div style="flex:1;min-width:0">
               <div style="display:flex;gap:6px;margin-bottom:2px"><span style="font-size:10px;color:var(--primary-light);background:rgba(108,92,231,0.15);padding:1px 8px;border-radius:10px">Monetization</span><span style="font-size:10px;color:rgba(255,255,255,0.25)">6 min</span></div>
@@ -448,7 +452,7 @@ footer a:hover{color:var(--primary-light);padding-left:3px}
               <p style="color:rgba(255,255,255,0.4);font-size:11px;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Monetization strategies for Indian publishers.</p>
             </div>
           </a>
-          <a href="/blog/ad-optimization-tips.html" style="display:flex;gap:14px;padding:12px;background:rgba(255,255,255,0.03);border-radius:12px;text-decoration:none;transition:all 0.3s;border:1px solid rgba(255,255,255,0.04)" onmouseover="this.style.background='rgba(108,92,231,0.08)';this.style.borderColor='rgba(108,92,231,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.borderColor='rgba(255,255,255,0.04)'">
+          <a href="/blog/ad-optimization-tips.html" class="blog-card-link" style="display:flex;gap:14px;padding:12px;background:rgba(255,255,255,0.03);border-radius:12px;text-decoration:none;transition:all 0.3s;border:1px solid rgba(255,255,255,0.04)">
             <div style="width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,#0984E3,#74B9FF);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px">&#128736;</div>
             <div style="flex:1;min-width:0">
               <div style="display:flex;gap:6px;margin-bottom:2px"><span style="font-size:10px;color:var(--primary-light);background:rgba(108,92,231,0.15);padding:1px 8px;border-radius:10px">Optimization</span><span style="font-size:10px;color:rgba(255,255,255,0.25)">5 min</span></div>
@@ -574,87 +578,87 @@ footer a:hover{color:var(--primary-light);padding-left:3px}
       <p>Answers to the most common questions from our publishers</p>
     </div>
     <div class="faq-list">
-      <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-item" onclick="toggleFaq(this)" tabindex="0" role="button" aria-expanded="false" onkeydown="if(event.key==='Enter'||event.key===' ')event.preventDefault(),toggleFaq(this)">
         <div class="faq-q">How do payments work? <span class="arrow">&#9660;</span></div>
         <div class="faq-a">Payments are processed on a NET-30 cycle. Earnings from each calendar month are calculated on the 1st of the following month and paid out within 30 days. Your first payment may have a 45-day holding period for fraud verification. Payments are sent via your chosen method (bank transfer, PayPal, or crypto).</div>
       </div>
-      <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-item" onclick="toggleFaq(this)" tabindex="0" role="button" aria-expanded="false" onkeydown="if(event.key==='Enter'||event.key===' ')event.preventDefault(),toggleFaq(this)">
         <div class="faq-q">What is the minimum payout? <span class="arrow">&#9660;</span></div>
         <div class="faq-a">The minimum payout threshold is $50 for all payment methods. If your earnings do not reach $50 in a month, the balance rolls over to the next month until the threshold is met. There are no fees for payouts.</div>
       </div>
-      <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-item" onclick="toggleFaq(this)" tabindex="0" role="button" aria-expanded="false" onkeydown="if(event.key==='Enter'||event.key===' ')event.preventDefault(),toggleFaq(this)">
         <div class="faq-q">How long does account approval take? <span class="arrow">&#9660;</span></div>
         <div class="faq-a">Account registration is automatic and instant. Site review and approval typically take 24-48 hours. During this period, our team verifies your domain, checks content quality, and ensures compliance with our policies. You can integrate the ad code immediately — ads will start serving once approved.</div>
       </div>
-      <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-item" onclick="toggleFaq(this)" tabindex="0" role="button" aria-expanded="false" onkeydown="if(event.key==='Enter'||event.key===' ')event.preventDefault(),toggleFaq(this)">
         <div class="faq-q">What are the traffic requirements? <span class="arrow">&#9660;</span></div>
         <div class="faq-a">There is no minimum traffic requirement to join Indranex AdNet. However, to generate meaningful revenue, we recommend at least 1,000 monthly pageviews. All traffic must be organic or from legitimate, non-fraudulent sources. Bots, auto-refresh traffic, and traffic exchange programs are strictly prohibited.</div>
       </div>
-      <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-item" onclick="toggleFaq(this)" tabindex="0" role="button" aria-expanded="false" onkeydown="if(event.key==='Enter'||event.key===' ')event.preventDefault(),toggleFaq(this)">
         <div class="faq-q">Which countries are supported? <span class="arrow">&#9660;</span></div>
         <div class="faq-a">We accept publishers from all countries. However, advertiser demand varies by geography. Traffic from tier-1 countries (US, UK, Canada, Australia, Western Europe) generally earns higher CPM rates. Indian traffic earns competitive rates based on current market demand. Our system automatically matches the best available campaigns for your audience's location.</div>
       </div>
-      <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-item" onclick="toggleFaq(this)" tabindex="0" role="button" aria-expanded="false" onkeydown="if(event.key==='Enter'||event.key===' ')event.preventDefault(),toggleFaq(this)">
         <div class="faq-q">What payment methods are available? <span class="arrow">&#9660;</span></div>
         <div class="faq-a">We support three payment methods: (1) Bank Transfer — direct to your Indian bank account (NEFT/IMPS), (2) PayPal — instant transfers to your PayPal account, (3) Cryptocurrency — USDT (BEP-20 or TRC-20). You can choose and update your payment method from the dashboard settings. Bank transfers within India typically settle within 2-3 business days.</div>
       </div>
-      <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-item" onclick="toggleFaq(this)" tabindex="0" role="button" aria-expanded="false" onkeydown="if(event.key==='Enter'||event.key===' ')event.preventDefault(),toggleFaq(this)">
         <div class="faq-q">How is revenue calculated? <span class="arrow">&#9660;</span></div>
         <div class="faq-a">Revenue is calculated on a CPM (Cost Per Mille) basis. You earn for every 1,000 verified impressions served on your site. The CPM rate varies based on your traffic geography, niche, ad format, and seasonal demand. Publishers receive 70% of the gross revenue. Your dashboard shows real-time earnings with daily, weekly, and monthly breakdowns.</div>
       </div>
-      <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-item" onclick="toggleFaq(this)" tabindex="0" role="button" aria-expanded="false" onkeydown="if(event.key==='Enter'||event.key===' ')event.preventDefault(),toggleFaq(this)">
         <div class="faq-q">Can I use multiple ad formats on the same page? <span class="arrow">&#9660;</span></div>
         <div class="faq-a">Yes, you can use multiple ad formats on the same page. We recommend a maximum of 3 ad slots per page to maintain good user experience. Popunders and interstitials are special formats that serve once per session regardless of how many slots you place. Each format has its own placement guidelines detailed in our Ad Placement Guide.</div>
       </div>
-      <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-item" onclick="toggleFaq(this)" tabindex="0" role="button" aria-expanded="false" onkeydown="if(event.key==='Enter'||event.key===' ')event.preventDefault(),toggleFaq(this)">
         <div class="faq-q">What happens if I violate the traffic policy? <span class="arrow">&#9660;</span></div>
         <div class="faq-a">Traffic policy violations are taken seriously. Depending on the severity, consequences include: warning with corrective action required, payment hold for investigation, temporary account suspension, or permanent account termination with forfeiture of outstanding balance. We recommend reading our Traffic Policy and Invalid Click Policy documents carefully.</div>
       </div>
-      <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-item" onclick="toggleFaq(this)" tabindex="0" role="button" aria-expanded="false" onkeydown="if(event.key==='Enter'||event.key===' ')event.preventDefault(),toggleFaq(this)">
         <div class="faq-q">Do I need a privacy policy on my website? <span class="arrow">&#9660;</span></div>
         <div class="faq-a">Yes, all publishers must have a privacy policy on their website that discloses the use of third-party advertising and cookies. This is required by Google AdSense policies and data protection regulations. Your privacy policy should inform visitors that ads may use cookies for personalized advertising and provide opt-out instructions.</div>
       </div>
-      <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-item" onclick="toggleFaq(this)" tabindex="0" role="button" aria-expanded="false" onkeydown="if(event.key==='Enter'||event.key===' ')event.preventDefault(),toggleFaq(this)">
         <div class="faq-q">Can I use Indranex AdNet alongside Google AdSense? <span class="arrow">&#9660;</span></div>
         <div class="faq-a">Yes, you can use Indranex AdNet alongside Google AdSense and other ad networks. Our ad SDK is designed to coexist with other ad scripts without conflicts. However, you must ensure that you do not exceed recommended ad density limits and that your total ad placements comply with all applicable policies.</div>
       </div>
-      <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-item" onclick="toggleFaq(this)" tabindex="0" role="button" aria-expanded="false" onkeydown="if(event.key==='Enter'||event.key===' ')event.preventDefault(),toggleFaq(this)">
         <div class="faq-q">How do I integrate the ad code? <span class="arrow">&#9660;</span></div>
         <div class="faq-a">Integration is simple: (1) Log into your publisher dashboard, (2) Go to the Integration tab, (3) Copy the generated code, (4) Paste it into your website's HTML where you want ads to appear. The code consists of ad slot divs and a script tag. Place ad slot divs at desired positions (header, sidebar, inline) and the script tag anywhere on the page. Ads will start serving automatically.</div>
       </div>
-      <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-item" onclick="toggleFaq(this)" tabindex="0" role="button" aria-expanded="false" onkeydown="if(event.key==='Enter'||event.key===' ')event.preventDefault(),toggleFaq(this)">
         <div class="faq-q">What ad formats do you support? <span class="arrow">&#9660;</span></div>
         <div class="faq-a">We support 6 ad formats: (1) Banner — image or text display ads, (2) Popunder — opens in new window behind current, (3) Interstitial — full-screen overlay with timer, (4) Native — in-content ads matching site style, (5) Video — YouTube or MP4 video pre-rolls, (6) Social Bar — sticky bottom bar with call-to-action. Each format can be enabled or disabled per campaign.</div>
       </div>
-      <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-item" onclick="toggleFaq(this)" tabindex="0" role="button" aria-expanded="false" onkeydown="if(event.key==='Enter'||event.key===' ')event.preventDefault(),toggleFaq(this)">
         <div class="faq-q">Can I block certain ad categories? <span class="arrow">&#9660;</span></div>
         <div class="faq-a">Currently, ad categories are managed at the platform level. We prohibit ads for illegal products, counterfeit goods, deceptive financial schemes, hate speech, and adult content. If you encounter an inappropriate ad on your site, please contact our support team immediately with a screenshot and we will investigate and remove it.</div>
       </div>
-      <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-item" onclick="toggleFaq(this)" tabindex="0" role="button" aria-expanded="false" onkeydown="if(event.key==='Enter'||event.key===' ')event.preventDefault(),toggleFaq(this)">
         <div class="faq-q">How do I track my earnings? <span class="arrow">&#9660;</span></div>
         <div class="faq-a">Your publisher dashboard provides real-time earnings tracking. You can view: total earnings, earnings by day (7-day chart), earnings by ad format, estimated vs confirmed earnings, withdrawal history, and pending payouts. All data is powered by Firebase Realtime Database and updates instantly as impressions and clicks are recorded.</div>
       </div>
-      <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-item" onclick="toggleFaq(this)" tabindex="0" role="button" aria-expanded="false" onkeydown="if(event.key==='Enter'||event.key===' ')event.preventDefault(),toggleFaq(this)">
         <div class="faq-q">Can I add multiple websites? <span class="arrow">&#9660;</span></div>
         <div class="faq-a">Yes, you can register multiple websites under a single publisher account. Each site gets a unique Site ID, separate integration code, and per-site analytics. This allows you to manage all your properties from one dashboard while tracking performance independently for each site.</div>
       </div>
-      <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-item" onclick="toggleFaq(this)" tabindex="0" role="button" aria-expanded="false" onkeydown="if(event.key==='Enter'||event.key===' ')event.preventDefault(),toggleFaq(this)">
         <div class="faq-q">What if my site gets rejected? <span class="arrow">&#9660;</span></div>
         <div class="faq-a">If your site is rejected during the review process, you will receive an email with specific reasons for rejection. Common reasons include: insufficient original content, prohibited content categories, broken navigation, missing privacy policy, or domain verification failure. You can fix the issues and re-apply by contacting our support team.</div>
       </div>
-      <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-item" onclick="toggleFaq(this)" tabindex="0" role="button" aria-expanded="false" onkeydown="if(event.key==='Enter'||event.key===' ')event.preventDefault(),toggleFaq(this)">
         <div class="faq-q">Is there a mobile app for the dashboard? <span class="arrow">&#9660;</span></div>
         <div class="faq-a">Currently, we do not have a dedicated mobile app. However, our dashboard is fully responsive and works seamlessly on mobile browsers. You can log in from your phone's browser, check earnings, view stats, and manage settings — all optimized for touch interaction.</div>
       </div>
-      <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-item" onclick="toggleFaq(this)" tabindex="0" role="button" aria-expanded="false" onkeydown="if(event.key==='Enter'||event.key===' ')event.preventDefault(),toggleFaq(this)">
         <div class="faq-q">How does the popunder format work? <span class="arrow">&#9660;</span></div>
         <div class="faq-a">The popunder format opens the advertiser's URL in a new browser window behind the current window. It is triggered by the user's first click anywhere on the page (ensuring it only fires with genuine user interaction). The popunder is counted once per session and will not re-fire on subsequent page views. This format typically has the highest CPM rates.</div>
       </div>
-      <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-item" onclick="toggleFaq(this)" tabindex="0" role="button" aria-expanded="false" onkeydown="if(event.key==='Enter'||event.key===' ')event.preventDefault(),toggleFaq(this)">
         <div class="faq-q">What is the revenue share percentage? <span class="arrow">&#9660;</span></div>
         <div class="faq-a">Publishers receive 70% of the gross ad revenue generated from their traffic. This is one of the highest revenue shares in the industry — most competing networks offer only 50-60%. We believe in fair partnerships and transparent revenue sharing with no hidden deductions.</div>
       </div>
-      <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-item" onclick="toggleFaq(this)" tabindex="0" role="button" aria-expanded="false" onkeydown="if(event.key==='Enter'||event.key===' ')event.preventDefault(),toggleFaq(this)">
         <div class="faq-q">How do I contact support? <span class="arrow">&#9660;</span></div>
         <div class="faq-a">You can reach our support team via email at support@indranexadnet.com or through our contact form at /contact.html. We aim to respond to all inquiries within 48 hours. For faster assistance, include your Site ID or Advertiser ID in the subject line. We also maintain comprehensive documentation in our Publisher Documentation Center.</div>
       </div>
@@ -687,12 +691,12 @@ footer a:hover{color:var(--primary-light);padding-left:3px}
           <p style="font-size:13px;color:var(--gray);line-height:1.8">We maintain comprehensive policies to ensure fair and transparent operations for all participants.</p>
         </div>
         <div style="padding:8px 28px 16px;display:flex;flex-wrap:wrap;gap:6px">
-          <a href="/privacy.html" style="font-size:11px;color:#6C5CE7;background:rgba(108,92,231,0.08);padding:4px 12px;border-radius:20px;text-decoration:none;font-weight:500;transition:all 0.2s" onmouseover="this.style.background='rgba(108,92,231,0.18)'" onmouseout="this.style.background='rgba(108,92,231,0.08)'">Privacy Policy</a>
-          <a href="/terms.html" style="font-size:11px;color:#6C5CE7;background:rgba(108,92,231,0.08);padding:4px 12px;border-radius:20px;text-decoration:none;font-weight:500;transition:all 0.2s" onmouseover="this.style.background='rgba(108,92,231,0.18)'" onmouseout="this.style.background='rgba(108,92,231,0.08)'">Terms of Service</a>
-          <a href="/cookie-policy.html" style="font-size:11px;color:#6C5CE7;background:rgba(108,92,231,0.08);padding:4px 12px;border-radius:20px;text-decoration:none;font-weight:500;transition:all 0.2s" onmouseover="this.style.background='rgba(108,92,231,0.18)'" onmouseout="this.style.background='rgba(108,92,231,0.08)'">Cookie Policy</a>
-          <a href="/disclaimer.html" style="font-size:11px;color:#6C5CE7;background:rgba(108,92,231,0.08);padding:4px 12px;border-radius:20px;text-decoration:none;font-weight:500;transition:all 0.2s" onmouseover="this.style.background='rgba(108,92,231,0.18)'" onmouseout="this.style.background='rgba(108,92,231,0.08)'">Disclaimer</a>
-          <a href="/docs/traffic-policy.html" style="font-size:11px;color:#00CEC9;background:rgba(0,206,201,0.08);padding:4px 12px;border-radius:20px;text-decoration:none;font-weight:500;transition:all 0.2s" onmouseover="this.style.background='rgba(0,206,201,0.18)'" onmouseout="this.style.background='rgba(0,206,201,0.08)'">Traffic Policy</a>
-          <a href="/docs/invalid-click-policy.html" style="font-size:11px;color:#E17055;background:rgba(225,112,85,0.08);padding:4px 12px;border-radius:20px;text-decoration:none;font-weight:500;transition:all 0.2s" onmouseover="this.style.background='rgba(225,112,85,0.18)'" onmouseout="this.style.background='rgba(225,112,85,0.08)'">Invalid Click Policy</a>
+          <a href="/privacy.html" class="pill-link-purple" style="font-size:11px;color:#6C5CE7;background:rgba(108,92,231,0.08);padding:4px 12px;border-radius:20px;text-decoration:none;font-weight:500;transition:all 0.2s">Privacy Policy</a>
+          <a href="/terms.html" class="pill-link-purple" style="font-size:11px;color:#6C5CE7;background:rgba(108,92,231,0.08);padding:4px 12px;border-radius:20px;text-decoration:none;font-weight:500;transition:all 0.2s">Terms of Service</a>
+          <a href="/cookie-policy.html" class="pill-link-purple" style="font-size:11px;color:#6C5CE7;background:rgba(108,92,231,0.08);padding:4px 12px;border-radius:20px;text-decoration:none;font-weight:500;transition:all 0.2s">Cookie Policy</a>
+          <a href="/disclaimer.html" class="pill-link-purple" style="font-size:11px;color:#6C5CE7;background:rgba(108,92,231,0.08);padding:4px 12px;border-radius:20px;text-decoration:none;font-weight:500;transition:all 0.2s">Disclaimer</a>
+          <a href="/docs/traffic-policy.html" class="pill-link-teal" style="font-size:11px;color:#00CEC9;background:rgba(0,206,201,0.08);padding:4px 12px;border-radius:20px;text-decoration:none;font-weight:500;transition:all 0.2s">Traffic Policy</a>
+          <a href="/docs/invalid-click-policy.html" class="pill-link-orange" style="font-size:11px;color:#E17055;background:rgba(225,112,85,0.08);padding:4px 12px;border-radius:20px;text-decoration:none;font-weight:500;transition:all 0.2s">Invalid Click Policy</a>
         </div>
       </div>
       <div class="card" style="padding:0;overflow:hidden">
@@ -780,7 +784,7 @@ footer a:hover{color:var(--primary-light);padding-left:3px}
 
 <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">&#8593;</button>
 <script>
-function toggleFaq(el){el.classList.toggle('open')}
+function toggleFaq(el){el.classList.toggle('open');el.setAttribute('aria-expanded',el.classList.contains('open'))}
 function calcRevenue(){
   var t=parseFloat(document.getElementById('calcTraffic').value)||0;
   var r=parseFloat(document.getElementById('calcRegion').value)||0.5;

@@ -2,8 +2,6 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="google-adsense-account" content="ca-pub-7499391070855373">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7499391070855373" crossorigin="anonymous"></script>
 <title>Contact Us - Indranex AdNet</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%236C5CE7'/><text x='50' y='68' font-size='60' fill='white' text-anchor='middle' font-family='Arial' font-weight='bold'>I</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -147,7 +145,7 @@ nav a:hover{color:#fff;text-decoration:none}
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 <script>
 var FC={apiKey:"AIzaSyBUqHKr6vuXqKr5cWMkSM5oTxG1LgPzFEw",authDomain:"indranex-ads-network.firebaseapp.com",databaseURL:"https://indranex-ads-network-default-rtdb.firebaseio.com",projectId:"indranex-ads-network",storageBucket:"indranex-ads-network.firebasestorage.app",messagingSenderId:"665770384201",appId:"1:665770384201:web:0126de06a6919e9f1e1898"};
-firebase.initializeApp(FC);var db=firebase.database();
+if(!firebase.apps.length){firebase.initializeApp(FC)}var db=firebase.database();
 function submitContact(e){
   e.preventDefault();
   var name=document.getElementById('contactName').value.trim();

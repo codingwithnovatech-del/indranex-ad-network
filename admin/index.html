@@ -2,8 +2,6 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="google-adsense-account" content="ca-pub-7499391070855373">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7499391070855373" crossorigin="anonymous"></script>
 <title>Admin - Indranex AdNet</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -239,7 +237,7 @@ tr:hover td{background:rgba(108,92,231,0.06)}
 
 <script>
 var FC={apiKey:"AIzaSyBUqHKr6vuXqKr5cWMkSM5oTxG1LgPzFEw",authDomain:"indranex-ads-network.firebaseapp.com",databaseURL:"https://indranex-ads-network-default-rtdb.firebaseio.com",projectId:"indranex-ads-network",storageBucket:"indranex-ads-network.firebasestorage.app",messagingSenderId:"665770384201",appId:"1:665770384201:web:0126de06a6919e9f1e1898"};
-firebase.initializeApp(FC);var db=firebase.database();var auth=firebase.auth();
+if(!firebase.apps.length){firebase.initializeApp(FC)}var db=firebase.apps.length?firebase.app().database():firebase.database();var auth=firebase.apps.length?firebase.app().auth():firebase.auth();
 
 function toast(m){var e=document.getElementById('toast');e.textContent=m;e.className='toast show';setTimeout(function(){e.className='toast'},3000)}
 function closeModal(id){document.getElementById(id).classList.remove('active')}
@@ -290,26 +288,8 @@ var loginHandler = function(){
       auth.signInWithEmailAndPassword(adminEmail,p).then(function(){
         var rm=document.getElementById('rememberMe').checked;setSession(rm);clearRateLimit();document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';window.scrollTo(0,0);initApp()
       }).catch(function(e){
-        if(e.code==='auth/user-not-found'){
-          document.getElementById('loginSub').textContent='First time? Set up your admin account';
-          document.getElementById('loginBtn').textContent='Create Admin Account';
-          document.getElementById('loginBtn').onclick=function(){
-            var p2=document.getElementById('loginPwd').value;
-            if(!p2||p2.length<6){setLoginError('Password must be 6+ characters');return}
-            var token2=turnstile.getResponse();if(!token2){setLoginError('Please complete the CAPTCHA');return}
-            setLoginBtn(true,'Creating...');
-            fetch('https://broad-resonance-0af8.ayushkumar20265f.workers.dev',{method:'POST',body:JSON.stringify({token:token2}),headers:{'Content-Type':'application/json'}}).then(function(r){return r.json()}).then(function(r2){
-              if(!r2.success){setLoginError('CAPTCHA verification failed');setLoginBtn(false,'Create Admin Account');return}
-              auth.createUserWithEmailAndPassword(adminEmail,p2).then(function(){
-                var rm=document.getElementById('rememberMe').checked;setSession(rm);clearRateLimit();document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';window.scrollTo(0,0);initApp()
-              }).catch(function(e2){setLoginError(e2.message);setLoginBtn(false,'Create Admin Account')});
-            }).catch(function(){setLoginError('CAPTCHA service unavailable');setLoginBtn(false,'Create Admin Account')});
-          };
-          setLoginBtn(false,'Create Admin Account');
-        } else {
-          recordAttempt();setLoginError('Invalid password');setLoginBtn(false,'Sign In');
-          document.getElementById('loginBtn').onclick=loginHandler;
-        }
+        recordAttempt();setLoginError('Invalid password. Account not found — contact support.');setLoginBtn(false,'Sign In');
+        document.getElementById('loginBtn').onclick=loginHandler;
       });
     });
   }).catch(function(){setLoginError('CAPTCHA service unavailable');setLoginBtn(false,'Sign In')});
@@ -482,19 +462,19 @@ function deletePub(id){if(!confirm('Delete?'))return;db.ref('publishers/'+id).re
 
 function loadAdvertisers(){
   db.ref('advertisers').once('value',function(s){
-    var advs=s.val()||{},k=Object.keys(advs),h='';
+    var advs=s.val()||{},k=Object.keys(advs),h='',promises=[];
     if(k.length){
       h='<table><thead><tr><th>Email</th><th>Name</th><th>Website</th><th>Wallet</th><th>Campaigns</th><th>Action</th></tr></thead><tbody>';
       k.forEach(function(ek){
         var a=advs[ek];
-        db.ref('ads').orderByChild('advertiser').equalTo(ek).once('value',function(as){
+        promises.push(db.ref('ads').orderByChild('advertiser').equalTo(ek).once('value').then(function(as){
           var cnt=as.val()?Object.keys(as.val()).length:0;
           var bal=parseFloat(a.balance)||0;
           h+='<tr><td>'+ek+'</td><td>'+(a.name||'')+'</td><td>'+(a.website||'-')+'</td><td><strong>$'+bal.toFixed(2)+'</strong></td><td>'+cnt+'</td>';
           h+='<td><button class="btn btn-primary btn-sm" onclick="adjustWallet(\''+ek+'\')">Adjust</button></td></tr>';
-        });
+        }));
       });
-      setTimeout(function(){document.getElementById('advertisersList').innerHTML=h+'</tbody></table>'},1000);
+      Promise.all(promises).then(function(){document.getElementById('advertisersList').innerHTML=h+'</tbody></table>'});
     } else document.getElementById('advertisersList').innerHTML='<div class="empty-state">No advertisers.</div>';
   });
 }
@@ -503,13 +483,14 @@ function loadAnalytics(){
   db.ref('analytics/impressions').once('value',function(s){var imps=s.val()?Object.keys(s.val()).length:0;document.getElementById('anaImps').textContent=imps;
     db.ref('analytics/clicks').once('value',function(s2){var clks=s2.val()?Object.keys(s2.val()).length:0;document.getElementById('anaClks').textContent=clks;document.getElementById('anaCtr').textContent=imps>0?((clks/imps)*100).toFixed(2)+'%':'0%'})});
   db.ref('ads').once('value',function(s){
-    var ads=s.val()||{},h='<table><thead><tr><th>Ad</th><th>Type</th><th>Impressions</th><th>Clicks</th><th>CTR</th></tr></thead><tbody>',active=0;
+    var ads=s.val()||{},h='<table><thead><tr><th>Ad</th><th>Type</th><th>Impressions</th><th>Clicks</th><th>CTR</th></tr></thead><tbody>',active=0,promises=[];
     Object.keys(ads).forEach(function(k){
       if(ads[k].status==='active')active++;
-      db.ref('analytics/impressions').orderByChild('adId').equalTo(k).once('value',function(is){var im=is.val()?Object.keys(is.val()).length:0;
-        db.ref('analytics/clicks').orderByChild('adId').equalTo(k).once('value',function(cs){var cl=cs.val()?Object.keys(cs.val()).length:0;h+='<tr><td>'+(ads[k].title||k.substring(0,10))+'</td><td>'+ads[k].type+'</td><td>'+im+'</td><td>'+cl+'</td><td>'+(im>0?((cl/im)*100).toFixed(2)+'%':'0%')+'</td></tr>'})})});
+      promises.push(db.ref('analytics/impressions').orderByChild('adId').equalTo(k).once('value').then(function(is){var im=is.val()?Object.keys(is.val()).length:0;
+        return db.ref('analytics/clicks').orderByChild('adId').equalTo(k).once('value').then(function(cs){var cl=cs.val()?Object.keys(cs.val()).length:0;h+='<tr><td>'+(ads[k].title||k.substring(0,10))+'</td><td>'+ads[k].type+'</td><td>'+im+'</td><td>'+cl+'</td><td>'+(im>0?((cl/im)*100).toFixed(2)+'%':'0%')+'</td></tr>'})}));
+    });
     document.getElementById('anaActive').textContent=active;
-    setTimeout(function(){document.getElementById('adPerfBody').innerHTML=h+'</tbody></table>'},2000);
+    Promise.all(promises).then(function(){document.getElementById('adPerfBody').innerHTML=h+'</tbody></table>'});
   });
 }
 
