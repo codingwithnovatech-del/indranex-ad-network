@@ -4,51 +4,160 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Terms of Service - Indranex AdNet</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{--primary:#6C5CE7;--primary-dark:#5A4BD1;--dark:#1a1a2e;--gray:#636E72;--bg:#f4f5f9;--card:#fff;--radius:12px}
-body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:#2D3436;font-size:14px;line-height:1.7}
-.container{max-width:800px;margin:0 auto;padding:40px 20px}
-.card{background:var(--card);border-radius:var(--radius);padding:40px;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
-h1{font-size:28px;font-weight:800;margin-bottom:4px}
-h2{font-size:18px;font-weight:700;margin:24px 0 8px}
-p{color:#555;margin-bottom:12px}
-.top-bar{background:var(--dark);color:#fff;padding:14px 0}
-.top-bar .container{display:flex;align-items:center;justify-content:space-between;padding:0 20px}
-.top-bar h1{font-size:18px;font-weight:700;margin:0}
-.top-bar h1 span{color:#A29BFE}
-.top-bar a{color:rgba(255,255,255,0.6);text-decoration:none;font-size:13px}
-.top-bar a:hover{color:#fff}
+:root{--primary:#6C5CE7;--primary-dark:#5A4BD1;--primary-light:#A29BFE;--secondary:#00CEC9;--success:#00b894;--danger:#e74c3c;--dark:#0a0a1a;--gray:#636E72}
+body{font-family:'Inter',-apple-system,sans-serif;background:#0a0a1a;color:#fff;font-size:14px;line-height:1.8;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background:linear-gradient(135deg,#0a0a1a 0%,#1a0a3e 25%,#0d1b2a 50%,#1a0a3e 75%,#0a0a1a 100%);background-size:400% 400%;animation:gradientShift 15s ease infinite;z-index:-2}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(108,92,231,0.12) 0%,transparent 50%),radial-gradient(ellipse at 80% 20%,rgba(0,206,201,0.08) 0%,transparent 50%),radial-gradient(ellipse at 50% 80%,rgba(108,92,231,0.06) 0%,transparent 50%);z-index:-1}
+@keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+a{color:var(--primary-light);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* NAV */
+nav{position:sticky;top:0;background:rgba(10,10,26,0.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);z-index:100;border-bottom:1px solid rgba(255,255,255,0.05)}
+nav .container{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;color:#fff;text-decoration:none}
+.logo .icon{width:32px;height:32px;background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900}
+.logo span{color:var(--primary-light)}
+nav a{color:rgba(255,255,255,0.5);font-size:13px;font-weight:500;text-decoration:none;transition:color 0.2s}
+nav a:hover{color:#fff;text-decoration:none}
+
+/* CONTENT */
+.wrapper{max-width:860px;margin:0 auto;padding:40px 24px 60px}
+.legal-card{background:rgba(255,255,255,0.04);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:48px;box-shadow:0 30px 80px rgba(0,0,0,0.3)}
+.legal-card h1{font-size:30px;font-weight:800;margin-bottom:4px;letter-spacing:-0.5px}
+.legal-card .meta{color:rgba(255,255,255,0.3);font-size:13px;margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.legal-card h2{font-size:18px;font-weight:700;margin:28px 0 10px;color:var(--primary-light)}
+.legal-card h3{font-size:15px;font-weight:600;margin:20px 0 8px;color:rgba(255,255,255,0.9)}
+.legal-card p{color:rgba(255,255,255,0.65);margin-bottom:12px}
+.legal-card ul{color:rgba(255,255,255,0.65);margin:8px 0 16px 20px;list-style:none}
+.legal-card ul li::before{content:'▸ ';color:var(--primary-light);font-weight:700}
+.legal-card ul li{margin-bottom:6px}
+.legal-card .highlight{border-left:3px solid var(--primary);padding:12px 16px;background:rgba(108,92,231,0.08);border-radius:0 10px 10px 0;margin:16px 0;color:rgba(255,255,255,0.6);font-size:13px}
+.legal-card strong{color:#fff}
+
+/* PARTNER LOGOS */
+.partners{display:flex;gap:20px;align-items:center;flex-wrap:wrap;margin:24px 0 8px;padding:20px 0;border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06)}
+.partners .label{font-size:11px;text-transform:uppercase;color:rgba(255,255,255,0.25);font-weight:600;letter-spacing:0.5px;margin-right:8px}
+.partners .logo-item{display:flex;align-items:center;gap:8px;padding:8px 14px;background:rgba(255,255,255,0.05);border-radius:8px;border:1px solid rgba(255,255,255,0.06);font-size:12px;color:rgba(255,255,255,0.5)}
+.partners .logo-item svg{flex-shrink:0}
+.partners .logo-item span{font-weight:500;color:rgba(255,255,255,0.7)}
+
+/* FOOTER */
+.footer{text-align:center;padding:20px 0;color:rgba(255,255,255,0.2);font-size:12px;border-top:1px solid rgba(255,255,255,0.04);margin-top:40px}
+.footer a{color:rgba(255,255,255,0.3)}
+.footer a:hover{color:var(--primary-light)}
+
+@media(max-width:600px){.legal-card{padding:28px 20px}.legal-card h1{font-size:24px}.partners{gap:10px}}
 </style>
 </head>
 <body>
-<div class="top-bar"><div class="container"><h1><span>&#9632;</span> Indranex <span>AdNet</span></h1><a href="/">Home</a></div></div>
-<div class="container">
-<div class="card">
-<h1>Terms of Service</h1>
-<p style="color:#999;font-size:13px">Last updated: June 2026</p>
 
-<h2>1. Acceptance of Terms</h2>
-<p>By accessing or using Indranex AdNet, you agree to be bound by these Terms of Service. If you do not agree, do not use the platform.</p>
+<nav>
+  <div class="container">
+    <a href="/" class="logo"><div class="icon">I</div>Indranex <span>AdNet</span></a>
+    <a href="/">&#8592; Back to Home</a>
+  </div>
+</nav>
 
-<h2>2. Publisher Responsibilities</h2>
-<p>Publishers agree to place ads in compliance with all applicable laws. Prohibited practices include click fraud, impression fraud, and placing ads on sites with illegal or adult content.</p>
+<div class="wrapper">
+<div class="legal-card">
+  <h1>Terms of Service</h1>
+  <div class="meta">Last updated: June 24, 2026 &middot; Effective: Immediately</div>
 
-<h2>3. Advertiser Responsibilities</h2>
-<p>Advertisers agree that all campaign content is lawful, accurate, and does not infringe on third-party rights. Indranex AdNet reserves the right to reject or remove any ad at its discretion.</p>
+  <p>Welcome to Indranex AdNet ("Company," "we," "our," "us"). These Terms of Service ("Terms") govern your access to and use of the Indranex AdNet platform, including any related websites, services, applications, and APIs (collectively, the "Platform"). By registering for, accessing, or using the Platform, you agree to be bound by these Terms. If you do not agree, you must not use the Platform.</p>
 
-<h2>4. Payment Terms</h2>
-<p>Publisher payments are processed based on verified impressions and clicks. Advertisers are billed according to the agreed campaign terms. Payment disputes must be raised within 14 days.</p>
+  <div class="partners">
+    <span class="label">Powered by</span>
+    <div class="logo-item">
+      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.54 28.59A14.5 14.5 0 0 1 9.5 24c0-1.59.28-3.14.76-4.59l-7.98-6.19A23.99 23.99 0 0 0 0 24c0 3.77.87 7.35 2.56 10.56l7.98-5.97z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 5.97C6.51 42.62 14.62 48 24 48z"/></svg>
+      <span>Google Auth</span>
+    </div>
+    <div class="logo-item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0z" fill="#FF9100"/><path d="M12 3c-2.1 0-3.8 1.7-3.8 3.8v1.5H6.8v6.8h10.5v-6.8h-1.5V6.8c0-2.1-1.7-3.8-3.8-3.8z" fill="#fff"/></svg>
+      <span>Firebase</span>
+    </div>
+    <div class="logo-item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="#F38020"/><path d="M16.5 9.5c0-2.5-2-4.5-4.5-4.5S7.5 7 7.5 9.5c0 .8.2 1.5.5 2.1l-1.3 3.9h3.3V17h3v-1.5h3.3l-1.3-3.9c.3-.6.5-1.3.5-2.1z" fill="#fff"/></svg>
+      <span>Cloudflare</span>
+    </div>
+  </div>
 
-<h2>5. Limitation of Liability</h2>
-<p>Indranex AdNet is provided &quot;as is&quot; without warranties. We are not liable for any indirect or consequential damages arising from use of the platform.</p>
+  <h2>1. Accounts &amp; Registration</h2>
+  <p>1.1 You must be at least 18 years old to use the Platform. By registering, you represent that all information you provide is accurate, complete, and current.</p>
+  <p>1.2 You are responsible for maintaining the confidentiality of your login credentials. Firebase Authentication (powered by Google) handles password security; we never store your password in plain text.</p>
+  <p>1.3 Each user may maintain only one account unless expressly authorized. Accounts registered with disposable or temporary email addresses may be suspended.</p>
 
-<h2>6. Termination</h2>
-<p>We reserve the right to suspend or terminate accounts that violate these terms or engage in fraudulent activity.</p>
+  <h2>2. Publisher Terms</h2>
+  <p>2.1 Publishers may integrate our ad tags into their websites. You must have legal ownership or sufficient authorization to place ads on the sites you register.</p>
+  <p>2.2 <strong>Prohibited Practices:</strong></p>
+  <ul>
+    <li>Click fraud, impression fraud, or any artificial inflation of ad metrics</li>
+    <li>Using automated scripts, bots, or iframe stacking to generate traffic</li>
+    <li>Placing ads on pages containing illegal, pornographic, violent, or hateful content</li>
+    <li>Modifying ad code to remove branding, resize improperly, or force unwanted redirects</li>
+    <li>Self-clicking or encouraging others to click your own ads</li>
+  </ul>
+  <p>2.3 We monitor traffic patterns using Cloudflare Turnstile and internal analytics. Suspicious activity may result in withheld payments, account suspension, or permanent ban.</p>
 
-<h2>7. Changes</h2>
-<p>These terms may be updated at any time. Continued use after changes constitutes acceptance of the new terms.</p>
-</div></div>
+  <h2>3. Advertiser Terms</h2>
+  <p>3.1 Advertisers represent that all campaign materials (images, videos, landing pages) comply with applicable laws and do not infringe on third-party intellectual property rights.</p>
+  <p>3.2 Prohibited ad categories include but are not limited to: illegal products/services, counterfeit goods, deceptive financial schemes (CFD, crypto scams), unapproved pharmaceuticals, and content promoting hate or violence.</p>
+  <p>3.3 We reserve the right to review, reject, or remove any campaign at any time without prior notice. Advertisers will not be charged for rejected campaigns.</p>
+
+  <h2>4. Payments &amp; Billing</h2>
+  <p>4.1 <strong>Publisher Payments:</strong> Earnings are calculated based on verified impressions and clicks. Payments are issued on a NET-30 schedule once the minimum threshold (typically $50) is reached. Payment methods may include bank transfer, PayPal, or crypto as available.</p>
+  <p>4.2 <strong>Advertiser Billing:</strong> Advertisers are billed according to their campaign terms (CPM, CPC, or flat rate). Prepayment may be required for new accounts. All fees are non-refundable except as explicitly stated.</p>
+  <p>4.3 <strong>Disputes:</strong> Any payment discrepancy must be reported within 14 days of the transaction date. We will investigate and respond within a reasonable timeframe.</p>
+  <p>4.4 <strong>Chargebacks:</strong> If an advertiser initiates a chargeback, their account will be suspended immediately and all outstanding campaigns will be stopped.</p>
+  <div class="highlight">Note: All payments are processed through secure Firebase-managed records. Indranex AdNet reserves the right to deduct applicable taxes as required by law.</div>
+
+  <h2>5. Platform Rules &amp; Conduct</h2>
+  <p>5.1 You agree not to:</p>
+  <ul>
+    <li>Reverse engineer, decompile, or attempt to extract source code from the Platform</li>
+    <li>Interfere with or disrupt the Platform's servers or networks</li>
+    <li>Use any data mining or scraping techniques without written permission</li>
+    <li>Impersonate any person or entity or misrepresent your affiliation</li>
+    <li>Upload or transmit malware, viruses, or any malicious code</li>
+  </ul>
+
+  <h2>6. Intellectual Property</h2>
+  <p>6.1 The Platform, including its design, logo, brand name "Indranex AdNet," and all proprietary technology, is owned by Indranex AdNet and protected by applicable intellectual property laws.</p>
+  <p>6.2 You retain ownership of any content you submit (ads, creative assets, site content). By submitting, you grant us a non-exclusive, worldwide license to display, distribute, and serve this content as part of the Platform's functionality.</p>
+
+  <h2>7. Limitation of Liability</h2>
+  <p>7.1 The Platform is provided "AS IS" and "AS AVAILABLE" without warranties of any kind, either express or implied, including but not limited to merchantability or fitness for a particular purpose.</p>
+  <p>7.2 In no event shall Indranex AdNet be liable for any indirect, incidental, special, consequential, or punitive damages arising out of or relating to your use of the Platform, even if advised of the possibility of such damages.</p>
+  <p>7.3 Our total liability to you for any claim arising from these Terms shall not exceed the greater of $100 or the amounts paid by you to us in the 12 months preceding the claim.</p>
+
+  <h2>8. Indemnification</h2>
+  <p>You agree to indemnify, defend, and hold harmless Indranex AdNet, its affiliates, officers, and employees from any claims, damages, or expenses arising from your violation of these Terms, your misuse of the Platform, or your violation of any third-party rights.</p>
+
+  <h2>9. Term &amp; Termination</h2>
+  <p>9.1 These Terms remain in effect until terminated by either party. You may terminate at any time by discontinuing use and deleting your account.</p>
+  <p>9.2 We may suspend or terminate your account immediately without prior notice if you violate these Terms or engage in fraudulent, abusive, or illegal activity.</p>
+  <p>9.3 Upon termination: your access to the Platform ceases, outstanding payments may be forfeited if termination is for cause, and Sections 7, 8, and 10 shall survive termination.</p>
+
+  <h2>10. Governing Law</h2>
+  <p>These Terms are governed by the laws of India. Any disputes arising from these Terms shall be resolved through binding arbitration in accordance with the Indian Arbitration and Conciliation Act, 1996. The venue for arbitration shall be New Delhi, India.</p>
+
+  <h2>11. Changes to Terms</h2>
+  <p>11.1 We may update these Terms from time to time. Material changes will be notified via email or through the Platform at least 14 days before taking effect.</p>
+  <p>11.2 Your continued use of the Platform after changes constitute acceptance of the revised Terms. If you do not agree, you must stop using the Platform.</p>
+
+  <h2>12. Contact</h2>
+  <p>For questions about these Terms, please contact:<br>
+  <strong>Email:</strong> support@indranexadnet.com<br>
+  <strong>Address:</strong> Indranex AdNet, New Delhi, India</p>
+</div>
+
+<div class="footer">
+  &copy; 2026 Indranex AdNet. All rights reserved. &bull; <a href="/">Home</a> &bull; <a href="/privacy.html">Privacy Policy</a>
+</div>
+</div>
+
 </body>
 </html>
