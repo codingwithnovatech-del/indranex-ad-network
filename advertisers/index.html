@@ -90,7 +90,7 @@ tr:hover td{background:rgba(108,92,231,0.06)}
 
 .toast{position:fixed;bottom:24px;right:24px;background:var(--dark);color:#fff;padding:14px 24px;border-radius:12px;font-size:13px;z-index:9999;opacity:0;transform:translateY(16px);transition:all 0.3s;max-width:380px;box-shadow:0 10px 40px rgba(0,0,0,0.15)}
 .toast.show{opacity:1;transform:translateY(0)}
-.empty{padding:40px;text-align:center;color:var(--gray);font-size:14px}
+.empty{padding:40px;text-align:center;color:rgba(255,255,255,0.35);font-size:14px}
 footer{padding:24px 0;text-align:center;border-top:1px solid rgba(255,255,255,0.05);color:rgba(255,255,255,0.3);font-size:12px;margin-top:24px}
 @media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.form-row{grid-template-columns:1fr}}
 </style>
@@ -261,6 +261,7 @@ function googleSignIn(){
         document.getElementById('googleRegCard').style.display='block';
         document.getElementById('googleRegSub').textContent='Welcome '+(result.user.displayName||email)+'! Complete your profile.';
         document.getElementById('gRegName').value=result.user.displayName||'';
+        setTimeout(function(){if(typeof turnstile!=='undefined')turnstile.render('#googleRegCard .cf-turnstile')},300);
         return
       }
       var rm = document.getElementById('rememberMe').checked;advSetSession(email,rm);currentAdv=key;loadDash(key)
@@ -347,7 +348,7 @@ function campaignForm(adId){
   document.querySelectorAll('#campaignPositions input').forEach(function(c){c.checked=false});
   db.ref('publishers').once('value',function(s){
     var pubs=s.val()||{};var h='<label><input type="checkbox" value="all"> All Sites</label>';
-    Object.keys(pubs).forEach(function(k){h+='<label><input type="checkbox" value="'+k+'"> '+k+'</label>'});document.getElementById('campaignSites').innerHTML=h||'<p style="color:#999;font-size:13px;">No publishers available.</p>';
+    Object.keys(pubs).forEach(function(k){h+='<label><input type="checkbox" value="'+k+'"> '+k+'</label>'});document.getElementById('campaignSites').innerHTML=h||'<p style="color:rgba(255,255,255,0.35);font-size:13px;">No publishers available.</p>';
   });
   if(adId)db.ref('ads/'+adId).once('value',function(s){
     var ad=s.val();if(!ad)return;

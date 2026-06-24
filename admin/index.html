@@ -45,7 +45,7 @@ input,select,textarea,button{font-family:inherit}
 
 /* APP LAYOUT */
 .app{display:none;min-height:100vh}
-.sidebar{position:fixed;top:0;left:0;bottom:0;width:240px;background:var(--sidebar-bg);color:#fff;padding:20px 12px;z-index:100;overflow-y:auto;display:flex;flex-direction:column}
+.sidebar{position:fixed;top:0;left:0;bottom:0;width:240px;background:rgba(13,13,32,0.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#fff;padding:20px 12px;z-index:100;overflow-y:auto;display:flex;flex-direction:column;border-right:1px solid rgba(255,255,255,0.04)}
 .sidebar-brand{display:flex;align-items:center;gap:10px;padding:4px 10px 28px;font-size:17px;font-weight:700}
 .sidebar-brand .sb-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800}
 .sidebar-brand span{color:var(--primary-light)}
@@ -57,29 +57,29 @@ input,select,textarea,button{font-family:inherit}
 .sidebar .sidebar-bottom a{font-size:12px;color:rgba(255,255,255,0.25);display:block;padding:6px 12px;border-radius:8px;text-decoration:none;transition:color 0.2s}
 .sidebar .sidebar-bottom a:hover{color:#fff}
 .main{margin-left:240px;min-height:100vh}
-.topbar{background:var(--card);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f0f0f0;position:sticky;top:0;z-index:50}
-.topbar h2{font-size:18px;font-weight:700}
+.topbar{background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.05);position:sticky;top:0;z-index:50}
+.topbar h2{font-size:18px;font-weight:700;color:#fff}
 .content{padding:24px 28px;max-width:1200px}
 
 /* STATS */
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:24px}
-.stat-card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform 0.2s}
+.stat-card{background:rgba(255,255,255,0.05);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius);padding:20px;box-shadow:0 8px 32px rgba(0,0,0,0.15);position:relative;overflow:hidden;transition:transform 0.2s}
 .stat-card:hover{transform:translateY(-2px)}
 .stat-card .stat-bar{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--primary),var(--secondary))}
-.stat-card .stat-label{font-size:11px;text-transform:uppercase;color:var(--gray);font-weight:600;letter-spacing:0.3px}
+.stat-card .stat-label{font-size:11px;text-transform:uppercase;color:rgba(255,255,255,0.4);font-weight:600;letter-spacing:0.3px}
 .stat-card .stat-value{font-size:26px;font-weight:800;margin-top:2px;background:linear-gradient(135deg,var(--primary),var(--primary-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.stat-card .stat-value.mono{-webkit-background-clip:unset;-webkit-text-fill-color:unset;color:var(--dark)}
-.stat-card .stat-sub{font-size:11px;color:var(--gray);margin-top:2px}
+.stat-card .stat-value.mono{-webkit-background-clip:unset;-webkit-text-fill-color:unset;color:#fff}
+.stat-card .stat-sub{font-size:11px;color:rgba(255,255,255,0.3);margin-top:2px}
 
 /* CARDS & TABLES */
-.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden}
-.card-head{padding:16px 20px;border-bottom:1px solid #f5f5f5;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
-.card-head h3{font-size:15px;font-weight:600}
+.card{background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius);box-shadow:0 8px 32px rgba(0,0,0,0.12);margin-bottom:20px;overflow:hidden}
+.card-head{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.card-head h3{font-size:15px;font-weight:600;color:#fff}
 .card-body{padding:16px 20px}
 table{width:100%;border-collapse:collapse;font-size:13px}
-th,td{padding:12px 14px;text-align:left;border-bottom:1px solid #f5f5f5}
-th{font-size:11px;text-transform:uppercase;color:var(--gray);font-weight:600;background:#fafafa}
-tr:hover td{background:#f5f3ff}
+th,td{padding:12px 14px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.8)}
+th{font-size:11px;text-transform:uppercase;color:rgba(255,255,255,0.4);font-weight:600;background:rgba(255,255,255,0.03)}
+tr:hover td{background:rgba(108,92,231,0.06)}
 .badge{display:inline-block;padding:3px 10px;border-radius:50px;font-size:11px;font-weight:600}
 .badge-active{background:#e8f8f5;color:var(--success)}
 .badge-inactive{background:#fce4ec;color:var(--danger)}
@@ -88,15 +88,15 @@ tr:hover td{background:#f5f3ff}
 .badge-native{background:#f3e8ff;color:#9b59b6}
 .badge-popunder{background:#fce4ec;color:#e91e63}
 .badge-interstitial{background:#e0f7fa;color:#00acc1}
-.tag{display:inline-block;padding:2px 8px;border-radius:5px;font-size:10px;background:#f0f0f0;color:var(--gray);margin:1px}
+.tag{display:inline-block;padding:2px 8px;border-radius:5px;font-size:10px;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.5);margin:1px}
 .checkbox-group{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px;margin-top:6px}
 .checkbox-group label{display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer}
 
 /* TABS */
-.tab-bar{display:flex;gap:0;margin-bottom:20px;background:var(--card);border-radius:10px;overflow:hidden;box-shadow:var(--shadow)}
-.tab-bar button{flex:1;padding:12px 16px;border:none;background:transparent;font-size:13px;font-weight:600;color:var(--gray);cursor:pointer;transition:all 0.2s;border-bottom:2px solid transparent}
-.tab-bar button:hover{color:var(--dark)}
-.tab-bar button.active{color:var(--primary);border-bottom-color:var(--primary);background:rgba(108,92,231,0.04)}
+.tab-bar{display:flex;gap:0;margin-bottom:20px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:10px;overflow:hidden}
+.tab-bar button{flex:1;padding:12px 16px;border:none;background:transparent;font-size:13px;font-weight:600;color:rgba(255,255,255,0.4);cursor:pointer;transition:all 0.2s;border-bottom:2px solid transparent}
+.tab-bar button:hover{color:#fff}
+.tab-bar button.active{color:var(--primary-light);border-bottom-color:var(--primary);background:rgba(108,92,231,0.1)}
 .tab-content{display:none}
 .tab-content.active{display:block}
 
@@ -107,7 +107,7 @@ tr:hover td{background:#f5f3ff}
 .modal h3{font-size:19px;font-weight:700;margin-bottom:20px}
 .modal-actions{display:flex;gap:12px;margin-top:20px}
 .modal-actions .btn{flex:1}
-.empty-state{text-align:center;padding:40px 20px;color:var(--gray);font-size:14px}
+.empty-state{text-align:center;padding:40px 20px;color:rgba(255,255,255,0.35);font-size:14px}
 
 /* TOAST */
 .toast{position:fixed;bottom:24px;right:24px;background:var(--darker);color:#fff;padding:14px 24px;border-radius:12px;font-size:13px;z-index:9999;opacity:0;transform:translateY(16px);transition:all 0.3s;max-width:380px;box-shadow:0 10px 40px rgba(0,0,0,0.2)}
@@ -199,7 +199,7 @@ tr:hover td{background:#f5f3ff}
       </div>
       <div class="tab-content" id="tabPayments">
         <div class="card"><div class="card-head"><h3>Payment Management</h3></div><div class="card-body">
-          <p style="color:var(--gray);font-size:14px;margin-bottom:16px;">Record publisher payments based on their earnings.</p>
+          <p style="color:rgba(255,255,255,0.5);font-size:14px;margin-bottom:16px;">Record publisher payments based on their earnings.</p>
           <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px;">
             <input id="payPubId" placeholder="Publisher Site ID" style="padding:11px 14px;border:2px solid #e8e8e8;border-radius:10px;outline:none;font-size:13px;flex:1;min-width:160px;">
             <input id="payAmount" type="number" placeholder="Amount" style="padding:11px 14px;border:2px solid #e8e8e8;border-radius:10px;outline:none;font-size:13px;width:120px;">
@@ -212,9 +212,10 @@ tr:hover td{background:#f5f3ff}
         <div class="card"><div class="card-head"><h3>Settings</h3></div><div class="card-body">
           <div class="form-group"><label>Change Admin Password</label><div style="display:flex;gap:8px;">
             <input type="password" id="changePwd" placeholder="New password (min 6 chars)" style="flex:1;max-width:300px;">
-            <button class="btn btn-primary btn-sm" onclick="changePwd()">Update</button></div></div>
-          <hr style="margin:24px 0;border:none;border-top:1px solid #eee">
-          <h4 style="margin-bottom:12px;font-size:15px;">Quick Links</h4>
+            <button class="btn btn-primary btn-sm" onclick="changePwd()">Update</button></div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:6px">You'll need to re-enter your current password for security.</div></div>
+          <hr style="margin:24px 0;border:none;border-top:1px solid rgba(255,255,255,0.06)">
+          <h4 style="margin-bottom:12px;font-size:15px;color:#fff">Quick Links</h4>
           <div style="display:flex;gap:10px;flex-wrap:wrap;">
             <a href="/publishers/" class="btn btn-outline btn-sm">Publisher Portal</a>
             <a href="/advertisers/" class="btn btn-outline btn-sm">Advertiser Portal</a>
@@ -284,9 +285,14 @@ document.getElementById('loginBtn').addEventListener('click',function(){
           document.getElementById('loginBtn').onclick=function(){
             var p2=document.getElementById('loginPwd').value;
             if(!p2||p2.length<6){setLoginError('Password must be 6+ characters');return}
-            auth.createUserWithEmailAndPassword(adminEmail,p2).then(function(){
-              var rm=document.getElementById('rememberMe').checked;setSession(rm);clearRateLimit();document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';initApp()
-            }).catch(function(e2){setLoginError(e2.message);setLoginBtn(false,'Create Admin Account')});
+            var token2=turnstile.getResponse();if(!token2){setLoginError('Please complete the CAPTCHA');return}
+            setLoginBtn(true,'Creating...');
+            fetch('https://broad-resonance-0af8.ayushkumar20265f.workers.dev',{method:'POST',body:JSON.stringify({token:token2}),headers:{'Content-Type':'application/json'}}).then(function(r){return r.json()}).then(function(r2){
+              if(!r2.success){setLoginError('CAPTCHA verification failed');setLoginBtn(false,'Create Admin Account');return}
+              auth.createUserWithEmailAndPassword(adminEmail,p2).then(function(){
+                var rm=document.getElementById('rememberMe').checked;setSession(rm);clearRateLimit();document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';initApp()
+              }).catch(function(e2){setLoginError(e2.message);setLoginBtn(false,'Create Admin Account')});
+            }).catch(function(){setLoginError('CAPTCHA service unavailable');setLoginBtn(false,'Create Admin Account')});
           };
           setLoginBtn(false,'Create Admin Account');
         } else {
@@ -333,7 +339,7 @@ function loadOverview(){
   db.ref('analytics/clicks').once('value',function(s){document.getElementById('statClks').textContent=s.val()?Object.keys(s.val()).length:0});
   db.ref('analytics/impressions').orderByKey().limitToLast(8).once('value',function(s){
     var d=s.val(),h='';
-    if(d){Object.entries(d).reverse().forEach(function(e){var x=e[1];h+='<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f5f5f5;font-size:13px;"><span>Impression: <strong>'+(x.adId?x.adId.substring(0,10):'?')+'</strong> / '+(x.siteId||'?')+' / '+(x.position||'?')+'</span><span style="color:#999;">'+new Date(x.timestamp).toLocaleString()+'</span></div>'})}
+    if(d){Object.entries(d).reverse().forEach(function(e){var x=e[1];h+='<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:13px;color:rgba(255,255,255,0.7);"><span>Impression: <strong style="color:#fff;">'+(x.adId?x.adId.substring(0,10):'?')+'</strong> / '+(x.siteId||'?')+' / '+(x.position||'?')+'</span><span style="color:rgba(255,255,255,0.35);">'+new Date(x.timestamp).toLocaleString()+'</span></div>'})}
     else h='<div class="empty-state">No activity yet.</div>';
     document.getElementById('recentActivity').innerHTML=h;
   });
@@ -382,7 +388,7 @@ function adForm(id){
   db.ref('publishers').once('value',function(s){
     var pubs=s.val()||{};var h='<label><input type="checkbox" value="all"> All Sites</label>';
     Object.keys(pubs).forEach(function(k){var p=pubs[k];h+='<label><input type="checkbox" value="'+k+'"> '+k+' ('+(p.name||'')+')</label>'});
-    document.getElementById('adSites').innerHTML=h||'<p style="color:#999;font-size:12px;">No publishers</p>';
+    document.getElementById('adSites').innerHTML=h||'<p style="color:rgba(255,255,255,0.35);font-size:12px;">No publishers</p>';
   });
   if(id)db.ref('ads/'+id).once('value',function(s){
     var a=s.val();if(!a)return;
@@ -496,7 +502,17 @@ function addPayment(){
 
 function changePwd(){
   var p=document.getElementById('changePwd').value;if(!p||p.length<6){toast('Min 6 characters');return}
-  auth.currentUser.updatePassword(p).then(function(){toast('Password updated!');document.getElementById('changePwd').value=''}).catch(function(e){toast(e.message)});
+  var curPwd=prompt('Enter your CURRENT password to change password:');if(!curPwd)return
+  var cred=firebase.auth.EmailAuthProvider.credential(auth.currentUser.email,curPwd)
+  auth.currentUser.reauthenticateWithCredential(cred).then(function(){
+    auth.currentUser.updatePassword(p).then(function(){toast('Password updated!');document.getElementById('changePwd').value=''}).catch(function(e){toast(e.message)})
+  }).catch(function(){toast('Current password incorrect')});
+}
+
+function checkSession(){
+  var ls=localStorage.getItem('adnet_auth');var ss=sessionStorage.getItem('adnet_auth');
+  if(ls||ss){auth.onAuthStateChanged(function(u){if(u){document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';initApp()}})}
+  else{var user=auth.currentUser;if(user){document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';initApp()}}
 }
 
 checkSession();

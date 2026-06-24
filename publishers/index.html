@@ -59,7 +59,7 @@ input,button,select{font-family:inherit}
 .dash{display:none}
 .dash-head{display:flex;justify-content:space-between;align-items:center;margin:28px 0 24px;flex-wrap:wrap;gap:12px}
 .dash-head h2{font-size:20px;font-weight:700}
-.dash-head .info{font-size:13px;color:var(--gray)}
+.dash-head .info{font-size:13px;color:rgba(255,255,255,0.4)}
 .dash-head .info code{background:#f0f0f0;padding:2px 8px;border-radius:4px;font-size:12px;font-family:monospace}
 
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:24px}
@@ -79,7 +79,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}
 th,td{padding:12px 14px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.8)}
 th{font-size:11px;text-transform:uppercase;color:rgba(255,255,255,0.4);font-weight:600;background:rgba(255,255,255,0.03)}
 tr:hover td{background:rgba(108,92,231,0.06)}
-.empty{padding:40px;text-align:center;color:var(--gray);font-size:14px}
+.empty{padding:40px;text-align:center;color:rgba(255,255,255,0.35);font-size:14px}
 
 .toast{position:fixed;bottom:24px;right:24px;background:var(--dark);color:#fff;padding:14px 24px;border-radius:12px;font-size:13px;z-index:9999;opacity:0;transform:translateY(16px);transition:all 0.3s;max-width:380px;box-shadow:0 10px 40px rgba(0,0,0,0.15)}
 .toast.show{opacity:1;transform:translateY(0)}
@@ -166,7 +166,7 @@ footer{padding:24px 0;text-align:center;border-top:1px solid rgba(255,255,255,0.
         <button class="btn btn-primary btn-sm" onclick="copyCode()">Copy Code</button>
       </div>
       <div class="card-body">
-        <p style="color:var(--gray);font-size:13px;margin-bottom:12px;">Add these ad slots and script to your website HTML:</p>
+        <p style="color:rgba(255,255,255,0.5);font-size:13px;margin-bottom:12px;">Add these ad slots and script to your website HTML:</p>
         <div class="code-box" id="integrationCode"></div>
       </div>
     </div>
@@ -242,7 +242,8 @@ function googleSignIn(){
         document.getElementById('loginCard').style.display='none';document.getElementById('regCard').style.display='none';
         document.getElementById('googleRegCard').style.display='block';
         document.getElementById('googleRegSub').textContent = 'Welcome ' + (name || email) + '! Complete your profile.';
-        document.getElementById('gRegName').value = name
+        document.getElementById('gRegName').value = name;
+        setTimeout(function(){if(typeof turnstile!=='undefined')turnstile.render('#googleRegCard .cf-turnstile')},300)
       }
     });
   }).catch(function(e){if(e.code !== 'auth/popup-closed-by-user')setLoginError(e.message)});
