@@ -313,7 +313,7 @@ function advLogout(){advClearSession();currentAdv=null;auth.signOut();document.g
 
 function loadDash(key){
   currentAdv=key;
-  document.getElementById('loginCard').style.display='none';document.getElementById('regCard').style.display='none';document.getElementById('dashboard').style.display='block';
+  document.getElementById('loginCard').style.display='none';document.getElementById('regCard').style.display='none';document.getElementById('dashboard').style.display='block';window.scrollTo(0,0);
   db.ref('advertisers/'+key).once('value',function(s){var d=s.val()||{};document.getElementById('advName').textContent=d.name||key});
   loadCampaigns(key);
 }

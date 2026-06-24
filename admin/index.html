@@ -267,7 +267,7 @@ function googleSignIn(){
       auth.signOut();setLoginError('Only admin@indranexadnet.com allowed');return
     }
     var rm = document.getElementById('rememberMe').checked;setSession(rm);clearRateLimit();
-    document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';initApp()
+    document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';window.scrollTo(0,0);initApp()
   }).catch(function(e){setLoginError(e.message)});
 }
 
@@ -279,7 +279,7 @@ document.getElementById('loginBtn').addEventListener('click',function(){
     if(!resp.success){setLoginError('CAPTCHA verification failed');setLoginBtn(false,'Sign In');return}
     checkRateLimit(function(){
       auth.signInWithEmailAndPassword(adminEmail,p).then(function(){
-        var rm=document.getElementById('rememberMe').checked;setSession(rm);clearRateLimit();document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';initApp()
+        var rm=document.getElementById('rememberMe').checked;setSession(rm);clearRateLimit();document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';window.scrollTo(0,0);initApp()
       }).catch(function(e){
         if(e.code==='auth/user-not-found'){
           document.getElementById('loginSub').textContent='First time? Set up your admin account';
@@ -292,7 +292,7 @@ document.getElementById('loginBtn').addEventListener('click',function(){
             fetch('https://broad-resonance-0af8.ayushkumar20265f.workers.dev',{method:'POST',body:JSON.stringify({token:token2}),headers:{'Content-Type':'application/json'}}).then(function(r){return r.json()}).then(function(r2){
               if(!r2.success){setLoginError('CAPTCHA verification failed');setLoginBtn(false,'Create Admin Account');return}
               auth.createUserWithEmailAndPassword(adminEmail,p2).then(function(){
-                var rm=document.getElementById('rememberMe').checked;setSession(rm);clearRateLimit();document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';initApp()
+                var rm=document.getElementById('rememberMe').checked;setSession(rm);clearRateLimit();document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';window.scrollTo(0,0);initApp()
               }).catch(function(e2){setLoginError(e2.message);setLoginBtn(false,'Create Admin Account')});
             }).catch(function(){setLoginError('CAPTCHA service unavailable');setLoginBtn(false,'Create Admin Account')});
           };
@@ -311,7 +311,7 @@ document.getElementById('logoutBtn').addEventListener('click',function(e){e.prev
 auth.onAuthStateChanged(function(user){
   if(user){
     var ls=localStorage.getItem('adnet_auth');var ss=sessionStorage.getItem('adnet_auth');
-    if(ls||ss){document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';initApp()}
+    if(ls||ss){document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';window.scrollTo(0,0);initApp()}
   }
 });
 
@@ -513,8 +513,8 @@ function changePwd(){
 
 function checkSession(){
   var ls=localStorage.getItem('adnet_auth');var ss=sessionStorage.getItem('adnet_auth');
-  if(ls||ss){auth.onAuthStateChanged(function(u){if(u){document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';initApp()}})}
-  else{var user=auth.currentUser;if(user){document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';initApp()}}
+  if(ls||ss){auth.onAuthStateChanged(function(u){if(u){document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';window.scrollTo(0,0);initApp()}})}
+  else{var user=auth.currentUser;if(user){document.getElementById('loginOverlay').style.display='none';document.getElementById('app').style.display='block';window.scrollTo(0,0);initApp()}}
 }
 
 checkSession();

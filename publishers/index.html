@@ -297,7 +297,7 @@ function pubLogin(){
 function pubLogout(){pubClearSession();auth.signOut();document.getElementById('dashboard').style.display='none';document.getElementById('loginCard').style.display='block';document.getElementById('googleRegCard').style.display='none'}
 
 function loadDash(sid){
-  document.getElementById('loginCard').style.display='none';document.getElementById('regCard').style.display='none';document.getElementById('dashboard').style.display='block';
+  document.getElementById('loginCard').style.display='none';document.getElementById('regCard').style.display='none';document.getElementById('dashboard').style.display='block';window.scrollTo(0,0);
   db.ref('publishers/'+sid).once('value',function(s){
     var p=s.val()||{};document.getElementById('pubName').textContent=p.name||sid;document.getElementById('pubSiteIdDisplay').textContent=sid;
     var dm=window.location.hostname;
