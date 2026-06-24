@@ -240,11 +240,18 @@ footer{padding:24px 0;text-align:center;border-top:1px solid rgba(255,255,255,0.
     <h3>&#36; Add Funds</h3>
     <div class="form-group"><label>Amount ($)</label><input type="number" id="fundAmount" placeholder="Minimum $10" min="10" step="0.01"></div>
     <div class="form-group"><label>Payment Method</label>
-      <select id="fundMethod" style="width:100%;padding:12px 16px;border:1px solid rgba(255,255,255,0.12);border-radius:10px;font-size:14px;outline:none;background:rgba(255,255,255,0.06);color:#fff">
+      <select id="fundMethod" onchange="toggleUpiInput()" style="width:100%;padding:12px 16px;border:1px solid rgba(255,255,255,0.12);border-radius:10px;font-size:14px;outline:none;background:rgba(255,255,255,0.06);color:#fff">
         <option value="card">Credit/Debit Card</option>
         <option value="bank">Bank Transfer</option>
+        <option value="upi">UPI</option>
         <option value="crypto">Cryptocurrency</option>
       </select>
+    </div>
+    <div id="upiSection" style="display:none;text-align:center;padding:16px;background:rgba(255,255,255,0.04);border-radius:12px;margin-bottom:16px">
+      <p style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:8px">Scan & pay via UPI</p>
+      <img src="https://i.ibb.co/zVsdtWK9/Chat-GPT-Image-Jun-24-2026-10-56-29-AM.png" alt="UPI QR" style="width:140px;height:140px;border-radius:12px;margin-bottom:8px;background:#fff;padding:8px">
+      <p style="font-size:14px;font-weight:600;color:var(--primary-light)">UPI ID: <span id="upiIdDisplay">admin@indranexadnet@upi</span></p>
+      <button class="btn btn-outline btn-sm" onclick="copyUpiId()" style="margin-top:6px">&#128203; Copy UPI ID</button>
     </div>
     <div class="modal-actions">
       <button class="btn btn-outline" onclick="closeFundModal()">Cancel</button>
@@ -498,8 +505,13 @@ function loadAdvWallet(key){
   loadAdvDailyStats(key);
 }
 
-function showFundModal(){document.getElementById('fundModal').classList.add('active')}
+function showFundModal(){document.getElementById('fundModal').classList.add('active');toggleUpiInput()}
 function closeFundModal(){document.getElementById('fundModal').classList.remove('active')}
+function toggleUpiInput(){document.getElementById('upiSection').style.display=document.getElementById('fundMethod').value==='upi'?'block':'none'}
+function copyUpiId(){
+  var id=document.getElementById('upiIdDisplay').textContent;
+  navigator.clipboard.writeText(id).then(function(){toast('UPI ID copied!')}).catch(function(){toast('Copy failed')})
+}
 function addFunds(){
   var amt=parseFloat(document.getElementById('fundAmount').value);
   var method=document.getElementById('fundMethod').value;
